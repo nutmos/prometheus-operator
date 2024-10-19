@@ -19297,7 +19297,7 @@ bool
 </td>
 <td>
 <em>(Optional)</em>
-<p>When false, Prometheus will not enable HTTP2.</p>
+<p>When false, Prometheus will request uncompressed response from the scraped target.</p>
 <p>If unset, Prometheus uses true by default.</p>
 </td>
 </tr>
@@ -28229,6 +28229,19 @@ bool
 <em>(Optional)</em>
 <p>When false, Prometheus will request uncompressed response from the scraped target.</p>
 <p>It requires Prometheus &gt;= v2.49.0.</p>
+<p>If unset, Prometheus uses true by default.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>enableHTTP2</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>When false, Prometheus will request uncompressed response from the scraped target.</p>
 <p>If unset, Prometheus uses true by default.</p>
 </td>
 </tr>
