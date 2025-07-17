@@ -4907,6 +4907,29 @@
                           },
                           "type": "array"
                         },
+                        "rocketChatConfigs": {
+                          "description": "List of Rocket Chat configurations.\nIt requires Alertmanager >= 0.28.0.",
+                          "items": {
+                            "description": "RocketChatConfig configures the rocket chat parameters\nSee https://prometheus.io/docs/alerting/latest/configuration/#msteamsv2_config\nIt requires Alertmanager >= 0.28.0.",
+                            "properties": {
+                              "APIURL": {
+                                "description": "MSTeams incoming webhook URL.",
+                                "type": "string"
+                              },
+                              "sendResolved": {
+                                "description": "Whether to notify about resolved alerts.",
+                                "type": "boolean"
+                              },
+                              "title": {
+                                "description": "Message title template.",
+                                "minLength": 1,
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
                         "slackConfigs": {
                           "description": "List of Slack configurations.",
                           "items": {

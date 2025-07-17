@@ -31051,6 +31051,76 @@ It requires Alertmanager &gt;= 0.26.0.</p>
 It requires Alertmanager &gt;= 0.28.0.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>rocketChatConfigs</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1alpha1.RocketChatConfig">
+[]RocketChatConfig
+</a>
+</em>
+</td>
+<td>
+<p>List of Rocket Chat configurations.
+It requires Alertmanager &gt;= 0.28.0.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="monitoring.coreos.com/v1alpha1.RocketChatConfig">RocketChatConfig
+</h3>
+<p>
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1alpha1.Receiver">Receiver</a>)
+</p>
+<div>
+<p>RocketChatConfig configures the rocket chat parameters
+See <a href="https://prometheus.io/docs/alerting/latest/configuration/#msteamsv2_config">https://prometheus.io/docs/alerting/latest/configuration/#msteamsv2_config</a>
+It requires Alertmanager &gt;= 0.28.0.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>sendResolved</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Whether to notify about resolved alerts.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>APIURL</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>MSTeams incoming webhook URL.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>title</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Message title template.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="monitoring.coreos.com/v1alpha1.Route">Route
@@ -36063,6 +36133,76 @@ It requires Alertmanager &gt;= 0.26.0.</p>
 <td>
 <p>List of MSTeamsV2 configurations.
 It requires Alertmanager &gt;= 0.28.0.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>rocketChatConfigs</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1beta1.RocketChatConfig">
+[]RocketChatConfig
+</a>
+</em>
+</td>
+<td>
+<p>List of Rocket Chat configurations.
+It requires Alertmanager &gt;= 0.28.0.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="monitoring.coreos.com/v1beta1.RocketChatConfig">RocketChatConfig
+</h3>
+<p>
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1beta1.Receiver">Receiver</a>)
+</p>
+<div>
+<p>RocketChatConfig configures the rocket chat parameters
+See <a href="https://prometheus.io/docs/alerting/latest/configuration/#msteamsv2_config">https://prometheus.io/docs/alerting/latest/configuration/#msteamsv2_config</a>
+It requires Alertmanager &gt;= 0.28.0.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>sendResolved</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Whether to notify about resolved alerts.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>APIURL</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>MSTeams incoming webhook URL.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>title</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Message title template.</p>
 </td>
 </tr>
 </tbody>

@@ -189,6 +189,9 @@ type Receiver struct {
 	// List of MSTeamsV2 configurations.
 	// It requires Alertmanager >= 0.28.0.
 	MSTeamsV2Configs []MSTeamsV2Config `json:"msteamsv2Configs,omitempty"`
+	// List of Rocket Chat configurations.
+	// It requires Alertmanager >= 0.28.0.
+	RocketChatConfigs []RocketChatConfig `json:"rocketChatConfigs,omitempty"`
 }
 
 // PagerDutyConfig configures notifications via PagerDuty.
@@ -991,6 +994,22 @@ type MSTeamsV2Config struct {
 	// HTTP client configuration.
 	// +optional
 	HTTPConfig *HTTPConfig `json:"httpConfig,omitempty"`
+}
+
+// RocketChatConfig configures the rocket chat parameters
+// See https://prometheus.io/docs/alerting/latest/configuration/#msteamsv2_config
+// It requires Alertmanager >= 0.28.0.
+type RocketChatConfig struct {
+	// Whether to notify about resolved alerts.
+	// +optional
+	SendResolved *bool `json:"sendResolved,omitempty"`
+	// MSTeams incoming webhook URL.
+	// +optional
+	APIURL *string `json:"APIURL,omitempty"`
+	// Message title template.
+	// +kubebuilder:validation:MinLength=1
+	// +optional
+	Channel *string `json:"title,omitempty"`
 }
 
 // InhibitRule defines an inhibition rule that allows to mute alerts when other

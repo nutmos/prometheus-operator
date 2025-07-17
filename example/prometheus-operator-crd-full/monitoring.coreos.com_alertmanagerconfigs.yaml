@@ -5240,6 +5240,28 @@ spec:
                             type: string
                         type: object
                       type: array
+                    rocketChatConfigs:
+                      description: |-
+                        List of Rocket Chat configurations.
+                        It requires Alertmanager >= 0.28.0.
+                      items:
+                        description: |-
+                          RocketChatConfig configures the rocket chat parameters
+                          See https://prometheus.io/docs/alerting/latest/configuration/#msteamsv2_config
+                          It requires Alertmanager >= 0.28.0.
+                        properties:
+                          APIURL:
+                            description: MSTeams incoming webhook URL.
+                            type: string
+                          sendResolved:
+                            description: Whether to notify about resolved alerts.
+                            type: boolean
+                          title:
+                            description: Message title template.
+                            minLength: 1
+                            type: string
+                        type: object
+                      type: array
                     slackConfigs:
                       description: List of Slack configurations.
                       items:
@@ -15835,6 +15857,28 @@ spec:
                               The user key file that contains the recipient user's user key.
                               Either `userKey` or `userKeyFile` is required.
                               It requires Alertmanager >= v0.26.0.
+                            type: string
+                        type: object
+                      type: array
+                    rocketChatConfigs:
+                      description: |-
+                        List of Rocket Chat configurations.
+                        It requires Alertmanager >= 0.28.0.
+                      items:
+                        description: |-
+                          RocketChatConfig configures the rocket chat parameters
+                          See https://prometheus.io/docs/alerting/latest/configuration/#msteamsv2_config
+                          It requires Alertmanager >= 0.28.0.
+                        properties:
+                          APIURL:
+                            description: MSTeams incoming webhook URL.
+                            type: string
+                          sendResolved:
+                            description: Whether to notify about resolved alerts.
+                            type: boolean
+                          title:
+                            description: Message title template.
+                            minLength: 1
                             type: string
                         type: object
                       type: array
