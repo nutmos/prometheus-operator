@@ -4018,6 +4018,9 @@ func TestSanitizeConfig(t *testing.T) {
 	versionSlackAppConfigAllowed := semver.Version{Major: 0, Minor: 30}
 	versionSlackAppConfigNotAllowed := semver.Version{Major: 0, Minor: 29}
 
+	versionSlackMessageTextAllowed := semver.Version{Major: 0, Minor: 31}
+	versionSlackMessageTextNotAllowed := semver.Version{Major: 0, Minor: 30}
+
 	versionJiraAllowed := semver.Version{Major: 0, Minor: 28}
 	versionJiraNotAllowed := semver.Version{Major: 0, Minor: 27}
 	jiraURL := config.URL{}
@@ -4164,6 +4167,38 @@ func TestSanitizeConfig(t *testing.T) {
 				},
 			},
 			golden: "test_slack_timeout_is_added_in_slack_config_for_supported_versions.golden",
+		},
+		{
+			name:           "Test message_text is dropped in slack config for unsupported versions",
+			againstVersion: versionSlackMessageTextNotAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						SlackConfigs: []*slackConfig{
+							{
+								MessageText: "test message text",
+							},
+						},
+					},
+				},
+			},
+			golden: "test_slack_message_text_is_dropped_in_slack_config_for_unsupported_versions.golden",
+		},
+		{
+			name:           "Test message_text is added in slack config for supported versions",
+			againstVersion: versionSlackMessageTextAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						SlackConfigs: []*slackConfig{
+							{
+								MessageText: "test message text",
+							},
+						},
+					},
+				},
+			},
+			golden: "test_slack_message_text_is_added_in_slack_config_for_supported_versions.golden",
 		},
 		{
 			name:           "Test inhibit rules error with unsupported syntax",
@@ -7495,6 +7530,9 @@ func TestSanitizeWeChatConfig(t *testing.T) {
 	logger := newNopLogger(t)
 	versionWeChatAllowed := semver.Version{Major: 0, Minor: 26}
 
+	versionSecretFileAllowed := semver.Version{Major: 0, Minor: 31}
+	versionSecretFileNotAllowed := semver.Version{Major: 0, Minor: 30}
+
 	for _, tc := range []struct {
 		name           string
 		againstVersion semver.Version
@@ -7535,6 +7573,76 @@ func TestSanitizeWeChatConfig(t *testing.T) {
 				},
 			},
 			golden: "wechat_valid_url_passes.golden",
+		},
+		{
+			name:           "wechat api_secret_file supported version",
+			againstVersion: versionSecretFileAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						WeChatConfigs: []*weChatConfig{
+							{
+								APIURL:        "https://api.weixin.qq.com/cgi-bin/message/send",
+								APISecretFile: "/api/secret/file",
+							},
+						},
+					},
+				},
+			},
+			golden: "wechat_api_secret_file_supported_version.golden",
+		},
+		{
+			name:           "wechat specifies both api_secret and api_secret_file",
+			againstVersion: versionSecretFileAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						WeChatConfigs: []*weChatConfig{
+							{
+								APIURL:        "https://api.weixin.qq.com/cgi-bin/message/send",
+								APISecret:     "abcdef123456",
+								APISecretFile: "/api/secret/file",
+							},
+						},
+					},
+				},
+			},
+			golden: "wechat_specifies_both_api_secret_and_api_secret_file.golden",
+		},
+		{
+			name:           "wechat api_secret_file unsupported version",
+			againstVersion: versionSecretFileNotAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						WeChatConfigs: []*weChatConfig{
+							{
+								APIURL:        "https://api.weixin.qq.com/cgi-bin/message/send",
+								APISecretFile: "/api/secret/file",
+							},
+						},
+					},
+				},
+			},
+			golden: "wechat_api_secret_file_unsupported_version.golden",
+		},
+		{
+			name:           "wechat specifies both api_secret and api_secret_file unsupported version",
+			againstVersion: versionSecretFileNotAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						WeChatConfigs: []*weChatConfig{
+							{
+								APIURL:        "https://api.weixin.qq.com/cgi-bin/message/send",
+								APISecret:     "abcdef123456",
+								APISecretFile: "/api/secret/file",
+							},
+						},
+					},
+				},
+			},
+			golden: "wechat_specifies_both_api_secret_and_api_secret_file_unsupported_version.golden",
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
