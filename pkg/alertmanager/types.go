@@ -190,6 +190,7 @@ type weChatConfig struct {
 	Message       string            `yaml:"message,omitempty"`
 	MessageType   string            `yaml:"message_type,omitempty"`
 	HTTPConfig    *httpClientConfig `yaml:"http_config,omitempty"`
+	APISecretFile string            `yaml:"api_secret_file,omitempty"`
 }
 
 type slackConfig struct {
@@ -220,6 +221,7 @@ type slackConfig struct {
 	MrkdwnIn      []string          `yaml:"mrkdwn_in,omitempty"`
 	Actions       []slackAction     `yaml:"actions,omitempty"`
 	Timeout       *model.Duration   `yaml:"timeout,omitempty"`
+	MessageText   string            `yaml:"message_text,omitempty"`
 }
 
 type httpClientConfig struct {
