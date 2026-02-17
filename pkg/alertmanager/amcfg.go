@@ -973,6 +973,7 @@ func (cb *ConfigBuilder) convertSlackConfig(ctx context.Context, in monitoringv1
 		IconEmoji:     ptr.Deref(in.IconEmoji, ""),
 		LinkNames:     ptr.Deref(in.LinkNames, false),
 		MrkdwnIn:      in.MrkdwnIn,
+		MessageText:   ptr.Deref(in.MessageText, ""),
 	}
 
 	if in.APIURL != nil {
