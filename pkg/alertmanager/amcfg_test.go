@@ -3979,6 +3979,9 @@ func TestSanitizeConfig(t *testing.T) {
 	versionFileURLAllowed := semver.Version{Major: 0, Minor: 22}
 	versionFileURLNotAllowed := semver.Version{Major: 0, Minor: 21}
 
+	versionGlobalWeChatConfigSecretFileAllowed := semver.Version{Major: 0, Minor: 31}
+	versionGlobalWeChatConfigSecretFileNotAllowed := semver.Version{Major: 0, Minor: 30}
+
 	matcherV2SyntaxAllowed := semver.Version{Major: 0, Minor: 22}
 	matcherV2SyntaxNotAllowed := semver.Version{Major: 0, Minor: 21}
 
@@ -4002,6 +4005,9 @@ func TestSanitizeConfig(t *testing.T) {
 
 	versionTelegramMessageThreadIDAllowed := semver.Version{Major: 0, Minor: 26}
 	versionTelegramMessageThreadIDNotAllowed := semver.Version{Major: 0, Minor: 25}
+
+	versionTelegramChatIDFileAllowed := semver.Version{Major: 0, Minor: 31}
+	versionTelegramChatIDFileNotAllowed := semver.Version{Major: 0, Minor: 30}
 
 	versionMSTeamsSummaryAllowed := semver.Version{Major: 0, Minor: 27}
 	versionMSTeamsSummaryNotAllowed := semver.Version{Major: 0, Minor: 26}
@@ -4083,6 +4089,27 @@ func TestSanitizeConfig(t *testing.T) {
 				},
 			},
 			golden: "test_slack_api_url_file is dropped_for_unsupported_versions.golden",
+		},
+		{
+			name:           "Test wechat_api_secret_file is dropped for unsupported versions",
+			againstVersion: versionGlobalWeChatConfigSecretFileNotAllowed,
+			in: &alertmanagerConfig{
+				Global: &globalConfig{
+					WeChatAPISecretFile: "/test",
+				},
+			},
+			golden: "test_wechat_api_secret_file_is_dropped_for_unsupported_versions.golden",
+		},
+		{
+			name:           "Test wechat_api_secret takes precedence over wechat_api_secret_file in global config",
+			againstVersion: versionGlobalWeChatConfigSecretFileAllowed,
+			in: &alertmanagerConfig{
+				Global: &globalConfig{
+					WeChatAPISecret:     "abcdef123456",
+					WeChatAPISecretFile: "/wechat/api/secret",
+				},
+			},
+			golden: "test_wechat_api_secret_takes_precedence_over_wechat_api_secret_file_in_global_config.golden",
 		},
 		{
 			name:           "Test api_url takes precedence in slack config",
@@ -4710,6 +4737,84 @@ func TestSanitizeConfig(t *testing.T) {
 				},
 			},
 			expectErr: true,
+		},
+		{
+			name:           "chat_id_file is presented along with chat_id",
+			againstVersion: versionTelegramChatIDFileAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						Name: "telegram",
+						TelegramConfigs: []*telegramConfig{
+							{
+								ChatID: 12345,
+								// Expect to drop chat_id_file as chat_id has higher precedence.
+								ChatIDFile: "/chat/id/file",
+								BotToken:   "test",
+							},
+						},
+					},
+				},
+			},
+			golden: "telegram_config_chat_id_file_and_chat_id.golden",
+		},
+		{
+			name:           "chat_id_file not supported is presented along with chat_id",
+			againstVersion: versionTelegramChatIDFileNotAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						Name: "telegram",
+						TelegramConfigs: []*telegramConfig{
+							{
+								ChatID: 12345,
+								// Expect to drop chat_id_file.
+								ChatIDFile: "/chat/id/file",
+								BotToken:   "test",
+							},
+						},
+					},
+				},
+			},
+			golden: "telegram_config_chat_id_file_not_supported_and_chat_id.golden",
+		},
+		{
+			name:           "chat_id_file not supported",
+			againstVersion: versionTelegramChatIDFileNotAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						Name: "telegram",
+						TelegramConfigs: []*telegramConfig{
+							{
+								// Expect to drop chat_id_file.
+								ChatIDFile: "/chat/id/file",
+								BotToken:   "test",
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "chat_id_file supported",
+			againstVersion: versionTelegramChatIDFileAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						Name: "telegram",
+						TelegramConfigs: []*telegramConfig{
+							{
+								// Expect to drop chat_id_file.
+								ChatIDFile: "/chat/id/file",
+								BotToken:   "test",
+							},
+						},
+					},
+				},
+			},
+			golden: "telegram_config_chat_id_supported.golden",
 		},
 		{
 			name:           "summary is dropped for unsupported versions for MSTeams config",

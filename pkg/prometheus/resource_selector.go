@@ -37,7 +37,7 @@ import (
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	monitoringv1alpha1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1alpha1"
 	"github.com/prometheus-operator/prometheus-operator/pkg/assets"
-	"github.com/prometheus-operator/prometheus-operator/pkg/k8sutil"
+	"github.com/prometheus-operator/prometheus-operator/pkg/k8s"
 	"github.com/prometheus-operator/prometheus-operator/pkg/operator"
 	"github.com/prometheus-operator/prometheus-operator/pkg/prometheus/validation"
 )
@@ -126,7 +126,7 @@ func selectObjects[T operator.ConfigurationResource](
 
 			obj := o.(runtime.Object)
 			obj = obj.DeepCopyObject()
-			if err := k8sutil.AddTypeInformationToObject(obj); err != nil {
+			if err := k8s.AddTypeInformationToObject(obj); err != nil {
 				logger.Error("failed to set type information", "namespace", ns, "err", err)
 				return
 			}

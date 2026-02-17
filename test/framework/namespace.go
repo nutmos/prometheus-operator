@@ -23,12 +23,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
-	"github.com/prometheus-operator/prometheus-operator/pkg/k8sutil"
+	"github.com/prometheus-operator/prometheus-operator/pkg/k8s"
 )
 
 func (f *Framework) CreateNamespace(ctx context.Context, t *testing.T, testCtx *TestCtx) string {
 	name := testCtx.ID()
-	rn := k8sutil.ResourceNamer{}
+	rn := k8s.ResourceNamer{}
 	name, err := rn.UniqueDNS1123Label(name)
 	if err != nil {
 		t.Fatalf("failed to generate namespace %v: %v", name, err)

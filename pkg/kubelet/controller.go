@@ -32,7 +32,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/utils/ptr"
 
-	"github.com/prometheus-operator/prometheus-operator/pkg/k8sutil"
+	"github.com/prometheus-operator/prometheus-operator/pkg/k8s"
 	"github.com/prometheus-operator/prometheus-operator/pkg/operator"
 )
 
@@ -464,7 +464,7 @@ func (c *Controller) syncEndpoints(ctx context.Context, addresses []nodeAddress)
 	}
 
 	c.logger.Debug("Updating Kubernetes endpoint")
-	err := k8sutil.CreateOrUpdateEndpoints(ctx, c.kclient.CoreV1().Endpoints(c.kubeletObjectNamespace), eps)
+	err := k8s.CreateOrUpdateEndpoints(ctx, c.kclient.CoreV1().Endpoints(c.kubeletObjectNamespace), eps)
 	if err != nil {
 		return err
 	}
@@ -493,7 +493,7 @@ func (c *Controller) syncService(ctx context.Context) (*v1.Service, error) {
 	}
 
 	c.logger.Debug("Updating Kubernetes service", "service", c.kubeletObjectName)
-	return k8sutil.CreateOrUpdateService(ctx, c.kclient.CoreV1().Services(c.kubeletObjectNamespace), svc)
+	return k8s.CreateOrUpdateService(ctx, c.kclient.CoreV1().Services(c.kubeletObjectNamespace), svc)
 }
 
 func (c *Controller) syncEndpointSlice(ctx context.Context, svc *v1.Service, addresses []nodeAddress) error {
@@ -652,7 +652,7 @@ func (c *Controller) syncEndpointSlice(ctx context.Context, svc *v1.Service, add
 		}
 
 		c.logger.Debug("Updating endpointslice object", "name", eps.Name)
-		err := k8sutil.CreateOrUpdateEndpointSlice(ctx, client, &eps)
+		err := k8s.CreateOrUpdateEndpointSlice(ctx, client, &eps)
 		if err != nil {
 			return fmt.Errorf("failed to update endpoinslice: %w", err)
 		}
