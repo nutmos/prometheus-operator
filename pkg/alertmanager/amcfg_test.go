@@ -5855,6 +5855,44 @@ func TestSanitizeEmailConfig(t *testing.T) {
 			},
 			golden: "test_implicit_tls_is_added_in_email_config_for_supported_versions.golden",
 		},
+		{
+			name:           "Test threading is dropped in email config for unsupported versions",
+			againstVersion: semver.Version{Major: 0, Minor: 29},
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						EmailConfigs: []*emailConfig{
+							{
+								Threading: &emailThreadingConfig{
+									Enabled:      ptr.To(true),
+									ThreadByDate: "daily",
+								},
+							},
+						},
+					},
+				},
+			},
+			golden: "test_threading_is_dropped_in_email_config_for_unsupported_versions.golden",
+		},
+		{
+			name:           "Test threading is added in email config for supported version",
+			againstVersion: semver.Version{Major: 0, Minor: 30},
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						EmailConfigs: []*emailConfig{
+							{
+								Threading: &emailThreadingConfig{
+									Enabled:      ptr.To(true),
+									ThreadByDate: "daily",
+								},
+							},
+						},
+					},
+				},
+			},
+			golden: "test_threading_is_added_in_email_config_for_supported_versions.golden",
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			err := tc.in.sanitize(tc.againstVersion, logger)

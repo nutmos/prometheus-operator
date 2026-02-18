@@ -2555,6 +2555,12 @@ func (ec *emailConfig) sanitize(amVersion semver.Version, logger *slog.Logger) e
 		ec.ImplicitTLS = nil
 	}
 
+	if ec.Threading != nil && amVersion.LT(semver.MustParse("0.30.0")) {
+		msg := "'threading' supported in Alertmanager >= 0.30.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		ec.Threading = nil
+	}
+
 	return nil
 }
 
