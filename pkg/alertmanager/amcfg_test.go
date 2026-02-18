@@ -3939,7 +3939,7 @@ func TestGenerateConfig(t *testing.T) {
 					},
 				},
 			},
-			golden: "CR_with_EmailConfig_ImplicitTLS_Not_Supported.golden",
+			expectedError: true,
 		},
 		{
 			name:      "CR with WebhookConfig with Timeout Setup",
