@@ -2243,6 +2243,24 @@ func (gc *globalConfig) sanitize(amVersion semver.Version, logger *slog.Logger) 
 		gc.WeChatAPISecretFile = ""
 	}
 
+	if gc.TelegramBotToken != "" && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'telegram_bot_token' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		gc.TelegramBotToken = ""
+	}
+
+	if gc.TelegramBotTokenFile != "" && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'telegram_bot_token_file' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		gc.TelegramBotTokenFile = ""
+	}
+
+	if gc.TelegramBotToken != "" && gc.TelegramBotTokenFile != "" {
+		msg := "'telegram_bot_token' and 'telegram_bot_token_file' are mutually exclusive - 'telegram_bot_token' has taken precedence"
+		logger.Warn(msg)
+		gc.TelegramBotTokenFile = ""
+	}
+
 	return nil
 }
 
@@ -2530,6 +2548,12 @@ func (ec *emailConfig) sanitize(amVersion semver.Version, logger *slog.Logger) e
 	if ec.AuthPassword != "" && ec.AuthPasswordFile != "" {
 		logger.Warn("'auth_password' and 'auth_password_file' are mutually exclusive for email receiver config - 'auth_password' has taken precedence")
 		ec.AuthPasswordFile = ""
+	}
+
+	if ec.ImplicitTLS != nil && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'implicit_tls' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		ec.ImplicitTLS = nil
 	}
 
 	return nil
@@ -2867,6 +2891,12 @@ func (tc *msTeamsV2Config) sanitize(amVersion semver.Version, logger *slog.Logge
 
 	if tc.WebhookURL != "" && len(tc.WebhookURLFile) != 0 {
 		return errors.New("both webhook_url and webhook_url_file cannot be set at the same time")
+	}
+
+	if tc.WebhookURL != "" {
+		if _, err := validation.ValidateURL(tc.WebhookURL); err != nil {
+			return fmt.Errorf("invalid 'webhook_url': %w", err)
+		}
 	}
 
 	return tc.HTTPConfig.sanitize(amVersion, logger)

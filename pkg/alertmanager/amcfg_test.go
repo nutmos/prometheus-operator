@@ -3994,9 +3994,6 @@ func TestSanitizeConfig(t *testing.T) {
 	versionDiscordMessageFieldsAllowed := semver.Version{Major: 0, Minor: 28}
 	versionDiscordMessageFieldsNotAllowed := semver.Version{Major: 0, Minor: 27}
 
-	versionMSteamsV2Allowed := semver.Version{Major: 0, Minor: 28}
-	versionMSteamsV2NotAllowed := semver.Version{Major: 0, Minor: 27}
-
 	versionWebexAllowed := semver.Version{Major: 0, Minor: 25}
 	versionWebexNotAllowed := semver.Version{Major: 0, Minor: 24}
 
@@ -4032,6 +4029,9 @@ func TestSanitizeConfig(t *testing.T) {
 	jiraURL := config.URL{}
 	jiraGlobalURL, _ := jiraURL.Parse("http://example.com")
 	jiraURL.URL = jiraGlobalURL
+
+	versionGlobalTelegramBotTokenAllowed := semver.Version{Major: 0, Minor: 31}
+	versionGlobalTelegramBotTokenNotAllowed := semver.Version{Major: 0, Minor: 30}
 
 	for _, tc := range []struct {
 		name           string
@@ -4516,85 +4516,6 @@ func TestSanitizeConfig(t *testing.T) {
 			expectErr: true,
 		},
 		{
-			name:           "msteamsv2_config for supported versions",
-			againstVersion: versionMSteamsV2Allowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						MSTeamsV2Configs: []*msTeamsV2Config{
-							{
-								WebhookURL: "http://example.com",
-							},
-						},
-					},
-				},
-			},
-			golden: "msteamsv2_config_for_supported_versions.golden",
-		},
-		{
-			name:           "msteamsv2_config returns error for unsupported versions",
-			againstVersion: versionMSteamsV2NotAllowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						MSTeamsV2Configs: []*msTeamsV2Config{
-							{
-								WebhookURL: "http://example.com",
-							},
-						},
-					},
-				},
-			},
-			expectErr: true,
-		},
-		{
-			name:           "msteamsv2_config no webhook url or webhook url file set",
-			againstVersion: versionMSteamsV2Allowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						MSTeamsV2Configs: []*msTeamsV2Config{
-							{},
-						},
-					},
-				},
-			},
-			expectErr: true,
-		},
-		{
-			name:           "msteamsv2_config both webhook url and webhook url file set",
-			againstVersion: versionMSteamsV2Allowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						MSTeamsV2Configs: []*msTeamsV2Config{
-							{
-								WebhookURL:     "http://example.com",
-								WebhookURLFile: "/var/secrets/webhook-url-file",
-							},
-						},
-					},
-				},
-			},
-			expectErr: true,
-		},
-		{
-			name:           "msteamsv2_config with webhook url file set",
-			againstVersion: versionMSteamsV2Allowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						MSTeamsV2Configs: []*msTeamsV2Config{
-							{
-								WebhookURLFile: "/var/secrets/webhook-url-file",
-							},
-						},
-					},
-				},
-			},
-			golden: "msteamsv2_config_with_webhook_config_file_set.golden",
-		},
-		{
 			name:           "webex_config returns error for missing mandatory field",
 			againstVersion: versionWebexAllowed,
 			in: &alertmanagerConfig{
@@ -4815,6 +4736,48 @@ func TestSanitizeConfig(t *testing.T) {
 				},
 			},
 			golden: "telegram_config_chat_id_supported.golden",
+		},
+		{
+			name:           "Test telegram_bot_token and telegram_bot_token_file are dropped for unsupported versions",
+			againstVersion: versionGlobalTelegramBotTokenNotAllowed,
+			in: &alertmanagerConfig{
+				Global: &globalConfig{
+					TelegramBotToken:     "a",
+					TelegramBotTokenFile: "/b",
+				},
+			},
+			golden: "test_telegram_bot_token_and_telegram_bot_token_file_are_dropped_for_unsupported_versions.golden",
+		},
+		{
+			name:           "Test telegram_bot_token preserved for supported versions",
+			againstVersion: versionGlobalTelegramBotTokenAllowed,
+			in: &alertmanagerConfig{
+				Global: &globalConfig{
+					TelegramBotToken: "a",
+				},
+			},
+			golden: "test_telegram_bot_token_preserved_for_supported_versions.golden",
+		},
+		{
+			name:           "Test telegram_bot_token_file preserved for supported versions",
+			againstVersion: versionGlobalTelegramBotTokenAllowed,
+			in: &alertmanagerConfig{
+				Global: &globalConfig{
+					TelegramBotTokenFile: "/b",
+				},
+			},
+			golden: "test_telegram_bot_token_file_preserved_for_supported_versions.golden",
+		},
+		{
+			name:           "Test telegram_bot_token takes precedence over telegram_bot_token_file",
+			againstVersion: versionGlobalTelegramBotTokenAllowed,
+			in: &alertmanagerConfig{
+				Global: &globalConfig{
+					TelegramBotToken:     "a",
+					TelegramBotTokenFile: "/b",
+				},
+			},
+			golden: "test_telegram_bot_token_takes_precedence_over_telegram_bot_token_file.golden",
 		},
 		{
 			name:           "summary is dropped for unsupported versions for MSTeams config",
@@ -5845,7 +5808,7 @@ func TestSanitizeEmailConfig(t *testing.T) {
 			golden: "test_smtp_auth_password_takes_precedence_in_email_config.golden",
 		},
 		{
-			name:           "Test smtp_auth_password_file is dropped in slack config for unsupported versions",
+			name:           "Test smtp_auth_password_file is dropped in email config for unsupported versions",
 			againstVersion: semver.Version{Major: 0, Minor: 24},
 			in: &alertmanagerConfig{
 				Receivers: []*receiver{
@@ -5858,7 +5821,39 @@ func TestSanitizeEmailConfig(t *testing.T) {
 					},
 				},
 			},
-			golden: "test_smtp_auth_password_file_is_dropped_in_slack_config_for_unsupported_versions.golden",
+			golden: "test_smtp_auth_password_file_is_dropped_in_email_config_for_unsupported_versions.golden",
+		},
+		{
+			name:           "Test implicit_tls is dropped in email config for unsupported versions",
+			againstVersion: semver.Version{Major: 0, Minor: 30},
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						EmailConfigs: []*emailConfig{
+							{
+								ImplicitTLS: ptr.To(true),
+							},
+						},
+					},
+				},
+			},
+			golden: "test_implicit_tls_is_dropped_in_email_config_for_unsupported_versions.golden",
+		},
+		{
+			name:           "Test implicit_tls is added in email config for supported version",
+			againstVersion: semver.Version{Major: 0, Minor: 31},
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						EmailConfigs: []*emailConfig{
+							{
+								ImplicitTLS: ptr.To(true),
+							},
+						},
+					},
+				},
+			},
+			golden: "test_implicit_tls_is_added_in_email_config_for_supported_versions.golden",
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -7824,6 +7819,167 @@ func TestSanitizeOpsGenieConfig(t *testing.T) {
 			require.NoError(t, err)
 
 			golden.Assert(t, string(amConfigs), tc.golden)
+		})
+	}
+}
+
+func TestSanitizeMSTeamsV2Config(t *testing.T) {
+	logger := newNopLogger(t)
+	versionMSTeamsV2Allowed := semver.Version{Major: 0, Minor: 28}
+	versionMSTeamsV2NotAllowed := semver.Version{Major: 0, Minor: 27}
+	for _, tc := range []struct {
+		name           string
+		againstVersion semver.Version
+		in             *alertmanagerConfig
+		golden         string
+		expectErr      bool
+	}{
+		{
+			name:           "msteamsv2_configs returns error for unsupported versions",
+			againstVersion: versionMSTeamsV2NotAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MSTeamsV2Configs: []*msTeamsV2Config{
+							{
+								WebhookURL: "http://msteams.example.com/hooks/xxx",
+								Text:       "test",
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "msteamsv2_configs valid url passes",
+			againstVersion: versionMSTeamsV2Allowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MSTeamsV2Configs: []*msTeamsV2Config{
+							{
+								WebhookURL: "http://msteams.example.com/hooks/xxx",
+								Text:       "test",
+							},
+						},
+					},
+				},
+			},
+			golden:    "msteamsv2_valid_url_passes.golden",
+			expectErr: false,
+		},
+		{
+			name:           "msteamsv2_configs invalid webhook_url returns error",
+			againstVersion: versionMSTeamsV2Allowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MSTeamsV2Configs: []*msTeamsV2Config{
+							{
+								WebhookURL: "not-a-valid-url",
+								Text:       "test",
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "msteamsv2_config for supported versions",
+			againstVersion: versionMSTeamsV2Allowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MSTeamsV2Configs: []*msTeamsV2Config{
+							{
+								WebhookURL: "http://example.com",
+							},
+						},
+					},
+				},
+			},
+			golden: "msteamsv2_config_for_supported_versions.golden",
+		},
+		{
+			name:           "msteamsv2_config returns error for unsupported versions",
+			againstVersion: versionMSTeamsV2NotAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MSTeamsV2Configs: []*msTeamsV2Config{
+							{
+								WebhookURL: "http://example.com",
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "msteamsv2_config no webhook url or webhook url file set",
+			againstVersion: versionMSTeamsV2Allowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MSTeamsV2Configs: []*msTeamsV2Config{
+							{},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "msteamsv2_config both webhook url and webhook url file set",
+			againstVersion: versionMSTeamsV2Allowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MSTeamsV2Configs: []*msTeamsV2Config{
+							{
+								WebhookURL:     "http://example.com",
+								WebhookURLFile: "/var/secrets/webhook-url-file",
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "msteamsv2_config with webhook url file set",
+			againstVersion: versionMSTeamsV2Allowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MSTeamsV2Configs: []*msTeamsV2Config{
+							{
+								WebhookURLFile: "/var/secrets/webhook-url-file",
+							},
+						},
+					},
+				},
+			},
+			golden: "msteamsv2_config_with_webhook_config_file_set.golden",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.in.sanitize(tc.againstVersion, logger)
+			if tc.expectErr {
+				require.Error(t, err)
+				return
+			}
+			require.NoError(t, err)
+
+			if tc.golden != "" {
+				amConfigs, err := yaml.Marshal(tc.in)
+				require.NoError(t, err)
+
+				golden.Assert(t, string(amConfigs), tc.golden)
+			}
 		})
 	}
 }
