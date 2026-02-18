@@ -6433,6 +6433,7 @@
                           },
                           messageText: {
                             description: "messageText defines text content of the Slack message.\nIf set, this is sent as the top-level 'text' field in the Slack payload.\nIt requires Alertmanager >= v0.31.0.",
+                            minLength: 1,
                             type: 'string',
                           },
                           mrkdwnIn: {

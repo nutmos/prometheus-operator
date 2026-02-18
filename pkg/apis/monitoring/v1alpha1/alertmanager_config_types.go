@@ -483,6 +483,7 @@ type SlackConfig struct {
 	// messageText defines text content of the Slack message.
 	// If set, this is sent as the top-level 'text' field in the Slack payload.
 	// It requires Alertmanager >= v0.31.0.
+	// +kubebuilder:validation:MinLength=1
 	// +optional
 	MessageText *string `json:"messageText,omitempty"`
 }

@@ -7296,6 +7296,7 @@ spec:
                               messageText defines text content of the Slack message.
                               If set, this is sent as the top-level 'text' field in the Slack payload.
                               It requires Alertmanager >= v0.31.0.
+                            minLength: 1
                             type: string
                           mrkdwnIn:
                             description: |-
