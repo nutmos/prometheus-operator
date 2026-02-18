@@ -5907,7 +5907,7 @@ func TestSanitizeEmailConfig(t *testing.T) {
 		},
 		{
 			name:           "Test implicit_tls is dropped in email config for unsupported versions",
-			againstVersion: semver.Version{Major: 0, Minor: 24},
+			againstVersion: semver.Version{Major: 0, Minor: 30},
 			in: &alertmanagerConfig{
 				Receivers: []*receiver{
 					{
@@ -5919,7 +5919,23 @@ func TestSanitizeEmailConfig(t *testing.T) {
 					},
 				},
 			},
-			golden: "test_smtp_auth_password_file_is_dropped_in_slack_config_for_unsupported_versions.golden",
+			golden: "test_implicit_tls_is_dropped_in_email_config_for_unsupported_versions.golden",
+		},
+		{
+			name:           "Test implicit_tls is added in email config for supported version",
+			againstVersion: semver.Version{Major: 0, Minor: 31},
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						EmailConfigs: []*emailConfig{
+							{
+								ImplicitTLS: ptr.To(true),
+							},
+						},
+					},
+				},
+			},
+			golden: "test_implicit_tls_is_added_in_email_config_for_supported_versions.golden",
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
