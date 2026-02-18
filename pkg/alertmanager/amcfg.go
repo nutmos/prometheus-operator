@@ -2549,6 +2549,12 @@ func (ec *emailConfig) sanitize(amVersion semver.Version, logger *slog.Logger) e
 		ec.AuthPasswordFile = ""
 	}
 
+	if ec.ImplicitTLS != nil && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'implicit_tls' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		ec.ImplicitTLS = nil
+	}
+
 	return nil
 }
 
