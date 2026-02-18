@@ -5905,6 +5905,22 @@ func TestSanitizeEmailConfig(t *testing.T) {
 			},
 			golden: "test_smtp_auth_password_file_is_dropped_in_slack_config_for_unsupported_versions.golden",
 		},
+		{
+			name:           "Test implicit_tls is dropped in email config for unsupported versions",
+			againstVersion: semver.Version{Major: 0, Minor: 24},
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						EmailConfigs: []*emailConfig{
+							{
+								ImplicitTLS: ptr.To(true),
+							},
+						},
+					},
+				},
+			},
+			golden: "test_smtp_auth_password_file_is_dropped_in_slack_config_for_unsupported_versions.golden",
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			err := tc.in.sanitize(tc.againstVersion, logger)
