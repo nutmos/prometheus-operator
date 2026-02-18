@@ -865,6 +865,11 @@ type EmailConfig struct {
 	// This includes settings for certificates, CA validation, and TLS protocol options.
 	// +optional
 	TLSConfig *monitoringv1.SafeTLSConfig `json:"tlsConfig,omitempty"`
+	// implicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
+	// true: force use of implicit TLS (direct TLS connection on any port)
+	// nil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility
+	// +optional
+	ImplicitTLS *bool `json:"implicitTLS,omitempty"` // nolint:kubeapilinter
 }
 
 // VictorOpsConfig configures notifications via VictorOps.

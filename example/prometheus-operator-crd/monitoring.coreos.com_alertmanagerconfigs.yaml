@@ -1125,6 +1125,12 @@ spec:
                               html defines the HTML body of the email notification.
                               This allows for rich formatting in the email content.
                             type: string
+                          implicitTLS:
+                            description: |-
+                              implicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
+                              true: force use of implicit TLS (direct TLS connection on any port)
+                              nil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility
+                            type: boolean
                           requireTLS:
                             description: |-
                               requireTLS defines the SMTP TLS requirement.

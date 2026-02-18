@@ -27319,6 +27319,20 @@ SafeTLSConfig
 This includes settings for certificates, CA validation, and TLS protocol options.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>implicitTLS</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>implicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
+true: force use of implicit TLS (direct TLS connection on any port)
+nil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="monitoring.coreos.com/v1alpha1.EurekaSDConfig">EurekaSDConfig
@@ -37643,6 +37657,20 @@ SafeTLSConfig
 <em>(Optional)</em>
 <p>tlsConfig defines the TLS configuration for SMTP connections.
 This includes settings for certificates, CA validation, and TLS protocol options.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>implicitTLS</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>implicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
+true: force use of implicit TLS (direct TLS connection on any port)
+nil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility</p>
 </td>
 </tr>
 </tbody>

@@ -38,6 +38,7 @@ type EmailConfigApplyConfiguration struct {
 	Text         *string                                       `json:"text,omitempty"`
 	RequireTLS   *bool                                         `json:"requireTLS,omitempty"`
 	TLSConfig    *monitoringv1.SafeTLSConfigApplyConfiguration `json:"tlsConfig,omitempty"`
+	ImplicitTLS  *bool                                         `json:"implicitTLS,omitempty"`
 }
 
 // EmailConfigApplyConfiguration constructs a declarative configuration of the EmailConfig type for use with
@@ -160,5 +161,13 @@ func (b *EmailConfigApplyConfiguration) WithRequireTLS(value bool) *EmailConfigA
 // If called multiple times, the TLSConfig field is set to the value of the last call.
 func (b *EmailConfigApplyConfiguration) WithTLSConfig(value *monitoringv1.SafeTLSConfigApplyConfiguration) *EmailConfigApplyConfiguration {
 	b.TLSConfig = value
+	return b
+}
+
+// WithImplicitTLS sets the ImplicitTLS field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the ImplicitTLS field is set to the value of the last call.
+func (b *EmailConfigApplyConfiguration) WithImplicitTLS(value bool) *EmailConfigApplyConfiguration {
+	b.ImplicitTLS = &value
 	return b
 }

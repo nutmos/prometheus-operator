@@ -448,6 +448,7 @@ func convertEmailConfigFrom(in v1alpha1.EmailConfig) EmailConfig {
 		Text:         in.Text,
 		RequireTLS:   in.RequireTLS,
 		TLSConfig:    in.TLSConfig,
+		ImplicitTLS:  in.ImplicitTLS,
 	}
 }
 
