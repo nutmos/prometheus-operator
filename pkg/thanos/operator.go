@@ -43,7 +43,7 @@ import (
 	monitoringv1ac "github.com/prometheus-operator/prometheus-operator/pkg/client/applyconfiguration/monitoring/v1"
 	monitoringclient "github.com/prometheus-operator/prometheus-operator/pkg/client/versioned"
 	"github.com/prometheus-operator/prometheus-operator/pkg/informers"
-	"github.com/prometheus-operator/prometheus-operator/pkg/k8sutil"
+	"github.com/prometheus-operator/prometheus-operator/pkg/k8s"
 	"github.com/prometheus-operator/prometheus-operator/pkg/listwatch"
 	"github.com/prometheus-operator/prometheus-operator/pkg/operator"
 	prompkg "github.com/prometheus-operator/prometheus-operator/pkg/prometheus"
@@ -440,7 +440,7 @@ func (o *Operator) handleNamespaceUpdate(oldo, curo any) {
 	err := o.thanosRulerInfs.ListAll(labels.Everything(), func(obj any) {
 		tr := obj.(*monitoringv1.ThanosRuler)
 
-		sync, err := k8sutil.LabelSelectionHasChanged(old.Labels, cur.Labels, tr.Spec.RuleNamespaceSelector)
+		sync, err := k8s.LabelSelectionHasChanged(old.Labels, cur.Labels, tr.Spec.RuleNamespaceSelector)
 		if err != nil {
 			o.logger.Error(
 				"failed to detect label selection change",
@@ -473,7 +473,6 @@ func (o *Operator) Sync(ctx context.Context, key string) error {
 
 func (o *Operator) sync(ctx context.Context, key string) error {
 	tr, err := operator.GetObjectFromKey[*monitoringv1.ThanosRuler](o.thanosRulerInfs, key)
-
 	if err != nil {
 		return err
 	}
@@ -484,23 +483,18 @@ func (o *Operator) sync(ctx context.Context, key string) error {
 		return nil
 	}
 
-	if tr.Spec.Paused {
-		return nil
-	}
-
 	logger := o.logger.With("key", key)
+	logger.Info("sync thanos-ruler")
 
-	statusCleanup := func() error {
+	finalizerAdded, err := o.finalizerSyncer.Sync(ctx, tr, o.rr.DeletionInProgress(tr), func() error {
 		return o.configResStatusCleanup(ctx, tr)
-	}
-
-	finalizerAdded, err := o.finalizerSyncer.Sync(ctx, tr, o.rr.DeletionInProgress(tr), statusCleanup)
+	})
 	if err != nil {
 		return err
 	}
 
 	if finalizerAdded {
-		// Since the object has been updated, let's trigger another sync.
+		// Since the finalizer has been added to the object, let's trigger another sync.
 		o.rr.EnqueueForReconciliation(tr)
 		return nil
 	}
@@ -511,7 +505,10 @@ func (o *Operator) sync(ctx context.Context, key string) error {
 		return nil
 	}
 
-	logger.Info("sync thanos-ruler")
+	if tr.Spec.Paused {
+		logger.Info("no action taken (the resource is paused)")
+		return nil
+	}
 
 	o.recordDeprecatedFields(key, logger, tr)
 
@@ -551,12 +548,12 @@ func (o *Operator) sync(ctx context.Context, key string) error {
 	svcClient := o.kclient.CoreV1().Services(tr.Namespace)
 	if tr.Spec.ServiceName != nil {
 		selectorLabels := makeSelectorLabels(tr.Name)
-		if err := k8sutil.EnsureCustomGoverningService(ctx, tr.Namespace, *tr.Spec.ServiceName, svcClient, selectorLabels); err != nil {
+		if err := k8s.EnsureCustomGoverningService(ctx, tr.Namespace, *tr.Spec.ServiceName, svcClient, selectorLabels); err != nil {
 			return err
 		}
 	} else {
 		// Create governing service if it doesn't exist.
-		if _, err = k8sutil.CreateOrUpdateService(ctx, svcClient, makeStatefulSetService(tr, o.config)); err != nil {
+		if _, err = k8s.CreateOrUpdateService(ctx, svcClient, makeStatefulSetService(tr, o.config)); err != nil {
 			return fmt.Errorf("synchronizing governing service failed: %w", err)
 		}
 	}
@@ -567,19 +564,10 @@ func (o *Operator) sync(ctx context.Context, key string) error {
 		return err
 	}
 
+	shouldCreate := false
 	if existingStatefulSet == nil {
-		ssetClient := o.kclient.AppsV1().StatefulSets(tr.Namespace)
-		sset, err := makeStatefulSet(tr, o.config, ruleConfigMapNames, "", tlsAssets)
-		if err != nil {
-			return fmt.Errorf("making thanos statefulset config failed: %w", err)
-		}
-
-		operator.SanitizeSTS(sset)
-		if _, err := ssetClient.Create(ctx, sset, metav1.CreateOptions{}); err != nil {
-			return fmt.Errorf("creating thanos statefulset failed: %w", err)
-		}
-
-		return nil
+		shouldCreate = true
+		existingStatefulSet = &appsv1.StatefulSet{}
 	}
 
 	if o.rr.DeletionInProgress(existingStatefulSet) {
@@ -598,9 +586,21 @@ func (o *Operator) sync(ctx context.Context, key string) error {
 
 	operator.SanitizeSTS(sset)
 
-	err = o.updateConfigResourcesStatus(ctx, tr, selectedRules)
-	if err != nil {
+	// Update the status of selected configuration resources (PrometheusRules).
+	// This must be called before the StatefulSet creation/update to ensure
+	// config resource bindings are updated on first reconciliation.
+	if err = o.updateConfigResourcesStatus(ctx, tr, selectedRules); err != nil {
 		return err
+	}
+
+	ssetClient := o.kclient.AppsV1().StatefulSets(tr.Namespace)
+	if shouldCreate {
+		logger.Debug("creating statefulset")
+		if _, err := k8s.CreateStatefulSetOrPatchLabels(ctx, ssetClient, sset); err != nil {
+			return fmt.Errorf("failed to create thanos statefulset: %w", err)
+		}
+
+		return nil
 	}
 
 	if newSSetInputHash == existingStatefulSet.Annotations[operator.InputHashAnnotationKey] {
@@ -609,8 +609,7 @@ func (o *Operator) sync(ctx context.Context, key string) error {
 	}
 
 	logger.Debug("new hash differs from the existing value", "new", newSSetInputHash, "existing", existingStatefulSet.Annotations[operator.InputHashAnnotationKey])
-	ssetClient := o.kclient.AppsV1().StatefulSets(tr.Namespace)
-	if err = k8sutil.ForceUpdateStatefulSet(ctx, ssetClient, sset, func(reason string) {
+	if err = k8s.ForceUpdateStatefulSet(ctx, ssetClient, sset, func(reason string) {
 		o.metrics.StsDeleteCreateCounter().Inc()
 		logger.Info("recreating StatefulSet because the update operation wasn't possible", "reason", reason)
 	}); err != nil {
@@ -724,7 +723,7 @@ func (o *Operator) UpdateStatus(ctx context.Context, key string) error {
 	tr.Status.Conditions = operator.UpdateConditions(tr.Status.Conditions, availableCondition, reconciledCondition)
 	tr.Status.Paused = tr.Spec.Paused
 
-	if _, err = o.mclient.MonitoringV1().ThanosRulers(tr.Namespace).ApplyStatus(ctx, applyConfigurationFromThanosRuler(tr), metav1.ApplyOptions{FieldManager: operator.PrometheusOperatorFieldManager, Force: true}); err != nil {
+	if _, err = o.mclient.MonitoringV1().ThanosRulers(tr.Namespace).ApplyStatus(ctx, applyConfigurationFromThanosRuler(tr), metav1.ApplyOptions{FieldManager: k8s.PrometheusOperatorFieldManager, Force: true}); err != nil {
 		return fmt.Errorf("failed to apply status subresource: %w", err)
 	}
 
@@ -1058,7 +1057,7 @@ func (o *Operator) createOrUpdateRulerConfigSecret(ctx context.Context, store *a
 	}
 	s.Data[rwConfigFile] = rwConfig
 
-	if err = k8sutil.CreateOrUpdateSecret(ctx, sClient, s); err != nil {
+	if err = k8s.CreateOrUpdateSecret(ctx, sClient, s); err != nil {
 		return err
 	}
 

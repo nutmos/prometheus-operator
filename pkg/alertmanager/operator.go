@@ -50,7 +50,7 @@ import (
 	monitoringv1ac "github.com/prometheus-operator/prometheus-operator/pkg/client/applyconfiguration/monitoring/v1"
 	monitoringclient "github.com/prometheus-operator/prometheus-operator/pkg/client/versioned"
 	"github.com/prometheus-operator/prometheus-operator/pkg/informers"
-	"github.com/prometheus-operator/prometheus-operator/pkg/k8sutil"
+	"github.com/prometheus-operator/prometheus-operator/pkg/k8s"
 	"github.com/prometheus-operator/prometheus-operator/pkg/listwatch"
 	"github.com/prometheus-operator/prometheus-operator/pkg/operator"
 	"github.com/prometheus-operator/prometheus-operator/pkg/webconfig"
@@ -269,7 +269,10 @@ func (c *Operator) bootstrap(ctx context.Context, config operator.Config) error 
 			config.Namespaces.DenyList,
 			c.mdClient,
 			resyncPeriod,
-			nil,
+			func(options *metav1.ListOptions) {
+				options.FieldSelector = config.ConfigMapListWatchFieldSelector.String()
+				options.LabelSelector = config.ConfigMapListWatchLabelSelector.String()
+			},
 		),
 		v1.SchemeGroupVersion.WithResource(string(v1.ResourceConfigMaps)),
 		informers.PartialObjectMetadataStrip(operator.ConfigMapGVK()),
@@ -544,7 +547,7 @@ func (c *Operator) handleNamespaceUpdate(oldo, curo any) {
 	err := c.alrtInfs.ListAll(labels.Everything(), func(obj any) {
 		a := obj.(*monitoringv1.Alertmanager)
 
-		sync, err := k8sutil.LabelSelectionHasChanged(old.Labels, cur.Labels, a.Spec.AlertmanagerConfigNamespaceSelector)
+		sync, err := k8s.LabelSelectionHasChanged(old.Labels, cur.Labels, a.Spec.AlertmanagerConfigNamespaceSelector)
 		if err != nil {
 			c.logger.Error(
 				"failed to detect label selection change",
@@ -590,17 +593,19 @@ func (c *Operator) sync(ctx context.Context, key string) error {
 
 	// Check if the Alertmanager instance is marked for deletion.
 	if c.rr.DeletionInProgress(am) {
-		return nil
-	}
-
-	if am.Spec.Paused {
+		c.reconciliations.ForgetObject(key)
 		return nil
 	}
 
 	logger := c.logger.With("key", key)
-	c.recordDeprecatedFields(key, logger, am)
-
 	logger.Info("sync alertmanager")
+
+	if am.Spec.Paused {
+		logger.Info("no action taken (the resource is paused)")
+		return nil
+	}
+
+	c.recordDeprecatedFields(key, logger, am)
 
 	if err := operator.CheckStorageClass(ctx, c.canReadStorageClass, c.kclient, am.Spec.Storage); err != nil {
 		return err
@@ -632,12 +637,12 @@ func (c *Operator) sync(ctx context.Context, key string) error {
 	svcClient := c.kclient.CoreV1().Services(am.Namespace)
 	if am.Spec.ServiceName != nil {
 		selectorLabels := makeSelectorLabels(am.Name)
-		if err := k8sutil.EnsureCustomGoverningService(ctx, am.Namespace, *am.Spec.ServiceName, svcClient, selectorLabels); err != nil {
+		if err := k8s.EnsureCustomGoverningService(ctx, am.Namespace, *am.Spec.ServiceName, svcClient, selectorLabels); err != nil {
 			return err
 		}
 	} else {
 		// Create governing service if it doesn't exist.
-		if _, err = k8sutil.CreateOrUpdateService(ctx, svcClient, makeStatefulSetService(am, c.config)); err != nil {
+		if _, err = k8s.CreateOrUpdateService(ctx, svcClient, makeStatefulSetService(am, c.config)); err != nil {
 			return fmt.Errorf("synchronizing governing service failed: %w", err)
 		}
 	}
@@ -677,13 +682,13 @@ func (c *Operator) sync(ctx context.Context, key string) error {
 	if shouldCreate {
 		logger.Debug("no current statefulset found")
 		logger.Debug("creating statefulset")
-		if _, err := ssetClient.Create(ctx, sset, metav1.CreateOptions{}); err != nil {
-			return fmt.Errorf("creating statefulset failed: %w", err)
+		if _, err := k8s.CreateStatefulSetOrPatchLabels(ctx, ssetClient, sset); err != nil {
+			return fmt.Errorf("failed to create statefulset: %w", err)
 		}
 		return nil
 	}
 
-	if err = k8sutil.ForceUpdateStatefulSet(ctx, ssetClient, sset, func(reason string) {
+	if err = k8s.ForceUpdateStatefulSet(ctx, ssetClient, sset, func(reason string) {
 		c.metrics.StsDeleteCreateCounter().Inc()
 		logger.Info("recreating StatefulSet because the update operation wasn't possible", "reason", reason)
 	}); err != nil {
@@ -754,10 +759,10 @@ func (c *Operator) UpdateStatus(ctx context.Context, key string) error {
 	a.Status.Conditions = operator.UpdateConditions(a.Status.Conditions, availableCondition, reconciledCondition)
 	a.Status.Paused = a.Spec.Paused
 
-	if _, err = c.mclient.MonitoringV1().Alertmanagers(a.Namespace).ApplyStatus(ctx, ApplyConfigurationFromAlertmanager(a, true), metav1.ApplyOptions{FieldManager: operator.PrometheusOperatorFieldManager, Force: true}); err != nil {
+	if _, err = c.mclient.MonitoringV1().Alertmanagers(a.Namespace).ApplyStatus(ctx, ApplyConfigurationFromAlertmanager(a, true), metav1.ApplyOptions{FieldManager: k8s.PrometheusOperatorFieldManager, Force: true}); err != nil {
 		c.logger.Info("failed to apply alertmanager status subresource, trying again without scale fields", "err", err)
 		// Try again, but this time does not update scale subresource.
-		if _, err = c.mclient.MonitoringV1().Alertmanagers(a.Namespace).ApplyStatus(ctx, ApplyConfigurationFromAlertmanager(a, false), metav1.ApplyOptions{FieldManager: operator.PrometheusOperatorFieldManager, Force: true}); err != nil {
+		if _, err = c.mclient.MonitoringV1().Alertmanagers(a.Namespace).ApplyStatus(ctx, ApplyConfigurationFromAlertmanager(a, false), metav1.ApplyOptions{FieldManager: k8s.PrometheusOperatorFieldManager, Force: true}); err != nil {
 			return fmt.Errorf("failed to apply alertmanager status subresource: %w", err)
 		}
 	}
@@ -983,7 +988,7 @@ func (c *Operator) createOrUpdateGeneratedConfigSecret(ctx context.Context, am *
 	generatedConfigSecret.Data[alertmanagerConfigFileCompressed] = buf.Bytes()
 
 	sClient := c.kclient.CoreV1().Secrets(am.Namespace)
-	err := k8sutil.CreateOrUpdateSecret(ctx, sClient, generatedConfigSecret)
+	err := k8s.CreateOrUpdateSecret(ctx, sClient, generatedConfigSecret)
 	if err != nil {
 		return fmt.Errorf("failed to update generated config secret: %w", err)
 	}
@@ -1370,12 +1375,6 @@ func checkRocketChatConfigs(
 			return err
 		}
 
-		if config.APIURL != nil {
-			if _, err := validation.ValidateURL(strings.TrimSpace(string(*config.APIURL))); err != nil {
-				return fmt.Errorf("failed to validate RocketChat API URL: %w", err)
-			}
-		}
-
 		if _, err := store.GetSecretKey(ctx, namespace, config.Token); err != nil {
 			return fmt.Errorf("failed to retrieve RocketChat token: %w", err)
 		}
@@ -1435,7 +1434,8 @@ func checkWebhookConfigs(
 			if err != nil {
 				return err
 			}
-			if err := validation.ValidateSecretURL(strings.TrimSpace(url)); err != nil {
+
+			if err := validation.ValidateTemplateURL(strings.TrimSpace(url)); err != nil {
 				return fmt.Errorf("failed to validate URL: %w", err)
 			}
 		}
@@ -1681,6 +1681,10 @@ func checkMSTeamsConfigs(
 			return err
 		}
 
+		if _, err := store.GetSecretKey(ctx, namespace, config.WebhookURL); err != nil {
+			return err
+		}
+
 		if err := configureHTTPConfigInStore(ctx, config.HTTPConfig, namespace, store); err != nil {
 			return err
 		}
@@ -1859,7 +1863,7 @@ func (c *Operator) createOrUpdateClusterTLSConfigSecret(ctx context.Context, a *
 		operator.WithManagingOwner(a),
 	)
 
-	if err = k8sutil.CreateOrUpdateSecret(ctx, c.kclient.CoreV1().Secrets(a.Namespace), s); err != nil {
+	if err = k8s.CreateOrUpdateSecret(ctx, c.kclient.CoreV1().Secrets(a.Namespace), s); err != nil {
 		return fmt.Errorf("failed to reconcile secret: %w", err)
 	}
 

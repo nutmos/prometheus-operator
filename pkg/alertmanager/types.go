@@ -16,6 +16,7 @@ package alertmanager
 
 import (
 	"github.com/prometheus/alertmanager/config"
+	commoncfg "github.com/prometheus/common/config"
 	"github.com/prometheus/common/model"
 )
 
@@ -67,6 +68,8 @@ type globalConfig struct {
 	VictorOpsAPIKey       string          `yaml:"victorops_api_key,omitempty"`
 	VictorOpsAPIKeyFile   string          `yaml:"victorops_api_key_file,omitempty"`
 	TelegramAPIURL        *config.URL     `yaml:"telegram_api_url,omitempty"`
+	TelegramBotToken      string          `yaml:"telegram_bot_token,omitempty"`
+	TelegramBotTokenFile  string          `yaml:"telegram_bot_token_file,omitempty"`
 	WebexAPIURL           *config.URL     `yaml:"webex_api_url,omitempty"`
 	JiraAPIURL            *config.URL     `yaml:"jira_api_url,omitempty"`
 	RocketChatAPIURL      *config.URL     `yaml:"rocketchat_api_url,omitempty"`
@@ -77,6 +80,7 @@ type globalConfig struct {
 	SlackAppToken         string          `yaml:"slack_app_token,omitempty"`
 	SlackAppTokenFile     string          `yaml:"slack_app_token_file,omitempty"`
 	SlackAppURL           *config.URL     `yaml:"slack_app_url,omitempty"`
+	WeChatAPISecretFile   string          `yaml:"wechat_api_secret_file,omitempty"`
 }
 
 type route struct {
@@ -188,6 +192,7 @@ type weChatConfig struct {
 	Message       string            `yaml:"message,omitempty"`
 	MessageType   string            `yaml:"message_type,omitempty"`
 	HTTPConfig    *httpClientConfig `yaml:"http_config,omitempty"`
+	APISecretFile string            `yaml:"api_secret_file,omitempty"`
 }
 
 type slackConfig struct {
@@ -218,19 +223,20 @@ type slackConfig struct {
 	MrkdwnIn      []string          `yaml:"mrkdwn_in,omitempty"`
 	Actions       []slackAction     `yaml:"actions,omitempty"`
 	Timeout       *model.Duration   `yaml:"timeout,omitempty"`
+	MessageText   string            `yaml:"message_text,omitempty"`
 }
 
 type httpClientConfig struct {
-	Authorization   *authorization `yaml:"authorization,omitempty"`
-	BasicAuth       *basicAuth     `yaml:"basic_auth,omitempty"`
-	OAuth2          *oauth2        `yaml:"oauth2,omitempty"`
-	BearerToken     string         `yaml:"bearer_token,omitempty"`
-	BearerTokenFile string         `yaml:"bearer_token_file,omitempty"`
-	TLSConfig       *tlsConfig     `yaml:"tls_config,omitempty"`
-	FollowRedirects *bool          `yaml:"follow_redirects,omitempty"`
-	EnableHTTP2     *bool          `yaml:"enable_http2,omitempty"`
-
-	proxyConfig `yaml:",inline"`
+	Authorization   *authorization     `yaml:"authorization,omitempty"`
+	BasicAuth       *basicAuth         `yaml:"basic_auth,omitempty"`
+	OAuth2          *oauth2            `yaml:"oauth2,omitempty"`
+	BearerToken     string             `yaml:"bearer_token,omitempty"`
+	BearerTokenFile string             `yaml:"bearer_token_file,omitempty"`
+	TLSConfig       *tlsConfig         `yaml:"tls_config,omitempty"`
+	FollowRedirects *bool              `yaml:"follow_redirects,omitempty"`
+	EnableHTTP2     *bool              `yaml:"enable_http2,omitempty"`
+	HTTPHeaders     *commoncfg.Headers `yaml:"http_headers,omitempty"`
+	proxyConfig     `yaml:",inline"`
 }
 
 type proxyConfig struct {
@@ -331,6 +337,7 @@ type emailConfig struct {
 	Text             *string           `yaml:"text,omitempty"`
 	RequireTLS       *bool             `yaml:"require_tls,omitempty"`
 	TLSConfig        *tlsConfig        `yaml:"tls_config,omitempty"`
+	ImplicitTLS      *bool             `yaml:"implicit_tls,omitempty"`
 }
 
 type pushoverConfig struct {
@@ -373,6 +380,7 @@ type telegramConfig struct {
 	BotToken             string            `yaml:"bot_token,omitempty"`
 	BotTokenFile         string            `yaml:"bot_token_file,omitempty"`
 	ChatID               int64             `yaml:"chat_id,omitempty"`
+	ChatIDFile           string            `yaml:"chat_id_file,omitempty"`
 	MessageThreadID      int               `yaml:"message_thread_id,omitempty"`
 	Message              string            `yaml:"message,omitempty"`
 	DisableNotifications bool              `yaml:"disable_notifications,omitempty"`

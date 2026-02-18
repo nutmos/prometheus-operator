@@ -54,6 +54,10 @@ Arguments:
     	Config Reloader memory limits. Value "0" disables it and causes no limit to be configured. (default 50Mi)
   -config-reloader-memory-request value
     	Config Reloader memory requests. Value "0" disables it and causes no request to be configured. (default 50Mi)
+  -configmap-field-selector value
+    	Field selector to filter ConfigMaps to watch
+  -configmap-label-selector value
+    	Label selector to filter ConfigMaps to watch
   -controller-id operator.prometheus.io/controller-id
     	Value used by the operator to filter Alertmanager, Prometheus, PrometheusAgent and ThanosRuler objects that it should reconcile. If the value isn't empty, the operator only reconciles objects with an operator.prometheus.io/controller-id annotation of the same value. Otherwise the operator reconciles all objects without the annotation or with an empty annotation value.
   -deny-namespaces value
@@ -75,6 +79,8 @@ Arguments:
     	Create Endpoints objects for kubelet targets. (default true)
   -kubelet-endpointslice
     	Create EndpointSlice objects for kubelet targets.
+  -kubelet-http-metrics
+    	Include HTTP metrics port (10255) in kubelet service. Set to false if your cluster has disabled the insecure kubelet read-only port (e.g., GKE 1.32+). (default true)
   -kubelet-node-address-priority value
     	Node address priority used by kubelet. Either 'internal' or 'external'. Default: 'internal'.
   -kubelet-selector value
@@ -94,7 +100,7 @@ Arguments:
   -namespaces value
     	Namespaces to scope the interaction of the Prometheus Operator and the apiserver (allow list). This is mutually exclusive with --deny-namespaces.
   -prometheus-config-reloader string
-    	Prometheus config reloader image (default "quay.io/prometheus-operator/prometheus-config-reloader:v0.88.0")
+    	Prometheus config reloader image (default "quay.io/prometheus-operator/prometheus-config-reloader:v0.89.0")
   -prometheus-default-base-image string
     	Prometheus default base image (path without tag/version) (default "quay.io/prometheus/prometheus")
   -prometheus-instance-namespaces value

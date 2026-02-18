@@ -1,3 +1,46 @@
+## 0.89.0 / 2026-02-05
+
+* [ENHANCEMENT] Add `hostNetwork` field to the `Alertmanager` CRD. #8281
+* [ENHANCEMENT] Add the `crds` and `full-crds` commands to the operator's binary. #8251
+* [ENHANCEMENT] Report deprecated field usage in the `Reconciled` condition type. #8236
+* [ENHANCEMENT] Avoid unnecessary reconciliation upon creation of the `ThanosRuler` StatefulSet. #8347
+* [ENHANCEMENT] Add `bodySizeLimit` to the ScrapeConfig CRD. #8348
+* [ENHANCEMENT] Support `http_headers` field in the Alertmanager Secret. #8357
+* [ENHANCEMENT] Add the `-kubelet-http-metrics` flag to enable/disable the HTTP metrics port in the Kubelet endpoint (default=enabled). #8350
+* [ENHANCEMENT] Include `operator.prometheus.io/version` annotation in the full version of CRDs. #8279
+* [BUGFIX] Validate VictorOps global configuration in the `Alertmanager` CRD. #8020
+* [BUGFIX] Validate Jira global configuration in the `Alertmanager` CRD. #8265
+* [BUGFIX] Validate VictorOps receiver's URL in the `AlertmanagerConfig` CRD. #8258
+* [BUGFIX] Validate Webex receiver's URL in the `AlertmanagerConfig` CRD. #8255
+* [BUGFIX] Validate Jira receiver's URL configuration in the `AlertmanagerConfig` CRD. #8230
+* [BUGFIX] Validate OpsGenie receiver configuration in the `AlertmanagerConfig` CRD. #8267
+* [BUGFIX] Validate WeChat receiver configuration in the `AlertmanagerConfig` CRD. #8271
+* [BUGFIX] Validate SNS receiver configuration in the `AlertmanagerConfig` CRD. #8217
+* [BUGFIX] Validate Webex global configuration in the `Alertmanager` CRD. #7979
+* [BUGFIX] Validate Telegram global configuration in the `Alertmanager` CRD. #8268
+* [BUGFIX] Restore statefulset's labels if the creation fails with AlreadyExists. #8343
+* [BUGFIX] Fix potential panic due to informer cache races. #8310
+* [BUGFIX] Support probers defined with IPv6 addresses in the `Probe` CRD. #8354
+* [BUGFIX] Prevent group and repeat intervals with zero duration from breaking Alertmanager. #8126
+* [BUGFIX] Propagate all supported RocketChat attributes for `AlertmanagerConfig` CRD. #8016
+* [BUGFIX] Add URL validation for WeChat receiver. #8256
+* [BUGFIX] Add URL validation for SNS receiver. #8259
+* [BUGFIX] Fix GCE service discovery for the `ScrapeConfig` CRD. #8284
+* [BUGFIX] Avoid stale conditions in `Alertmanager`, `ThanosRuler`, `Prometheus` and `PrometheusAgent` resources. #8304
+* [BUGFIX] Fix race condition when updating rule ConfigMaps. #8290
+* [BUGFIX] Fix race condition when patching finalizers. #8323
+* [BUGFIX] Reconcile `ScrapeConfig` resources when namespace selection changes. #8334
+
+## 0.88.1 / 2026-01-27
+
+* [BUGFIX] Validate `webhookURL` secret for `MSTeams` receiver in `AlertmanagerConfig` CRD. #8294
+* [BUGFIX] Revert maximum version check for `EC2/Lightsail` SD in `ScrapeConfig` CRD. #8308
+* [BUGFIX] Relax URL validation in `Slack` receiver in AlertmanagerConfig CRD to support Go templates. #8299 #8331
+* [BUGFIX] Relax URL validation in `PagerDuty` in AlertmanagerConfig CRD to support Go templates. #8319
+* [BUGFIX] Relax URL validation in `WebhookConfig` in AlertmanagerConfig CRD to support Go templates. #8307 #8317
+* [BUGFIX] Relax URL validation in `RocketChat` receiver in AlertmanagerConfig CRD to support Go templates. #8318
+* [BUGFIX] Relax URL validation in `Pushover` receiver in AlertmanagerConfig CRD to support Go templates. #8307 #8316
+
 ## 0.88.0 / 2026-01-09
 
 * [CHANGE] Use narrower selectors for StatefulSet informers in `Alertmanager` and `ThanosRuler` controllers. It is recommended to upgrade from `v0.85.0` (at least). #8246
@@ -530,6 +573,7 @@ documented in [#5279](https://github.com/prometheus-operator/prometheus-operator
 and provides a Kubernetes native API to create and manage additional scrape configurations.
 
 To try it, follow the following steps:
+
 1. Install the new CRD in the cluster (see
    `example/prometheus-operator-crd/monitoring.coreos.com_scrapeconfigs.yaml`).
 2. Update the Prometheus operator's RBAC permissions to manage `ScrapeConfig` resources
@@ -559,6 +603,7 @@ with the new `PrometheusAgent` CRD. As the v1alpha1 version tells it, we don't
 recommend using it in production but we're eager to hear all possible feedback.
 
 To try it, follow the following steps:
+
 1. Install the new CRD in the cluster (see
    `example/prometheus-operator-crd/monitoring.coreos.com_prometheusagents.yaml`).
 2. Update the Prometheus operator's RBAC permissions to manage PrometheusAgents resources
@@ -678,6 +723,7 @@ The main change introduced by this release is a new v1beta1 API version for the
 AlertmanagerConfig CRD.
 
 Changes compared to the v1alpha1 API:
+
 * Renamed `spec.muteTimeIntervals` field to `to spec.timeIntervals`.
 * Removed `regex` field from the `Matcher` type.
 * Replaced all `v1.SecretKeySelector` types by the `SecretKeySelector` type
@@ -1192,6 +1238,7 @@ We have also added a governance (#3398).
 * [FEATURE] Add support for InitContainers to Prometheus Custom Resource (#2522)
 
 ## 0.31.1 / 2019-06-25
+
 * [BUGFIX] Increase terminationGracePeriod for alertmanager statefulSet as it cannot be 0. (#2657)
 
 ## 0.31.0 / 2019-06-20

@@ -34,7 +34,7 @@ import (
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/utils/ptr"
 
-	"github.com/prometheus-operator/prometheus-operator/pkg/k8sutil"
+	"github.com/prometheus-operator/prometheus-operator/pkg/k8s"
 )
 
 // Syncer knows how to synchronize statefulset-based or daemonset-based resources.
@@ -454,18 +454,20 @@ func (rr *ResourceReconciler) OnUpdate(old, cur any) {
 	mOld, err := meta.Accessor(old)
 	if err != nil {
 		rr.logger.Error("failed to get old object meta", "err", err, "key", key)
+		return
 	}
 
 	mCur, err := meta.Accessor(cur)
 	if err != nil {
 		rr.logger.Error("failed to get current object meta", "err", err, "key", key)
+		return
 	}
 
 	if !rr.isManagedByController(mCur) {
 		return
 	}
 
-	if !k8sutil.HasStatusCleanupFinalizer(mCur) && rr.DeletionInProgress(mCur) {
+	if !k8s.HasStatusCleanupFinalizer(mCur) && rr.DeletionInProgress(mCur) {
 		return
 	}
 

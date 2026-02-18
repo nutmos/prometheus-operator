@@ -409,14 +409,21 @@ func (cb *ConfigBuilder) AddAlertmanagerConfigs(ctx context.Context, amConfigs m
 }
 
 func (cb *ConfigBuilder) getValidURLFromSecret(ctx context.Context, namespace string, selector v1.SecretKeySelector) (string, error) {
+	return cb.getFromSecretWithValidation(ctx, namespace, selector, func(url string) error {
+		_, err := validation.ValidateURL(url)
+		return err
+	})
+}
+
+func (cb *ConfigBuilder) getFromSecretWithValidation(ctx context.Context, namespace string, selector v1.SecretKeySelector, validFn func(string) error) (string, error) {
 	url, err := cb.store.GetSecretKey(ctx, namespace, selector)
 	if err != nil {
 		return "", fmt.Errorf("failed to get URL: %w", err)
 	}
 
 	url = strings.TrimSpace(url)
-	if _, err := validation.ValidateURL(url); err != nil {
-		return url, fmt.Errorf("invalid URL %q in key %q from secret %q: %w", url, selector.Key, selector.Name, err)
+	if err := validFn(url); err != nil {
+		return url, fmt.Errorf("failed to validate key %q from secret %q: %w", selector.Key, selector.Name, err)
 	}
 	return url, nil
 }
@@ -575,9 +582,9 @@ func (cb *ConfigBuilder) convertRoute(in *monitoringv1alpha1.Route, crKey types.
 	return &route{
 		Receiver:            receiver,
 		GroupByStr:          in.GroupBy,
-		GroupWait:           in.GroupWait,
-		GroupInterval:       in.GroupInterval,
-		RepeatInterval:      in.RepeatInterval,
+		GroupWait:           ptr.Deref((*string)(in.GroupWait), ""),
+		GroupInterval:       ptr.Deref((*string)(in.GroupInterval), ""),
+		RepeatInterval:      ptr.Deref((*string)(in.RepeatInterval), ""),
 		Continue:            in.Continue,
 		Match:               match,
 		MatchRE:             matchRE,
@@ -795,6 +802,10 @@ func (cb *ConfigBuilder) convertRocketChatConfig(ctx context.Context, in monitor
 		SendResolved: in.SendResolved,
 	}
 
+	if in.APIURL != nil && *in.APIURL != "" {
+		out.APIURL = (string)(*in.APIURL)
+	}
+
 	token, err := cb.store.GetSecretKey(ctx, crKey.Namespace, in.Token)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get RocketChat token: %w", err)
@@ -806,6 +817,56 @@ func (cb *ConfigBuilder) convertRocketChatConfig(ctx context.Context, in monitor
 		return nil, fmt.Errorf("failed to get RocketChat token ID: %w", err)
 	}
 	out.TokenID = &tokenID
+
+	if in.Channel != nil && *in.Channel != "" {
+		out.Channel = *in.Channel
+	}
+
+	if in.Color != nil && *in.Color != "" {
+		out.Color = *in.Color
+	}
+
+	if in.Title != nil && *in.Title != "" {
+		out.Title = *in.Title
+	}
+
+	if in.TitleLink != nil && *in.TitleLink != "" {
+		out.TitleLink = *in.TitleLink
+	}
+
+	if in.Text != nil && *in.Text != "" {
+		out.Text = *in.Text
+	}
+
+	if in.ShortFields != nil {
+		out.ShortFields = *in.ShortFields
+	}
+
+	out.Emoji = ptr.Deref(in.Emoji, "")
+	out.IconURL = ptr.Deref(in.IconURL, "")
+	out.ImageURL = ptr.Deref(in.ImageURL, "")
+	out.ThumbURL = ptr.Deref(in.ThumbURL, "")
+	out.LinkNames = ptr.Deref(in.LinkNames, false)
+
+	fields := make([]*rocketchatAttachmentField, len(in.Fields))
+	for i, f := range in.Fields {
+		fields[i] = &rocketchatAttachmentField{
+			Short: f.Short,
+			Title: ptr.Deref(f.Title, ""),
+			Value: ptr.Deref(f.Value, ""),
+		}
+	}
+	out.Fields = fields
+
+	actions := make([]*rocketchatAttachmentAction, len(in.Actions))
+	for i, a := range in.Actions {
+		actions[i] = &rocketchatAttachmentAction{
+			Text: ptr.Deref(a.Text, ""),
+			URL:  ptr.Deref(a.URL, ""),
+			Msg:  ptr.Deref(a.Msg, ""),
+		}
+	}
+	out.Actions = actions
 
 	httpConfig, err := cb.convertHTTPConfig(ctx, in.HTTPConfig, crKey)
 	if err != nil {
@@ -821,18 +882,16 @@ func (cb *ConfigBuilder) convertWebhookConfig(ctx context.Context, in monitoring
 		VSendResolved: in.SendResolved,
 	}
 
+	// No need to validate again the URL because it's been done when selecting the AlertmanagerConfig resource.
 	if in.URLSecret != nil {
-		url, err := cb.getValidURLFromSecret(ctx, crKey.Namespace, *in.URLSecret)
+		url, err := cb.store.GetSecretKey(ctx, crKey.Namespace, *in.URLSecret)
 		if err != nil {
 			return nil, err
 		}
+
 		out.URL = url
 	} else if in.URL != nil {
-		url, err := validation.ValidateURL(string(*in.URL))
-		if err != nil {
-			return nil, err
-		}
-		out.URL = url.String()
+		out.URL = *in.URL
 	}
 
 	httpConfig, err := cb.convertHTTPConfig(ctx, in.HTTPConfig, crKey)
@@ -924,17 +983,17 @@ func (cb *ConfigBuilder) convertSlackConfig(ctx context.Context, in monitoringv1
 		out.APIURL = url
 	}
 
-	if ptr.Deref(in.TitleLink, "") != "" {
-		out.TitleLink = string(*in.TitleLink)
+	if in.TitleLink != "" {
+		out.TitleLink = in.TitleLink
 	}
-	if ptr.Deref(in.IconURL, "") != "" {
-		out.TitleLink = string(*in.IconURL)
+	if in.IconURL != "" {
+		out.IconURL = in.IconURL
 	}
-	if ptr.Deref(in.ImageURL, "") != "" {
-		out.TitleLink = string(*in.ImageURL)
+	if in.ImageURL != "" {
+		out.ImageURL = in.ImageURL
 	}
-	if ptr.Deref(in.ThumbURL, "") != "" {
-		out.TitleLink = string(*in.ThumbURL)
+	if in.ThumbURL != "" {
+		out.ThumbURL = in.ThumbURL
 	}
 
 	var actions []slackAction
@@ -949,8 +1008,8 @@ func (cb *ConfigBuilder) convertSlackConfig(ctx context.Context, in monitoringv1
 				Value: ptr.Deref(a.Value, ""),
 			}
 
-			if ptr.Deref(a.URL, "") != "" {
-				action.URL = string(*a.URL)
+			if a.URL != "" {
+				action.URL = a.URL
 			}
 
 			if a.ConfirmField != nil {
@@ -1017,9 +1076,7 @@ func (cb *ConfigBuilder) convertPagerdutyConfig(ctx context.Context, in monitori
 		out.URL = string(*in.URL)
 	}
 
-	if in.ClientURL != nil {
-		out.ClientURL = string(*in.ClientURL)
-	}
+	out.ClientURL = ptr.Deref(in.ClientURL, "")
 
 	if in.RoutingKey != nil {
 		routingKey, err := cb.store.GetSecretKey(ctx, crKey.Namespace, *in.RoutingKey)
@@ -1051,10 +1108,8 @@ func (cb *ConfigBuilder) convertPagerdutyConfig(ctx context.Context, in monitori
 		linkConfigs = make([]pagerdutyLink, l)
 		for i, lc := range in.PagerDutyLinkConfigs {
 			linkConfigs[i] = pagerdutyLink{
+				Href: ptr.Deref(lc.Href, ""),
 				Text: ptr.Deref(lc.Text, ""),
-			}
-			if lc.Href != nil {
-				linkConfigs[i].Href = string(*lc.Href)
 			}
 		}
 	}
@@ -1065,11 +1120,9 @@ func (cb *ConfigBuilder) convertPagerdutyConfig(ctx context.Context, in monitori
 		imageConfig = make([]pagerdutyImage, l)
 		for i, ic := range in.PagerDutyImageConfigs {
 			imageConfig[i] = pagerdutyImage{
-				Src: ptr.Deref(ic.Src, ""),
-				Alt: ptr.Deref(ic.Alt, ""),
-			}
-			if ic.Href != nil {
-				imageConfig[i].Href = string(*ic.Href)
+				Src:  ptr.Deref(ic.Src, ""),
+				Alt:  ptr.Deref(ic.Alt, ""),
+				Href: ptr.Deref(ic.Href, ""),
 			}
 		}
 	}
@@ -1337,8 +1390,8 @@ func (cb *ConfigBuilder) convertPushoverConfig(ctx context.Context, in monitorin
 		Monospace:     in.Monospace,
 	}
 
-	if ptr.Deref(in.URL, "") != "" {
-		out.URL = string(*in.URL)
+	if in.URL != "" {
+		out.URL = in.URL
 	}
 
 	if in.TTL != nil {
@@ -1442,7 +1495,7 @@ func (cb *ConfigBuilder) convertSnsConfig(ctx context.Context, in monitoringv1al
 	}
 
 	if in.ApiURL != nil {
-		out.APIUrl = string(*in.ApiURL)
+		out.APIUrl = *in.ApiURL
 	}
 
 	if in.TopicARN != nil {
@@ -2177,6 +2230,36 @@ func (gc *globalConfig) sanitize(amVersion semver.Version, logger *slog.Logger) 
 		gc.VictorOpsAPIKeyFile = ""
 	}
 
+	if gc.WeChatAPISecretFile != "" && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'wechat_api_secret_file' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		gc.WeChatAPISecretFile = ""
+	}
+
+	if gc.WeChatAPISecret != "" && gc.WeChatAPISecretFile != "" {
+		msg := "'wechat_api_secret' and 'wechat_api_secret_file' are mutually exclusive - 'wechat_api_secret' has taken precedence"
+		logger.Warn(msg)
+		gc.WeChatAPISecretFile = ""
+	}
+
+	if gc.TelegramBotToken != "" && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'telegram_bot_token' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		gc.TelegramBotToken = ""
+	}
+
+	if gc.TelegramBotTokenFile != "" && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'telegram_bot_token_file' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		gc.TelegramBotTokenFile = ""
+	}
+
+	if gc.TelegramBotToken != "" && gc.TelegramBotTokenFile != "" {
+		msg := "'telegram_bot_token' and 'telegram_bot_token_file' are mutually exclusive - 'telegram_bot_token' has taken precedence"
+		logger.Warn(msg)
+		gc.TelegramBotTokenFile = ""
+	}
+
 	return nil
 }
 
@@ -2203,6 +2286,18 @@ func (hc *httpClientConfig) sanitize(amVersion semver.Version, logger *slog.Logg
 		msg := "'enable_http2' set in 'http_config' but supported in Alertmanager >= 0.25.0 only - dropping field from provided config"
 		logger.Warn(msg, "current_version", amVersion.String())
 		hc.EnableHTTP2 = nil
+	}
+
+	if hc.HTTPHeaders != nil {
+		if err := hc.HTTPHeaders.Validate(); err != nil {
+			return err
+		}
+
+		if !amVersion.GTE(semver.MustParse("0.28.0")) {
+			msg := "'http_headers' set in 'http_config' but supported in Alertmanager >= 0.28.0 only - dropping field from provided config"
+			logger.Warn(msg, "current_version", amVersion.String())
+			hc.HTTPHeaders = nil
+		}
 	}
 
 	if err := hc.TLSConfig.sanitize(amVersion, logger); err != nil {
@@ -2454,6 +2549,12 @@ func (ec *emailConfig) sanitize(amVersion semver.Version, logger *slog.Logger) e
 		ec.AuthPasswordFile = ""
 	}
 
+	if ec.ImplicitTLS != nil && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'implicit_tls' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		ec.ImplicitTLS = nil
+	}
+
 	return nil
 }
 
@@ -2620,7 +2721,7 @@ func (poc *pushoverConfig) sanitize(amVersion semver.Version, logger *slog.Logge
 	}
 
 	if poc.URL != "" {
-		if _, err := validation.ValidateURL(poc.URL); err != nil {
+		if err := validation.ValidateTemplateURL(poc.URL); err != nil {
 			return fmt.Errorf("invalid 'url': %w", err)
 		}
 	}
@@ -2630,6 +2731,7 @@ func (poc *pushoverConfig) sanitize(amVersion semver.Version, logger *slog.Logge
 
 func (sc *slackConfig) sanitize(amVersion semver.Version, logger *slog.Logger) error {
 	lessThanV0_30 := amVersion.LT(semver.MustParse("0.30.0"))
+	lessThanV0_31 := amVersion.LT(semver.MustParse("0.31.0"))
 
 	if err := sc.HTTPConfig.sanitize(amVersion, logger); err != nil {
 		return err
@@ -2657,6 +2759,12 @@ func (sc *slackConfig) sanitize(amVersion semver.Version, logger *slog.Logger) e
 		msg := "'app_url' supported in Alertmanager >= 0.30.0 only - dropping field from provided config"
 		logger.Warn(msg, "current_version", amVersion.String())
 		sc.AppURL = ""
+	}
+
+	if sc.MessageText != "" && lessThanV0_31 {
+		msg := "'message_text' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		sc.MessageText = ""
 	}
 
 	if sc.AppToken != "" && sc.AppTokenFile != "" {
@@ -2740,7 +2848,7 @@ func (whc *webhookConfig) sanitize(amVersion semver.Version, logger *slog.Logger
 	}
 
 	if whc.URL != "" {
-		if _, err := validation.ValidateURL(whc.URL); err != nil {
+		if err := validation.ValidateTemplateURL(whc.URL); err != nil {
 			return fmt.Errorf("invalid 'url': %w", err)
 		}
 	}
@@ -2784,27 +2892,70 @@ func (tc *msTeamsV2Config) sanitize(amVersion semver.Version, logger *slog.Logge
 		return errors.New("both webhook_url and webhook_url_file cannot be set at the same time")
 	}
 
+	if tc.WebhookURL != "" {
+		if _, err := validation.ValidateURL(tc.WebhookURL); err != nil {
+			return fmt.Errorf("invalid 'webhook_url': %w", err)
+		}
+	}
+
 	return tc.HTTPConfig.sanitize(amVersion, logger)
 }
 
 func (wcc *weChatConfig) sanitize(amVersion semver.Version, logger *slog.Logger) error {
+	if wcc.APIURL != "" {
+		if _, err := validation.ValidateURL(wcc.APIURL); err != nil {
+			return fmt.Errorf("invalid 'api_url': %w", err)
+		}
+	}
+
+	if wcc.APISecretFile != "" && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'api_secret_file' supported in Alertmanager >= 0.31.0 only - dropping field `api_secret_file` from wechat config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		wcc.APISecretFile = ""
+	}
+
+	if wcc.APISecret != "" && wcc.APISecretFile != "" {
+		msg := "'api_secret' and 'api_secret_file' are mutually exclusive for telegram receiver config - 'api_secret' has taken precedence"
+		logger.Warn(msg)
+		wcc.APISecretFile = ""
+	}
+
 	return wcc.HTTPConfig.sanitize(amVersion, logger)
 }
 
 func (sc *snsConfig) sanitize(amVersion semver.Version, logger *slog.Logger) error {
+	if sc.APIUrl != "" {
+		if err := validation.ValidateTemplateURL(sc.APIUrl); err != nil {
+			return fmt.Errorf("invalid 'api_url': %w", err)
+		}
+	}
+
 	return sc.HTTPConfig.sanitize(amVersion, logger)
 }
 
 func (tc *telegramConfig) sanitize(amVersion semver.Version, logger *slog.Logger) error {
 	lessThanV0_26 := amVersion.LT(semver.MustParse("0.26.0"))
 	telegramAllowed := amVersion.GTE(semver.MustParse("0.24.0"))
+	lessThanV0_31 := amVersion.LT(semver.MustParse("0.31.0"))
 
 	if !telegramAllowed {
 		return fmt.Errorf(`invalid syntax in receivers config; telegram integration is available in Alertmanager >= 0.24.0`)
 	}
 
-	if tc.ChatID == 0 {
-		return fmt.Errorf("mandatory field %q is empty", "chatID")
+	if tc.ChatIDFile != "" && lessThanV0_31 {
+		msg := "'chat_id_file' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		tc.ChatIDFile = ""
+	}
+
+	if tc.ChatID == 0 && tc.ChatIDFile == "" {
+		return fmt.Errorf("missing mandatory field chat_id or chat_id_file")
+	}
+
+	if tc.ChatID != 0 && tc.ChatIDFile != "" {
+		msg := "'chat_id' and 'chat_id_file' are mutually exclusive for telegram receiver config - 'chat_id' has taken precedence"
+		logger.Warn(msg)
+		tc.ChatIDFile = ""
 	}
 
 	if tc.BotTokenFile != "" && lessThanV0_26 {
@@ -3070,6 +3221,25 @@ func (r *route) sanitize(amVersion semver.Version, logger *slog.Logger) error {
 		r.ActiveTimeIntervals = nil
 	}
 
+	if r.GroupWait != "" {
+		_, err := model.ParseDuration(r.GroupWait)
+		if err != nil {
+			return fmt.Errorf("group_wait: %w", err)
+		}
+	}
+
+	d, err := convertToNonZeroDuration(r.GroupInterval)
+	if err != nil {
+		return fmt.Errorf("group_interval: %w", err)
+	}
+	r.GroupInterval = d
+
+	d, err = convertToNonZeroDuration(r.RepeatInterval)
+	if err != nil {
+		return fmt.Errorf("repeat_interval: %w", err)
+	}
+	r.RepeatInterval = d
+
 	for i, child := range r.Routes {
 		if err := child.sanitize(amVersion, logger); err != nil {
 			return fmt.Errorf("route[%d]: %w", i, err)
@@ -3080,6 +3250,24 @@ func (r *route) sanitize(amVersion semver.Version, logger *slog.Logger) error {
 	r.MatchRE = convertMapToNilIfEmpty(r.MatchRE)
 	r.Matchers = convertSliceToNilIfEmpty(r.Matchers)
 	return nil
+}
+
+// convertToNonZeroDuration returns an empty string if d is a zero duration.
+func convertToNonZeroDuration(d string) (string, error) {
+	if d == "" {
+		return "", nil
+	}
+
+	duration, err := model.ParseDuration(d)
+	if err != nil {
+		return "", err
+	}
+
+	if duration == 0 {
+		return "", nil
+	}
+
+	return d, nil
 }
 
 func checkNotEmptyMap(in ...map[string]string) bool {
@@ -3114,8 +3302,6 @@ func convertSliceToNilIfEmpty(in []string) []string {
 	return nil
 }
 
-// contains will return true if any slice value with all whitespace removed
-// is equal to the provided value with all whitespace removed.
 func contains(value string, in []string) bool {
 	for _, str := range in {
 		if strings.ReplaceAll(value, " ", "") == strings.ReplaceAll(str, " ", "") {
