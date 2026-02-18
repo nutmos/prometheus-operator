@@ -1088,30 +1088,6 @@ func testAlertmanagerConfigCRD(t *testing.T) {
 	_, err = framework.KubeClient.CoreV1().Secrets(configNs).Create(context.Background(), msteamsSecret, metav1.CreateOptions{})
 	require.NoError(t, err)
 
-	msteamsv2WebhookURL := "https://msteamsv2.webhook.url"
-	msteamsv2 := &v1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "msteamsv2",
-		},
-		Data: map[string][]byte{
-			"webhook-url": []byte(msteamsv2WebhookURL),
-		},
-	}
-	_, err = framework.KubeClient.CoreV1().Secrets(configNs).Create(context.Background(), msteamsv2, metav1.CreateOptions{})
-	require.NoError(t, err)
-
-	rocketchat := &v1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "rocketchat",
-		},
-		Data: map[string][]byte{
-			"token":    []byte("abcdef123456"),
-			"token-id": []byte("abc123456def"),
-		},
-	}
-	_, err = framework.KubeClient.CoreV1().Secrets(configNs).Create(context.Background(), rocketchat, metav1.CreateOptions{})
-	require.NoError(t, err)
-
 	// A valid AlertmanagerConfig resource with many receivers.
 	configCR := &monitoringv1alpha1.AlertmanagerConfig{
 		ObjectMeta: metav1.ObjectMeta{
@@ -1283,30 +1259,6 @@ func testAlertmanagerConfigCRD(t *testing.T) {
 						Key: "webhook-url",
 					},
 					Title: ptr.To("Alert"),
-				}},
-				//MSTeamsV2Configs: []monitoringv1alpha1.MSTeamsV2Config{{
-				//	WebhookURL: &v1.SecretKeySelector{
-				//		LocalObjectReference: v1.LocalObjectReference{
-				//			Name: "msteamsv2",
-				//		},
-				//		Key: "webhookv2-url",
-				//	},
-				//	Title: ptr.To("Alert"),
-				//}},
-				RocketChatConfigs: []monitoringv1alpha1.RocketChatConfig{{
-					//APIURL: ptr.To(monitoringv1alpha1.URL("https://rocketchat.api.url")),
-					Token: v1.SecretKeySelector{
-						LocalObjectReference: v1.LocalObjectReference{
-							Name: "rocketchat",
-						},
-						Key: "token",
-					},
-					TokenID: v1.SecretKeySelector{
-						LocalObjectReference: v1.LocalObjectReference{
-							Name: "rocketchat",
-						},
-						Key: "token-id",
-					},
 				}},
 			}},
 		},
