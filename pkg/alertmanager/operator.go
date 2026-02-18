@@ -1200,7 +1200,7 @@ func checkReceivers(ctx context.Context, amc *monitoringv1alpha1.AlertmanagerCon
 			return err
 		}
 
-		err = checkEmailConfigs(ctx, receiver.EmailConfigs, amc.GetNamespace(), store)
+		err = checkEmailConfigs(ctx, receiver.EmailConfigs, amc.GetNamespace(), store, amVersion)
 		if err != nil {
 			return err
 		}
@@ -1502,7 +1502,12 @@ func checkWebexConfigs(
 	return nil
 }
 
-func checkEmailConfigs(ctx context.Context, configs []monitoringv1alpha1.EmailConfig, namespace string, store *assets.StoreBuilder) error {
+func checkEmailConfigs(
+	ctx context.Context,
+	configs []monitoringv1alpha1.EmailConfig,
+	namespace string, store *assets.StoreBuilder,
+	amVersion semver.Version,
+) error {
 	for _, config := range configs {
 		if config.AuthPassword != nil {
 			if _, err := store.GetSecretKey(ctx, namespace, *config.AuthPassword); err != nil {
@@ -1517,6 +1522,10 @@ func checkEmailConfigs(ctx context.Context, configs []monitoringv1alpha1.EmailCo
 
 		if err := store.AddSafeTLSConfig(ctx, namespace, config.TLSConfig); err != nil {
 			return err
+		}
+
+		if config.ImplicitTLS != nil && amVersion.LT(semver.MustParse("0.31.0")) {
+			return fmt.Errorf(`implicitTLS' is available in Alertmanager >= 0.31.0 only - current %s`, amVersion)
 		}
 	}
 
