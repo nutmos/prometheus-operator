@@ -2267,7 +2267,7 @@ func (gc *globalConfig) sanitize(amVersion semver.Version, logger *slog.Logger) 
 	}
 
 	if gc.SMTPAuthSecret != "" && gc.SMTPAuthSecretFile != "" {
-		msg := "'smtp_auth_secret' and 'smtp_auth_secret_file' are mutually exclusive - 'smtp_auth_secret_file' has taken precedence"
+		msg := "'smtp_auth_secret' and 'smtp_auth_secret_file' are mutually exclusive - 'smtp_auth_secret' has taken precedence"
 		logger.Warn(msg)
 		gc.SMTPAuthSecretFile = ""
 	}
