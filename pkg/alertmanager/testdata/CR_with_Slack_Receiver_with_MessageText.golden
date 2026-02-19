@@ -1,3 +1,5 @@
+global:
+  slack_api_url: http://slack.example.com
 route:
   receiver: "null"
   routes:
