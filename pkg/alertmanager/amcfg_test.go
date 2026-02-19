@@ -5894,7 +5894,7 @@ func TestSanitizeEmailConfig(t *testing.T) {
 			golden: "test_threading_is_added_in_email_config_for_supported_versions.golden",
 		},
 		{
-			name:           "Test threading is added in email config for supported version",
+			name:           "Test email config empty thread_by_date",
 			againstVersion: semver.Version{Major: 0, Minor: 30},
 			in: &alertmanagerConfig{
 				Receivers: []*receiver{
@@ -5910,7 +5910,7 @@ func TestSanitizeEmailConfig(t *testing.T) {
 					},
 				},
 			},
-			golden: "test_threading_is_added_in_email_config_for_supported_versions.golden",
+			golden: "test_email_config_empty_thread_by_date.golden",
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
