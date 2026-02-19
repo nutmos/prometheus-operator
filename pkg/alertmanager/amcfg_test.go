@@ -3189,9 +3189,9 @@ func TestGenerateConfig(t *testing.T) {
 			golden: "CR_with_Slack_Receiver_and_global_Slack_URL_File.golden",
 		},
 		{
-			name:    "CR with Slack Receiver with MessageText",
-			kclient: fake.NewSimpleClientset(),
-			amVersion: &semver.Versions{{Major: 0, Minor: 31},
+			name:      "CR with Slack Receiver with MessageText",
+			kclient:   fake.NewSimpleClientset(),
+			amVersion: &semver.Version{Major: 0, Minor: 31},
 			baseConfig: alertmanagerConfig{
 				Global: &globalConfig{
 					SlackAPIURL: &config.URL{URL: globalSlackAPIURL},
