@@ -3193,9 +3193,6 @@ func TestGenerateConfig(t *testing.T) {
 			kclient:   fake.NewSimpleClientset(),
 			amVersion: &semver.Version{Major: 0, Minor: 31},
 			baseConfig: alertmanagerConfig{
-				Global: &globalConfig{
-					SlackAPIURL: &config.URL{URL: globalSlackAPIURL},
-				},
 				Route: &route{
 					Receiver: "null",
 				},
