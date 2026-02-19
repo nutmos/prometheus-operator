@@ -83,9 +83,6 @@ func TestInitializeFromAlertmanagerConfig(t *testing.T) {
 	version28, err := semver.ParseTolerant("v0.28.0")
 	require.NoError(t, err)
 
-	version31, err := semver.ParseTolerant("v0.31.0")
-	require.NoError(t, err)
-
 	pagerdutyURL := "example.pagerduty.com"
 	invalidPagerdutyURL := "://example.pagerduty.com"
 
@@ -3222,7 +3219,7 @@ func TestGenerateConfig(t *testing.T) {
 					},
 				},
 			},
-			golden: "CR_with_Slack_Receiver_with_URL_fields.golden",
+			golden: "CR_with_Slack_Receiver_with_MessageText.golden",
 		},
 		{
 			name: "CR with SNS Receiver with Access and Key",
