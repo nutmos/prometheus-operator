@@ -50,6 +50,7 @@ type globalConfig struct {
 	SMTPAuthPassword      string          `yaml:"smtp_auth_password,omitempty"`
 	SMTPAuthPasswordFile  string          `yaml:"smtp_auth_password_file,omitempty"`
 	SMTPAuthSecret        string          `yaml:"smtp_auth_secret,omitempty"`
+	SMTPAuthSecretFile    string          `yaml:"smtp_auth_secret_file,omitempty"`
 	SMTPAuthIdentity      string          `yaml:"smtp_auth_identity,omitempty"`
 	SMTPRequireTLS        *bool           `yaml:"smtp_require_tls,omitempty"`
 	SMTPTLSConfig         *tlsConfig      `yaml:"smtp_tls_config,omitempty"`

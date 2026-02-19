@@ -2260,6 +2260,18 @@ func (gc *globalConfig) sanitize(amVersion semver.Version, logger *slog.Logger) 
 		gc.TelegramBotTokenFile = ""
 	}
 
+	if gc.SMTPAuthSecretFile != "" && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'smtp_auth_secret_file' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		gc.SMTPAuthSecretFile = ""
+	}
+
+	if gc.SMTPAuthSecret != "" && gc.SMTPAuthSecretFile != "" {
+		msg := "'smtp_auth_secret' and 'smtp_auth_secret_file' are mutually exclusive - 'smtp_auth_secret_file' has taken precedence"
+		logger.Warn(msg)
+		gc.SMTPAuthSecretFile = ""
+	}
+
 	return nil
 }
 
