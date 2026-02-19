@@ -5855,6 +5855,38 @@ func TestSanitizeEmailConfig(t *testing.T) {
 			},
 			golden: "test_implicit_tls_is_added_in_email_config_for_supported_versions.golden",
 		},
+		{
+			name:           "Test auth_secret_file is added in email config for supported version",
+			againstVersion: semver.Version{Major: 0, Minor: 31},
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						EmailConfigs: []*emailConfig{
+							{
+								AuthSecretFile: "/auth/secret/file",
+							},
+						},
+					},
+				},
+			},
+			golden: "test_auth_secret_file_is_added_in_email_config_for_supported_versions.golden",
+		},
+		{
+			name:           "Test auth_secret_file is dropped in email config for unsupported versions",
+			againstVersion: semver.Version{Major: 0, Minor: 30},
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						EmailConfigs: []*emailConfig{
+							{
+								ImplicitTLS: ptr.To(true),
+							},
+						},
+					},
+				},
+			},
+			golden: "test_auth_secret_file_is_dropped_in_email_config_for_unsupported_versions.golden",
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			err := tc.in.sanitize(tc.againstVersion, logger)

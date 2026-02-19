@@ -2555,6 +2555,17 @@ func (ec *emailConfig) sanitize(amVersion semver.Version, logger *slog.Logger) e
 		ec.ImplicitTLS = nil
 	}
 
+	if ec.AuthSecretFile != "" && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'auth_secret_file' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		ec.AuthSecretFile = ""
+	}
+
+	if ec.AuthSecret != "" && ec.AuthSecretFile != "" {
+		logger.Warn("'auth_secret' and 'auth_secret_file' are mutually exclusive for email receiver config - 'auth_secret' has taken precedence")
+		ec.AuthSecretFile = ""
+	}
+
 	return nil
 }
 

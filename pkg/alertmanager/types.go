@@ -331,6 +331,7 @@ type emailConfig struct {
 	AuthPassword     string            `yaml:"auth_password,omitempty"`
 	AuthPasswordFile string            `yaml:"auth_password_file,omitempty"`
 	AuthSecret       string            `yaml:"auth_secret,omitempty"`
+	AuthSecretFile   string            `yaml:"auth_secret_file,omitempty"`
 	AuthIdentity     string            `yaml:"auth_identity,omitempty"`
 	Headers          map[string]string `yaml:"headers,omitempty"`
 	HTML             *string           `yaml:"html,omitempty"`
