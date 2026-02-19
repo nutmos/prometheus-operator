@@ -12,4 +12,5 @@ receivers:
   - to: customers@example.com
     from: admin@example.com
     smarthost: example.com:25
+    implicit_tls: true
 templates: []
