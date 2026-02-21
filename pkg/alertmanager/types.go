@@ -339,7 +339,7 @@ type emailConfig struct {
 	Text             *string           `yaml:"text,omitempty"`
 	RequireTLS       *bool             `yaml:"require_tls,omitempty"`
 	TLSConfig        *tlsConfig        `yaml:"tls_config,omitempty"`
-	ImplicitTLS      *bool             `yaml:"implicit_tls,omitempty"`
+	ForceImplicitTLS *bool             `yaml:"force_implicit_tls,omitempty"`
 }
 
 type pushoverConfig struct {
