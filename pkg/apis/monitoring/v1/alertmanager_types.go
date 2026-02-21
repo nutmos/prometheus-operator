@@ -665,6 +665,11 @@ type GlobalTelegramConfig struct {
 	// It requires Alertmanager >= v0.24.0.
 	// +optional
 	APIURL *URL `json:"apiURL,omitempty"`
+
+	// botToken represents the bot token configuration for Telegram.
+	// It requires Alertmanager >= v0.31.0.
+	// +optional
+	BotToken *v1.SecretKeySelector `json:"botToken,omitempty"`
 }
 
 // GlobalJiraConfig configures global Jira parameters.

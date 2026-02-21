@@ -11460,6 +11460,21 @@ URL
 <p>It requires Alertmanager &gt;= v0.24.0.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>botToken</code><br/>
+<em>
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#secretkeyselector-v1-core">
+Kubernetes core/v1.SecretKeySelector
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>botToken represents the bot token configuration for Telegram.
+It requires Alertmanager &gt;= v0.31.0.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="monitoring.coreos.com/v1.GlobalVictorOpsConfig">GlobalVictorOpsConfig
