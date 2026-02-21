@@ -2123,7 +2123,7 @@ Z8Ja2z8jw1xUKxfurno8wsAgFAQLuUZ0sTpwHBtwzFEdIeaAHBbNkkuGq7leIw/u
 					Namespace: "mynamespace",
 				},
 				Data: map[string][]byte{
-					"bot-token": []byte("telegrambottoken23"),
+					"bot-token": []byte("telegrambottoken123"),
 				},
 			},
 		)
