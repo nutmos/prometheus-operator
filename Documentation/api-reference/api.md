@@ -27330,6 +27330,7 @@ bool
 <em>(Optional)</em>
 <p>forceImplicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
 true: force use of implicit TLS (direct TLS connection on any port)
+false: force disable implicit TLS (use explicit TLS/STARTTLS if required)
 nil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility
 It requires Alertmanager &gt;= v0.31.0.</p>
 </td>
@@ -37671,6 +37672,7 @@ bool
 <em>(Optional)</em>
 <p>forceImplicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
 true: force use of implicit TLS (direct TLS connection on any port)
+false: force disable implicit TLS (use explicit TLS/STARTTLS if required)
 nil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility
 It requires Alertmanager &gt;= v0.31.0.</p>
 </td>
