@@ -4036,6 +4036,9 @@ func TestSanitizeConfig(t *testing.T) {
 	versionGlobalSMTPAuthSecretFileAllowed := semver.Version{Major: 0, Minor: 31}
 	versionGlobalSMTPAuthSecretFileNotAllowed := semver.Version{Major: 0, Minor: 30}
 
+	versionGlobalSMTPForceImplicitTLSAllowed := semver.Version{Major: 0, Minor: 31}
+	versionGlobalSMTPForceImplicitTLSNotAllowed := semver.Version{Major: 0, Minor: 30}
+
 	for _, tc := range []struct {
 		name           string
 		againstVersion semver.Version
@@ -4099,6 +4102,26 @@ func TestSanitizeConfig(t *testing.T) {
 				},
 			},
 			golden: "test_smtp_auth_secret_takes_precedence_over_smtp_auth_secret_file.golden",
+		},
+		{
+			name:           "Test smtp_force_implicit_tls added for supported version",
+			againstVersion: versionGlobalSMTPForceImplicitTLSAllowed,
+			in: &alertmanagerConfig{
+				Global: &globalConfig{
+					SMTPForceImplicitTLS: ptr.To(true),
+				},
+			},
+			golden: "test_smtp_force_implicit_tls_added_for_supported_version.golden",
+		},
+		{
+			name:           "Test smtp_force_implicit_tls dropped for unsupported version",
+			againstVersion: versionGlobalSMTPForceImplicitTLSNotAllowed,
+			in: &alertmanagerConfig{
+				Global: &globalConfig{
+					SMTPForceImplicitTLS: ptr.To(true),
+				},
+			},
+			golden: "test_smtp_force_implicit_tls_dropped_for_unsupported_version.golden",
 		},
 		{
 			name:           "Test slack_api_url takes precedence in global config",
