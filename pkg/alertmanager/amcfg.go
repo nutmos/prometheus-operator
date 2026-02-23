@@ -1277,7 +1277,7 @@ func (cb *ConfigBuilder) convertEmailConfig(ctx context.Context, in monitoringv1
 		HTML:          in.HTML,
 		Text:          in.Text,
 		RequireTLS:    in.RequireTLS,
-		ImplicitTLS:   in.ImplicitTLS,
+		ImplicitTLS:   in.ForceImplicitTLS,
 	}
 
 	if ptr.Deref(in.Smarthost, "") == "" {

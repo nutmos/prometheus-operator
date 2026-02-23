@@ -247,8 +247,8 @@ func (in *EmailConfig) DeepCopyInto(out *EmailConfig) {
 		*out = new(v1.SafeTLSConfig)
 		(*in).DeepCopyInto(*out)
 	}
-	if in.ImplicitTLS != nil {
-		in, out := &in.ImplicitTLS, &out.ImplicitTLS
+	if in.ForceImplicitTLS != nil {
+		in, out := &in.ForceImplicitTLS, &out.ForceImplicitTLS
 		*out = new(bool)
 		**out = **in
 	}

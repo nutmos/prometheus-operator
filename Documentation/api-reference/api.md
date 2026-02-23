@@ -27321,14 +27321,14 @@ This includes settings for certificates, CA validation, and TLS protocol options
 </tr>
 <tr>
 <td>
-<code>implicitTLS</code><br/>
+<code>forceImplicitTLS</code><br/>
 <em>
 bool
 </em>
 </td>
 <td>
 <em>(Optional)</em>
-<p>implicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
+<p>forceImplicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
 true: force use of implicit TLS (direct TLS connection on any port)
 nil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility</p>
 </td>
@@ -37661,14 +37661,14 @@ This includes settings for certificates, CA validation, and TLS protocol options
 </tr>
 <tr>
 <td>
-<code>implicitTLS</code><br/>
+<code>forceImplicitTLS</code><br/>
 <em>
 bool
 </em>
 </td>
 <td>
 <em>(Optional)</em>
-<p>implicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
+<p>forceImplicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
 true: force use of implicit TLS (direct TLS connection on any port)
 nil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility</p>
 </td>

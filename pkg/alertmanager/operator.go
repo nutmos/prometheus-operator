@@ -1524,8 +1524,8 @@ func checkEmailConfigs(
 			return err
 		}
 
-		if config.ImplicitTLS != nil && amVersion.LT(semver.MustParse("0.31.0")) {
-			return fmt.Errorf(`implicitTLS' is available in Alertmanager >= 0.31.0 only - current %s`, amVersion)
+		if config.ForceImplicitTLS != nil && amVersion.LT(semver.MustParse("0.31.0")) {
+			return fmt.Errorf(`forceImplicitTLS' is available in Alertmanager >= 0.31.0 only - current %s`, amVersion)
 		}
 	}
 

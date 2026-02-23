@@ -862,6 +862,10 @@
                             minLength: 1,
                             type: 'string',
                           },
+                          forceImplicitTLS: {
+                            description: 'forceImplicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.\ntrue: force use of implicit TLS (direct TLS connection on any port)\nnil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility',
+                            type: 'boolean',
+                          },
                           from: {
                             description: 'from defines the sender address for email notifications.\nThis appears as the "From" field in the email header.',
                             minLength: 1,
@@ -898,10 +902,6 @@
                           html: {
                             description: 'html defines the HTML body of the email notification.\nThis allows for rich formatting in the email content.',
                             type: 'string',
-                          },
-                          implicitTLS: {
-                            description: 'implicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.\ntrue: force use of implicit TLS (direct TLS connection on any port)\nnil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility',
-                            type: 'boolean',
                           },
                           requireTLS: {
                             description: 'requireTLS defines the SMTP TLS requirement.\nNote that Go does not support unencrypted connections to remote SMTP endpoints.',

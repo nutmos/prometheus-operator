@@ -3866,7 +3866,7 @@ func TestGenerateConfig(t *testing.T) {
 			golden: "CR_with_EmailConfig_Receiver_Global_Defaults_Conf.golden",
 		},
 		{
-			name:      "CR with EmailConfig with ImplicitTLS",
+			name:      "CR with EmailConfig with ForceImplicitTLS",
 			amVersion: &version31,
 			kclient:   fake.NewSimpleClientset(),
 			baseConfig: alertmanagerConfig{
@@ -3890,10 +3890,10 @@ func TestGenerateConfig(t *testing.T) {
 								Name: "test",
 								EmailConfigs: []monitoringv1alpha1.EmailConfig{
 									{
-										Smarthost:   ptr.To("example.com:25"),
-										From:        ptr.To("admin@example.com"),
-										To:          ptr.To("customers@example.com"),
-										ImplicitTLS: ptr.To(true),
+										Smarthost:        ptr.To("example.com:25"),
+										From:             ptr.To("admin@example.com"),
+										To:               ptr.To("customers@example.com"),
+										ForceImplicitTLS: ptr.To(true),
 									},
 								},
 							},
@@ -3901,10 +3901,10 @@ func TestGenerateConfig(t *testing.T) {
 					},
 				},
 			},
-			golden: "CR_with_EmailConfig_ImplicitTLS.golden",
+			golden: "CR_with_EmailConfig_ForceImplicitTLS.golden",
 		},
 		{
-			name:      "CR with EmailConfig with ImplicitTLS Not Supported",
+			name:      "CR with EmailConfig with ForceImplicitTLS Not Supported",
 			amVersion: &version28,
 			kclient:   fake.NewSimpleClientset(),
 			baseConfig: alertmanagerConfig{
@@ -3928,10 +3928,10 @@ func TestGenerateConfig(t *testing.T) {
 								Name: "test",
 								EmailConfigs: []monitoringv1alpha1.EmailConfig{
 									{
-										Smarthost:   ptr.To("example.com:25"),
-										From:        ptr.To("admin@example.com"),
-										To:          ptr.To("customers@example.com"),
-										ImplicitTLS: ptr.To(true),
+										Smarthost:        ptr.To("example.com:25"),
+										From:             ptr.To("admin@example.com"),
+										To:               ptr.To("customers@example.com"),
+										ForceImplicitTLS: ptr.To(true),
 									},
 								},
 							},

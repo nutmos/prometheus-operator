@@ -1348,7 +1348,7 @@ func TestCheckAlertmanagerConfig(t *testing.T) {
 						Name: "recv1",
 						EmailConfigs: []monitoringv1alpha1.EmailConfig{
 							{
-								ImplicitTLS: ptr.To(true),
+								ForceImplicitTLS: ptr.To(true),
 							},
 						},
 					}},
