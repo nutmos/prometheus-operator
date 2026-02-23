@@ -5874,36 +5874,36 @@ func TestSanitizeEmailConfig(t *testing.T) {
 			golden: "test_smtp_auth_password_file_is_dropped_in_email_config_for_unsupported_versions.golden",
 		},
 		{
-			name:           "Test implicit_tls is dropped in email config for unsupported versions",
+			name:           "Test force_implicit_tls is dropped in email config for unsupported versions",
 			againstVersion: semver.Version{Major: 0, Minor: 30},
 			in: &alertmanagerConfig{
 				Receivers: []*receiver{
 					{
 						EmailConfigs: []*emailConfig{
 							{
-								ImplicitTLS: ptr.To(true),
+								ForceImplicitTLS: ptr.To(true),
 							},
 						},
 					},
 				},
 			},
-			golden: "test_implicit_tls_is_dropped_in_email_config_for_unsupported_versions.golden",
+			golden: "test_force_implicit_tls_is_dropped_in_email_config_for_unsupported_versions.golden",
 		},
 		{
-			name:           "Test implicit_tls is added in email config for supported version",
+			name:           "Test force_implicit_tls is added in email config for supported version",
 			againstVersion: semver.Version{Major: 0, Minor: 31},
 			in: &alertmanagerConfig{
 				Receivers: []*receiver{
 					{
 						EmailConfigs: []*emailConfig{
 							{
-								ImplicitTLS: ptr.To(true),
+								ForceImplicitTLS: ptr.To(true),
 							},
 						},
 					},
 				},
 			},
-			golden: "test_implicit_tls_is_added_in_email_config_for_supported_versions.golden",
+			golden: "test_force_implicit_tls_is_added_in_email_config_for_supported_versions.golden",
 		},
 		{
 			name:           "Test auth_secret_file is added in email config for supported version",
@@ -5929,7 +5929,7 @@ func TestSanitizeEmailConfig(t *testing.T) {
 					{
 						EmailConfigs: []*emailConfig{
 							{
-								ImplicitTLS: ptr.To(true),
+								AuthSecretFile: "/auth/secret/file",
 							},
 						},
 					},
