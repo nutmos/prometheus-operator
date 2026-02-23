@@ -656,6 +656,13 @@ type GlobalSMTPConfig struct {
 	// tlsConfig defines the default TLS configuration for SMTP receivers
 	// +optional
 	TLSConfig *SafeTLSConfig `json:"tlsConfig,omitempty"`
+
+	// forceImplicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
+	// true: force use of implicit TLS (direct TLS connection on any port)
+	// nil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility
+	// It requires Alertmanager >= v0.31.0.
+	// +optional
+	ForceImplicitTLS *bool `json:"forceImplicitTLS,omitempty"` // nolint:kubeapilinter
 }
 
 // GlobalTelegramConfig configures global Telegram parameters.
