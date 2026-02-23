@@ -4036,6 +4036,9 @@ func TestSanitizeConfig(t *testing.T) {
 	versionGlobalSMTPAuthSecretFileAllowed := semver.Version{Major: 0, Minor: 31}
 	versionGlobalSMTPAuthSecretFileNotAllowed := semver.Version{Major: 0, Minor: 30}
 
+	versionGlobalSMTPForceImplicitTLSAllowed := semver.Version{Major: 0, Minor: 31}
+	versionGlobalSMTPForceImplicitTLSNotAllowed := semver.Version{Major: 0, Minor: 30}
+
 	for _, tc := range []struct {
 		name           string
 		againstVersion semver.Version
@@ -4099,6 +4102,26 @@ func TestSanitizeConfig(t *testing.T) {
 				},
 			},
 			golden: "test_smtp_auth_secret_takes_precedence_over_smtp_auth_secret_file.golden",
+		},
+		{
+			name:           "Test smtp_force_implicit_tls added for supported version",
+			againstVersion: versionGlobalSMTPForceImplicitTLSAllowed,
+			in: &alertmanagerConfig{
+				Global: &globalConfig{
+					SMTPForceImplicitTLS: ptr.To(true),
+				},
+			},
+			golden: "test_smtp_force_implicit_tls_added_for_supported_version.golden",
+		},
+		{
+			name:           "Test smtp_force_implicit_tls dropped for unsupported version",
+			againstVersion: versionGlobalSMTPForceImplicitTLSNotAllowed,
+			in: &alertmanagerConfig{
+				Global: &globalConfig{
+					SMTPForceImplicitTLS: ptr.To(true),
+				},
+			},
+			golden: "test_smtp_force_implicit_tls_dropped_for_unsupported_version.golden",
 		},
 		{
 			name:           "Test slack_api_url takes precedence in global config",
@@ -4904,6 +4927,22 @@ func TestSanitizeConfig(t *testing.T) {
 				},
 			},
 			golden: "test_webhook_url_takes_precedence_in_mattermost_config.golden",
+		},
+		{
+			name:           "Test text is optional in mattermost config",
+			againstVersion: versionMattermostConfigAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "www.test.com",
+							},
+						},
+					},
+				},
+			},
+			golden: "test_mattermos_text_is_optional.golden",
 		},
 		{
 			name:           "Test timeout is dropped in pagerduty config for unsupported versions",
@@ -5858,36 +5897,36 @@ func TestSanitizeEmailConfig(t *testing.T) {
 			golden: "test_smtp_auth_password_file_is_dropped_in_email_config_for_unsupported_versions.golden",
 		},
 		{
-			name:           "Test implicit_tls is dropped in email config for unsupported versions",
+			name:           "Test force_implicit_tls is dropped in email config for unsupported versions",
 			againstVersion: semver.Version{Major: 0, Minor: 30},
 			in: &alertmanagerConfig{
 				Receivers: []*receiver{
 					{
 						EmailConfigs: []*emailConfig{
 							{
-								ImplicitTLS: ptr.To(true),
+								ForceImplicitTLS: ptr.To(true),
 							},
 						},
 					},
 				},
 			},
-			golden: "test_implicit_tls_is_dropped_in_email_config_for_unsupported_versions.golden",
+			golden: "test_force_implicit_tls_is_dropped_in_email_config_for_unsupported_versions.golden",
 		},
 		{
-			name:           "Test implicit_tls is added in email config for supported version",
+			name:           "Test force_implicit_tls is added in email config for supported version",
 			againstVersion: semver.Version{Major: 0, Minor: 31},
 			in: &alertmanagerConfig{
 				Receivers: []*receiver{
 					{
 						EmailConfigs: []*emailConfig{
 							{
-								ImplicitTLS: ptr.To(true),
+								ForceImplicitTLS: ptr.To(true),
 							},
 						},
 					},
 				},
 			},
-			golden: "test_implicit_tls_is_added_in_email_config_for_supported_versions.golden",
+			golden: "test_force_implicit_tls_is_added_in_email_config_for_supported_versions.golden",
 		},
 		{
 			name:           "Test auth_secret_file is added in email config for supported version",
@@ -5913,7 +5952,7 @@ func TestSanitizeEmailConfig(t *testing.T) {
 					{
 						EmailConfigs: []*emailConfig{
 							{
-								ImplicitTLS: ptr.To(true),
+								AuthSecretFile: "/auth/secret/file",
 							},
 						},
 					},
