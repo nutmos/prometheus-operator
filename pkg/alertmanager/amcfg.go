@@ -2261,6 +2261,24 @@ func (gc *globalConfig) sanitize(amVersion semver.Version, logger *slog.Logger) 
 		gc.TelegramBotTokenFile = ""
 	}
 
+	if gc.SMTPAuthSecretFile != "" && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'smtp_auth_secret_file' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		gc.SMTPAuthSecretFile = ""
+	}
+
+	if gc.SMTPAuthSecret != "" && gc.SMTPAuthSecretFile != "" {
+		msg := "'smtp_auth_secret' and 'smtp_auth_secret_file' are mutually exclusive - 'smtp_auth_secret' has taken precedence"
+		logger.Warn(msg)
+		gc.SMTPAuthSecretFile = ""
+	}
+
+	if gc.SMTPForceImplicitTLS != nil && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'smtp_force_implicit_tls' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		gc.SMTPForceImplicitTLS = nil
+	}
+
 	return nil
 }
 
@@ -2550,10 +2568,21 @@ func (ec *emailConfig) sanitize(amVersion semver.Version, logger *slog.Logger) e
 		ec.AuthPasswordFile = ""
 	}
 
-	if ec.ImplicitTLS != nil && amVersion.LT(semver.MustParse("0.31.0")) {
-		msg := "'implicit_tls' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+	if ec.ForceImplicitTLS != nil && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'force_implicit_tls' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
 		logger.Warn(msg, "current_version", amVersion.String())
-		ec.ImplicitTLS = nil
+		ec.ForceImplicitTLS = nil
+	}
+
+	if ec.AuthSecretFile != "" && amVersion.LT(semver.MustParse("0.31.0")) {
+		msg := "'auth_secret_file' supported in Alertmanager >= 0.31.0 only - dropping field from provided config"
+		logger.Warn(msg, "current_version", amVersion.String())
+		ec.AuthSecretFile = ""
+	}
+
+	if ec.AuthSecret != "" && ec.AuthSecretFile != "" {
+		logger.Warn("'auth_secret' and 'auth_secret_file' are mutually exclusive for email receiver config - 'auth_secret' has taken precedence")
+		ec.AuthSecretFile = ""
 	}
 
 	return nil
