@@ -1505,7 +1505,8 @@ func checkWebexConfigs(
 func checkEmailConfigs(
 	ctx context.Context,
 	configs []monitoringv1alpha1.EmailConfig,
-	namespace string, store *assets.StoreBuilder,
+	namespace string,
+	store *assets.StoreBuilder,
 	amVersion semver.Version,
 ) error {
 	for _, config := range configs {
