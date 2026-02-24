@@ -1215,7 +1215,7 @@ func (in *JiraConfig) DeepCopyInto(out *JiraConfig) {
 	}
 	if in.ReopenDuration != nil {
 		in, out := &in.ReopenDuration, &out.ReopenDuration
-		*out = new(monitoringv1.Duration)
+		*out = new(v1.Duration)
 		**out = **in
 	}
 	if in.Fields != nil {
