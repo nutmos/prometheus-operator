@@ -1065,7 +1065,7 @@ func TestInitializeFromAlertmanagerConfig(t *testing.T) {
 			matcherStrategy: monitoringv1.AlertmanagerConfigMatcherStrategy{
 				Type: "OnNamespace",
 			},
-			golden: "invalid_smtpConfig_forceImplicitTLS_unsupported_version.golden",
+			wantErr: true,
 		},
 		{
 			name:      "valid global config telegram api url",
