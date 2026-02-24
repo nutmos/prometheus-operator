@@ -2591,8 +2591,8 @@ func (ec *emailConfig) sanitize(amVersion semver.Version, logger *slog.Logger) e
 	}
 
 	if t := ec.Threading; t != nil {
-		if t.ThreadByDate != "daily" && t.ThreadByDate != "none" {
-			return fmt.Errorf("invalid 'thread_by_date': the value must be either 'daily' or 'none'")
+		if t.ThreadByDate != "" && t.ThreadByDate != "daily" && t.ThreadByDate != "none" {
+			return fmt.Errorf("invalid 'thread_by_date': the value must be empty, 'daily' or 'none'")
 		}
 	}
 
