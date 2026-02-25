@@ -11427,6 +11427,22 @@ SafeTLSConfig
 <p>tlsConfig defines the default TLS configuration for SMTP receivers</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>forceImplicitTLS</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>forceImplicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
+true: force use of implicit TLS (direct TLS connection on any port)
+false: force disable implicit TLS (use explicit TLS/STARTTLS if required)
+nil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility
+It requires Alertmanager &gt;= v0.31.0.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="monitoring.coreos.com/v1.GlobalTelegramConfig">GlobalTelegramConfig

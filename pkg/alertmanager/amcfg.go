@@ -1757,6 +1757,9 @@ func (cb *ConfigBuilder) convertSMTPConfig(ctx context.Context, out *globalConfi
 	if in.AuthIdentity != nil {
 		out.SMTPAuthIdentity = *in.AuthIdentity
 	}
+	if in.ForceImplicitTLS != nil {
+		out.SMTPForceImplicitTLS = in.ForceImplicitTLS
+	}
 	out.SMTPRequireTLS = in.RequireTLS
 
 	if in.SmartHost != nil {
@@ -3398,6 +3401,10 @@ func (cb *ConfigBuilder) checkAlertmanagerGlobalConfigResource(
 	// Perform more specific validations which depend on the Alertmanager
 	// version. It also retrieves data from referenced secrets and configmaps
 	// (and fails in case of missing/invalid references).
+	if err := cb.checkGlobalSMTPConfig(gc.SMTPConfig); err != nil {
+		return err
+	}
+
 	if err := cb.checkGlobalTelegramConfig(gc.TelegramConfig); err != nil {
 		return err
 	}
@@ -3420,6 +3427,18 @@ func (cb *ConfigBuilder) checkAlertmanagerGlobalConfigResource(
 
 	if err := cb.checkGlobalWeChatConfig(ctx, gc.WeChatConfig, namespace); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (cb *ConfigBuilder) checkGlobalSMTPConfig(sc *monitoringv1.GlobalSMTPConfig) error {
+	if sc == nil {
+		return nil
+	}
+
+	if sc.ForceImplicitTLS != nil && cb.amVersion.LT(semver.MustParse("0.31.0")) {
+		return fmt.Errorf(`'forceImplicitTLS' integration requires Alertmanager >= 0.31.0 - current %s`, cb.amVersion)
 	}
 
 	return nil
