@@ -54,7 +54,7 @@ func (in *AWSSDConfig) DeepCopyInto(out *AWSSDConfig) {
 	}
 	if in.RefreshInterval != nil {
 		in, out := &in.RefreshInterval, &out.RefreshInterval
-		*out = new(monitoringv1.Duration)
+		*out = new(v1.Duration)
 		**out = **in
 	}
 	if in.Filters != nil {
@@ -67,7 +67,7 @@ func (in *AWSSDConfig) DeepCopyInto(out *AWSSDConfig) {
 	in.ProxyConfig.DeepCopyInto(&out.ProxyConfig)
 	if in.TLSConfig != nil {
 		in, out := &in.TLSConfig, &out.TLSConfig
-		*out = new(monitoringv1.SafeTLSConfig)
+		*out = new(v1.SafeTLSConfig)
 		(*in).DeepCopyInto(*out)
 	}
 	if in.FollowRedirects != nil {
