@@ -1594,10 +1594,10 @@ type AWSSDConfig struct {
 	TLSConfig *v1.SafeTLSConfig `json:"tlsConfig,omitempty"`
 	// followRedirects defines whether HTTP requests follow HTTP 3xx redirects.
 	// +optional
-	FollowRedirects *bool `json:"followRedirects,omitempty"`
+	FollowRedirects *bool `json:"followRedirects,omitempty"` // nolint:kubeapilinter
 	// enableHTTP2 defines whether to enable HTTP2.
 	// +optional
-	EnableHTTP2 *bool `json:"enableHTTP2,omitempty"`
+	EnableHTTP2 *bool `json:"enableHTTP2,omitempty"` // nolint:kubeapilinter
 	// profile defines Named AWS profile used to authenticate.
 	// +kubebuilder:validation:MinLength=1
 	// +optional
