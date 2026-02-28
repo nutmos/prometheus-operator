@@ -973,6 +973,7 @@ func (cb *ConfigBuilder) convertSlackConfig(ctx context.Context, in monitoringv1
 		IconEmoji:     ptr.Deref(in.IconEmoji, ""),
 		LinkNames:     ptr.Deref(in.LinkNames, false),
 		MrkdwnIn:      in.MrkdwnIn,
+		MessageText:   ptr.Deref(in.MessageText, ""),
 	}
 
 	if in.APIURL != nil {
@@ -1094,9 +1095,9 @@ func (cb *ConfigBuilder) convertPagerdutyConfig(ctx context.Context, in monitori
 		out.ServiceKey = serviceKey
 	}
 
-	var details map[string]string
+	var details map[string]any
 	if l := len(in.Details); l > 0 {
-		details = make(map[string]string, l)
+		details = make(map[string]any, l)
 		for _, d := range in.Details {
 			details[d.Key] = d.Value
 		}
@@ -1757,6 +1758,9 @@ func (cb *ConfigBuilder) convertSMTPConfig(ctx context.Context, out *globalConfi
 	}
 	if in.AuthIdentity != nil {
 		out.SMTPAuthIdentity = *in.AuthIdentity
+	}
+	if in.ForceImplicitTLS != nil {
+		out.SMTPForceImplicitTLS = in.ForceImplicitTLS
 	}
 	out.SMTPRequireTLS = in.RequireTLS
 
@@ -2553,6 +2557,12 @@ func (r *receiver) sanitize(amVersion semver.Version, logger *slog.Logger) error
 		}
 	}
 
+	for _, conf := range r.PagerdutyConfigs {
+		if err := conf.sanitize(amVersion, withLogger); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -2686,6 +2696,14 @@ func (pdc *pagerdutyConfig) sanitize(amVersion semver.Version, logger *slog.Logg
 		msg := "'timeout' supported in Alertmanager >= 0.30.0 only - dropping field from provided config"
 		logger.Warn(msg, "current_version", amVersion.String())
 		pdc.Timeout = nil
+	}
+
+	if lessThanV0_30 {
+		for _, v := range pdc.Details {
+			if _, ok := v.(string); !ok {
+				return fmt.Errorf("'details' value in non-string format is supported in Alertmanager >= 0.30.0 only")
+			}
+		}
 	}
 
 	return pdc.HTTPConfig.sanitize(amVersion, logger)
@@ -3385,6 +3403,10 @@ func (cb *ConfigBuilder) checkAlertmanagerGlobalConfigResource(
 	// Perform more specific validations which depend on the Alertmanager
 	// version. It also retrieves data from referenced secrets and configmaps
 	// (and fails in case of missing/invalid references).
+	if err := cb.checkGlobalSMTPConfig(gc.SMTPConfig); err != nil {
+		return err
+	}
+
 	if err := cb.checkGlobalTelegramConfig(gc.TelegramConfig); err != nil {
 		return err
 	}
@@ -3407,6 +3429,18 @@ func (cb *ConfigBuilder) checkAlertmanagerGlobalConfigResource(
 
 	if err := cb.checkGlobalWeChatConfig(ctx, gc.WeChatConfig, namespace); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (cb *ConfigBuilder) checkGlobalSMTPConfig(sc *monitoringv1.GlobalSMTPConfig) error {
+	if sc == nil {
+		return nil
+	}
+
+	if sc.ForceImplicitTLS != nil && cb.amVersion.LT(semver.MustParse("0.31.0")) {
+		return fmt.Errorf(`'forceImplicitTLS' integration requires Alertmanager >= 0.31.0 - current %s`, cb.amVersion)
 	}
 
 	return nil
