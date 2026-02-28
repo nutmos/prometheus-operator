@@ -1311,7 +1311,7 @@ type MattermostConfig struct {
 	Text *string `json:"text,omitempty"`
 	// iconURL overrides the profile picture the message posts with.
 	// +optional
-	IconURL *URL `json:"iconURL,omitempty"`
+	IconURL *string `json:"iconURL,omitempty"`
 	// iconEmoji overrides the profile picture and icon_url parameter.
 	// +kubebuilder:validation:MinLength=1
 	// +optional
@@ -1365,10 +1365,10 @@ type MattermostAttachmentConfig struct {
 	// authorLink defines optional URL used to hyperlink the author_name.
 	// If no author_name is specified, this field does nothing.
 	// +optional
-	AuthorLink *URL `json:"authorLink,omitempty"`
+	AuthorLink *string `json:"authorLink,omitempty"`
 	// authorIcon defines an optional URL used to display a 16x16 pixel icon beside the author's name.
 	// +optional
-	AuthorIcon *URL `json:"authorIcon,omitempty"`
+	AuthorIcon *string `json:"authorIcon,omitempty"`
 	// title defines an optional title displayed below the author information in the attachment.
 	// +kubebuilder:validation:MinLength=1
 	// +optional
@@ -1376,7 +1376,7 @@ type MattermostAttachmentConfig struct {
 	// titleLink defines an optional URL used to hyperlink the title.
 	// If no title is specified, this field does nothing.
 	// +optional
-	TitleLink *URL `json:"titleLink,omitempty"`
+	TitleLink *string `json:"titleLink,omitempty"`
 	// fields defines a list of fields that are sent with each notification
 	// to be displayed in a table format inside the attachment.
 	// +kubebuilder:validation:MinItems=1
@@ -1387,7 +1387,7 @@ type MattermostAttachmentConfig struct {
 	// (GIF, JPEG, PNG, BMP, or SVG) that is displayed as a 75x75 pixel thumbnail
 	// on the right side of an attachment.
 	// +optional
-	ThumbURL *URL `json:"thumbURL,omitempty"`
+	ThumbURL *string `json:"thumbURL,omitempty"`
 	// footer defines an optional line of text that will be displayed at the bottom of the attachment.
 	// +kubebuilder:validation:MinLength=1
 	// +optional
@@ -1395,11 +1395,11 @@ type MattermostAttachmentConfig struct {
 	// footerIcon defines an optional URL to an image file (GIF, JPEG, PNG, BMP, or SVG)
 	// that is displayed as a 16x16 pixel thumbnail before the footer text.
 	// +optional
-	FooterIcon *URL `json:"footerIcon,omitempty"`
+	FooterIcon *string `json:"footerIcon,omitempty"`
 	// imageURL defines an optional URL to an image file
 	// (GIF, JPEG, PNG, BMP, or SVG) that is displayed inside a message attachment.
 	// +optional
-	ImageURL *URL `json:"imageURL,omitempty"`
+	ImageURL *string `json:"imageURL,omitempty"`
 }
 
 // MattermostField configures information to be displayed in a table format inside the attachment.

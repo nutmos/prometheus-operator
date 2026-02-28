@@ -16,10 +16,6 @@
 
 package v1alpha1
 
-import (
-	monitoringv1alpha1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1alpha1"
-)
-
 // MattermostAttachmentConfigApplyConfiguration represents a declarative configuration of the MattermostAttachmentConfig type for use
 // with apply.
 type MattermostAttachmentConfigApplyConfiguration struct {
@@ -28,15 +24,15 @@ type MattermostAttachmentConfigApplyConfiguration struct {
 	Pretext    *string                             `json:"pretext,omitempty"`
 	Text       *string                             `json:"text,omitempty"`
 	AuthorName *string                             `json:"authorName,omitempty"`
-	AuthorLink *monitoringv1alpha1.URL             `json:"authorLink,omitempty"`
-	AuthorIcon *monitoringv1alpha1.URL             `json:"authorIcon,omitempty"`
+	AuthorLink *string                             `json:"authorLink,omitempty"`
+	AuthorIcon *string                             `json:"authorIcon,omitempty"`
 	Title      *string                             `json:"title,omitempty"`
-	TitleLink  *monitoringv1alpha1.URL             `json:"titleLink,omitempty"`
+	TitleLink  *string                             `json:"titleLink,omitempty"`
 	Fields     []MattermostFieldApplyConfiguration `json:"fields,omitempty"`
-	ThumbURL   *monitoringv1alpha1.URL             `json:"thumbURL,omitempty"`
+	ThumbURL   *string                             `json:"thumbURL,omitempty"`
 	Footer     *string                             `json:"footer,omitempty"`
-	FooterIcon *monitoringv1alpha1.URL             `json:"footerIcon,omitempty"`
-	ImageURL   *monitoringv1alpha1.URL             `json:"imageURL,omitempty"`
+	FooterIcon *string                             `json:"footerIcon,omitempty"`
+	ImageURL   *string                             `json:"imageURL,omitempty"`
 }
 
 // MattermostAttachmentConfigApplyConfiguration constructs a declarative configuration of the MattermostAttachmentConfig type for use with
@@ -88,7 +84,7 @@ func (b *MattermostAttachmentConfigApplyConfiguration) WithAuthorName(value stri
 // WithAuthorLink sets the AuthorLink field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the AuthorLink field is set to the value of the last call.
-func (b *MattermostAttachmentConfigApplyConfiguration) WithAuthorLink(value monitoringv1alpha1.URL) *MattermostAttachmentConfigApplyConfiguration {
+func (b *MattermostAttachmentConfigApplyConfiguration) WithAuthorLink(value string) *MattermostAttachmentConfigApplyConfiguration {
 	b.AuthorLink = &value
 	return b
 }
@@ -96,7 +92,7 @@ func (b *MattermostAttachmentConfigApplyConfiguration) WithAuthorLink(value moni
 // WithAuthorIcon sets the AuthorIcon field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the AuthorIcon field is set to the value of the last call.
-func (b *MattermostAttachmentConfigApplyConfiguration) WithAuthorIcon(value monitoringv1alpha1.URL) *MattermostAttachmentConfigApplyConfiguration {
+func (b *MattermostAttachmentConfigApplyConfiguration) WithAuthorIcon(value string) *MattermostAttachmentConfigApplyConfiguration {
 	b.AuthorIcon = &value
 	return b
 }
@@ -112,7 +108,7 @@ func (b *MattermostAttachmentConfigApplyConfiguration) WithTitle(value string) *
 // WithTitleLink sets the TitleLink field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the TitleLink field is set to the value of the last call.
-func (b *MattermostAttachmentConfigApplyConfiguration) WithTitleLink(value monitoringv1alpha1.URL) *MattermostAttachmentConfigApplyConfiguration {
+func (b *MattermostAttachmentConfigApplyConfiguration) WithTitleLink(value string) *MattermostAttachmentConfigApplyConfiguration {
 	b.TitleLink = &value
 	return b
 }
@@ -133,7 +129,7 @@ func (b *MattermostAttachmentConfigApplyConfiguration) WithFields(values ...*Mat
 // WithThumbURL sets the ThumbURL field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the ThumbURL field is set to the value of the last call.
-func (b *MattermostAttachmentConfigApplyConfiguration) WithThumbURL(value monitoringv1alpha1.URL) *MattermostAttachmentConfigApplyConfiguration {
+func (b *MattermostAttachmentConfigApplyConfiguration) WithThumbURL(value string) *MattermostAttachmentConfigApplyConfiguration {
 	b.ThumbURL = &value
 	return b
 }
@@ -149,7 +145,7 @@ func (b *MattermostAttachmentConfigApplyConfiguration) WithFooter(value string) 
 // WithFooterIcon sets the FooterIcon field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the FooterIcon field is set to the value of the last call.
-func (b *MattermostAttachmentConfigApplyConfiguration) WithFooterIcon(value monitoringv1alpha1.URL) *MattermostAttachmentConfigApplyConfiguration {
+func (b *MattermostAttachmentConfigApplyConfiguration) WithFooterIcon(value string) *MattermostAttachmentConfigApplyConfiguration {
 	b.FooterIcon = &value
 	return b
 }
@@ -157,7 +153,7 @@ func (b *MattermostAttachmentConfigApplyConfiguration) WithFooterIcon(value moni
 // WithImageURL sets the ImageURL field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the ImageURL field is set to the value of the last call.
-func (b *MattermostAttachmentConfigApplyConfiguration) WithImageURL(value monitoringv1alpha1.URL) *MattermostAttachmentConfigApplyConfiguration {
+func (b *MattermostAttachmentConfigApplyConfiguration) WithImageURL(value string) *MattermostAttachmentConfigApplyConfiguration {
 	b.ImageURL = &value
 	return b
 }

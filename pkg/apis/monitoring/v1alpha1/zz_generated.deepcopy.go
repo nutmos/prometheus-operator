@@ -1602,12 +1602,12 @@ func (in *MattermostAttachmentConfig) DeepCopyInto(out *MattermostAttachmentConf
 	}
 	if in.AuthorLink != nil {
 		in, out := &in.AuthorLink, &out.AuthorLink
-		*out = new(URL)
+		*out = new(string)
 		**out = **in
 	}
 	if in.AuthorIcon != nil {
 		in, out := &in.AuthorIcon, &out.AuthorIcon
-		*out = new(URL)
+		*out = new(string)
 		**out = **in
 	}
 	if in.Title != nil {
@@ -1617,7 +1617,7 @@ func (in *MattermostAttachmentConfig) DeepCopyInto(out *MattermostAttachmentConf
 	}
 	if in.TitleLink != nil {
 		in, out := &in.TitleLink, &out.TitleLink
-		*out = new(URL)
+		*out = new(string)
 		**out = **in
 	}
 	if in.Fields != nil {
@@ -1629,7 +1629,7 @@ func (in *MattermostAttachmentConfig) DeepCopyInto(out *MattermostAttachmentConf
 	}
 	if in.ThumbURL != nil {
 		in, out := &in.ThumbURL, &out.ThumbURL
-		*out = new(URL)
+		*out = new(string)
 		**out = **in
 	}
 	if in.Footer != nil {
@@ -1639,12 +1639,12 @@ func (in *MattermostAttachmentConfig) DeepCopyInto(out *MattermostAttachmentConf
 	}
 	if in.FooterIcon != nil {
 		in, out := &in.FooterIcon, &out.FooterIcon
-		*out = new(URL)
+		*out = new(string)
 		**out = **in
 	}
 	if in.ImageURL != nil {
 		in, out := &in.ImageURL, &out.ImageURL
-		*out = new(URL)
+		*out = new(string)
 		**out = **in
 	}
 }
@@ -1689,7 +1689,7 @@ func (in *MattermostConfig) DeepCopyInto(out *MattermostConfig) {
 	}
 	if in.IconURL != nil {
 		in, out := &in.IconURL, &out.IconURL
-		*out = new(URL)
+		*out = new(string)
 		**out = **in
 	}
 	if in.IconEmoji != nil {

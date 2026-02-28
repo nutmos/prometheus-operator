@@ -1100,12 +1100,10 @@
                               properties: {
                                 authorIcon: {
                                   description: "authorIcon defines an optional URL used to display a 16x16 pixel icon beside the author's name.",
-                                  pattern: '^https?://.+$',
                                   type: 'string',
                                 },
                                 authorLink: {
                                   description: 'authorLink defines optional URL used to hyperlink the author_name.\nIf no author_name is specified, this field does nothing.',
-                                  pattern: '^https?://.+$',
                                   type: 'string',
                                 },
                                 authorName: {
@@ -1160,12 +1158,10 @@
                                 },
                                 footerIcon: {
                                   description: 'footerIcon defines an optional URL to an image file (GIF, JPEG, PNG, BMP, or SVG)\nthat is displayed as a 16x16 pixel thumbnail before the footer text.',
-                                  pattern: '^https?://.+$',
                                   type: 'string',
                                 },
                                 imageURL: {
                                   description: 'imageURL defines an optional URL to an image file\n(GIF, JPEG, PNG, BMP, or SVG) that is displayed inside a message attachment.',
-                                  pattern: '^https?://.+$',
                                   type: 'string',
                                 },
                                 pretext: {
@@ -1180,7 +1176,6 @@
                                 },
                                 thumbURL: {
                                   description: 'thumbURL defines an optional URL to an image file\n(GIF, JPEG, PNG, BMP, or SVG) that is displayed as a 75x75 pixel thumbnail\non the right side of an attachment.',
-                                  pattern: '^https?://.+$',
                                   type: 'string',
                                 },
                                 title: {
@@ -1190,7 +1185,6 @@
                                 },
                                 titleLink: {
                                   description: 'titleLink defines an optional URL used to hyperlink the title.\nIf no title is specified, this field does nothing.',
-                                  pattern: '^https?://.+$',
                                   type: 'string',
                                 },
                               },
@@ -1849,7 +1843,6 @@
                           },
                           iconURL: {
                             description: 'iconURL overrides the profile picture the message posts with.',
-                            pattern: '^https?://.+$',
                             type: 'string',
                           },
                           priority: {

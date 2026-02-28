@@ -17,7 +17,6 @@
 package v1beta1
 
 import (
-	monitoringv1beta1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1beta1"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -29,7 +28,7 @@ type MattermostConfigApplyConfiguration struct {
 	Channel      *string                                        `json:"channel,omitempty"`
 	Username     *string                                        `json:"username,omitempty"`
 	Text         *string                                        `json:"text,omitempty"`
-	IconURL      *monitoringv1beta1.URL                         `json:"iconURL,omitempty"`
+	IconURL      *string                                        `json:"iconURL,omitempty"`
 	IconEmoji    *string                                        `json:"iconEmoji,omitempty"`
 	Attachments  []MattermostAttachmentConfigApplyConfiguration `json:"attachments,omitempty"`
 	Props        *MattermostPropsConfigApplyConfiguration       `json:"props,omitempty"`
@@ -86,7 +85,7 @@ func (b *MattermostConfigApplyConfiguration) WithText(value string) *MattermostC
 // WithIconURL sets the IconURL field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the IconURL field is set to the value of the last call.
-func (b *MattermostConfigApplyConfiguration) WithIconURL(value monitoringv1beta1.URL) *MattermostConfigApplyConfiguration {
+func (b *MattermostConfigApplyConfiguration) WithIconURL(value string) *MattermostConfigApplyConfiguration {
 	b.IconURL = &value
 	return b
 }

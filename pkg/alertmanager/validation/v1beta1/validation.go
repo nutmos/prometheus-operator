@@ -423,32 +423,32 @@ func validateMSTeamsV2Configs(configs []monitoringv1beta1.MSTeamsV2Config) error
 func validateMattermostConfigs(configs []monitoringv1beta1.MattermostConfig) error {
 	for i, config := range configs {
 
-		if err := validation.ValidateURLPtr((*string)(config.IconURL)); err != nil {
+		if err := validation.ValidateTemplateURLPtr(config.IconURL); err != nil {
 			return fmt.Errorf("[%d]: iconURL: %w", i, err)
 		}
 
 		for j, att := range config.Attachments {
-			if err := validation.ValidateURLPtr((*string)(att.AuthorIcon)); err != nil {
+			if err := validation.ValidateTemplateURLPtr(att.AuthorIcon); err != nil {
 				return fmt.Errorf("[%d]: invalid attachments [%d]: authorIcon: %w", i, j, err)
 			}
 
-			if err := validation.ValidateURLPtr((*string)(att.AuthorLink)); err != nil {
+			if err := validation.ValidateTemplateURLPtr(att.AuthorLink); err != nil {
 				return fmt.Errorf("[%d]: invalid attachments [%d]: authorLink: %w", i, j, err)
 			}
 
-			if err := validation.ValidateURLPtr((*string)(att.TitleLink)); err != nil {
+			if err := validation.ValidateTemplateURLPtr(att.TitleLink); err != nil {
 				return fmt.Errorf("[%d]: invalid attachments [%d]: titleLink: %w", i, j, err)
 			}
 
-			if err := validation.ValidateURLPtr((*string)(att.ThumbURL)); err != nil {
+			if err := validation.ValidateTemplateURLPtr(att.ThumbURL); err != nil {
 				return fmt.Errorf("[%d]: invalid attachments [%d]: thumbURL: %w", i, j, err)
 			}
 
-			if err := validation.ValidateURLPtr((*string)(att.FooterIcon)); err != nil {
+			if err := validation.ValidateTemplateURLPtr(att.FooterIcon); err != nil {
 				return fmt.Errorf("[%d]: invalid attachments [%d]: footerIcon: %w", i, j, err)
 			}
 
-			if err := validation.ValidateURLPtr((*string)(att.ImageURL)); err != nil {
+			if err := validation.ValidateTemplateURLPtr(att.ImageURL); err != nil {
 				return fmt.Errorf("[%d]: invalid attachments [%d]: imageURL: %w", i, j, err)
 			}
 		}
