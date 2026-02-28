@@ -16,6 +16,7 @@ package alertmanager
 
 import (
 	"github.com/prometheus/alertmanager/config"
+	commoncfg "github.com/prometheus/common/config"
 	"github.com/prometheus/common/model"
 )
 
@@ -49,9 +50,11 @@ type globalConfig struct {
 	SMTPAuthPassword      string          `yaml:"smtp_auth_password,omitempty"`
 	SMTPAuthPasswordFile  string          `yaml:"smtp_auth_password_file,omitempty"`
 	SMTPAuthSecret        string          `yaml:"smtp_auth_secret,omitempty"`
+	SMTPAuthSecretFile    string          `yaml:"smtp_auth_secret_file,omitempty"`
 	SMTPAuthIdentity      string          `yaml:"smtp_auth_identity,omitempty"`
 	SMTPRequireTLS        *bool           `yaml:"smtp_require_tls,omitempty"`
 	SMTPTLSConfig         *tlsConfig      `yaml:"smtp_tls_config,omitempty"`
+	SMTPForceImplicitTLS  *bool           `yaml:"smtp_force_implicit_tls,omitempty"`
 	SlackAPIURL           *config.URL     `yaml:"slack_api_url,omitempty"`
 	SlackAPIURLFile       string          `yaml:"slack_api_url_file,omitempty"`
 	PagerdutyURL          *config.URL     `yaml:"pagerduty_url,omitempty"`
@@ -67,6 +70,8 @@ type globalConfig struct {
 	VictorOpsAPIKey       string          `yaml:"victorops_api_key,omitempty"`
 	VictorOpsAPIKeyFile   string          `yaml:"victorops_api_key_file,omitempty"`
 	TelegramAPIURL        *config.URL     `yaml:"telegram_api_url,omitempty"`
+	TelegramBotToken      string          `yaml:"telegram_bot_token,omitempty"`
+	TelegramBotTokenFile  string          `yaml:"telegram_bot_token_file,omitempty"`
 	WebexAPIURL           *config.URL     `yaml:"webex_api_url,omitempty"`
 	JiraAPIURL            *config.URL     `yaml:"jira_api_url,omitempty"`
 	RocketChatAPIURL      *config.URL     `yaml:"rocketchat_api_url,omitempty"`
@@ -74,6 +79,10 @@ type globalConfig struct {
 	RocketChatTokenFile   string          `yaml:"rocketchat_token_file,omitempty"`
 	RocketChatTokenID     string          `yaml:"rocketchat_token_id,omitempty"`
 	RocketChatTokenIDFile string          `yaml:"rocketchat_token_id_file,omitempty"`
+	SlackAppToken         string          `yaml:"slack_app_token,omitempty"`
+	SlackAppTokenFile     string          `yaml:"slack_app_token_file,omitempty"`
+	SlackAppURL           *config.URL     `yaml:"slack_app_url,omitempty"`
+	WeChatAPISecretFile   string          `yaml:"wechat_api_secret_file,omitempty"`
 }
 
 type route struct {
@@ -120,7 +129,7 @@ type receiver struct {
 	JiraConfigs       []*jiraConfig       `yaml:"jira_configs,omitempty"`
 	RocketChatConfigs []*rocketChatConfig `yaml:"rocketchat_configs,omitempty"`
 	MattermostConfigs []*mattermostConfig `yaml:"mattermost_configs,omitempty"`
-	IncidentioConfigs []*incidentioConfig `yaml:"incidentio_config,omitempty"`
+	IncidentioConfigs []*incidentioConfig `yaml:"incidentio_configs,omitempty"`
 }
 
 type webhookConfig struct {
@@ -143,7 +152,7 @@ type pagerdutyConfig struct {
 	Client         string            `yaml:"client,omitempty"`
 	ClientURL      string            `yaml:"client_url,omitempty"`
 	Description    string            `yaml:"description,omitempty"`
-	Details        map[string]string `yaml:"details,omitempty"`
+	Details        map[string]any    `yaml:"details,omitempty"`
 	Images         []pagerdutyImage  `yaml:"images,omitempty"`
 	Links          []pagerdutyLink   `yaml:"links,omitempty"`
 	Severity       string            `yaml:"severity,omitempty"`
@@ -185,6 +194,7 @@ type weChatConfig struct {
 	Message       string            `yaml:"message,omitempty"`
 	MessageType   string            `yaml:"message_type,omitempty"`
 	HTTPConfig    *httpClientConfig `yaml:"http_config,omitempty"`
+	APISecretFile string            `yaml:"api_secret_file,omitempty"`
 }
 
 type slackConfig struct {
@@ -192,6 +202,9 @@ type slackConfig struct {
 	HTTPConfig    *httpClientConfig `yaml:"http_config,omitempty"`
 	APIURL        string            `yaml:"api_url,omitempty"`
 	APIURLFile    string            `yaml:"api_url_file,omitempty"`
+	AppToken      string            `yaml:"app_token,omitempty"`
+	AppTokenFile  string            `yaml:"app_token_file,omitempty"`
+	AppURL        string            `yaml:"app_url,omitempty"`
 	Channel       string            `yaml:"channel,omitempty"`
 	Username      string            `yaml:"username,omitempty"`
 	Color         string            `yaml:"color,omitempty"`
@@ -212,19 +225,20 @@ type slackConfig struct {
 	MrkdwnIn      []string          `yaml:"mrkdwn_in,omitempty"`
 	Actions       []slackAction     `yaml:"actions,omitempty"`
 	Timeout       *model.Duration   `yaml:"timeout,omitempty"`
+	MessageText   string            `yaml:"message_text,omitempty"`
 }
 
 type httpClientConfig struct {
-	Authorization   *authorization `yaml:"authorization,omitempty"`
-	BasicAuth       *basicAuth     `yaml:"basic_auth,omitempty"`
-	OAuth2          *oauth2        `yaml:"oauth2,omitempty"`
-	BearerToken     string         `yaml:"bearer_token,omitempty"`
-	BearerTokenFile string         `yaml:"bearer_token_file,omitempty"`
-	TLSConfig       *tlsConfig     `yaml:"tls_config,omitempty"`
-	FollowRedirects *bool          `yaml:"follow_redirects,omitempty"`
-	EnableHTTP2     *bool          `yaml:"enable_http2,omitempty"`
-
-	proxyConfig `yaml:",inline"`
+	Authorization   *authorization     `yaml:"authorization,omitempty"`
+	BasicAuth       *basicAuth         `yaml:"basic_auth,omitempty"`
+	OAuth2          *oauth2            `yaml:"oauth2,omitempty"`
+	BearerToken     string             `yaml:"bearer_token,omitempty"`
+	BearerTokenFile string             `yaml:"bearer_token_file,omitempty"`
+	TLSConfig       *tlsConfig         `yaml:"tls_config,omitempty"`
+	FollowRedirects *bool              `yaml:"follow_redirects,omitempty"`
+	EnableHTTP2     *bool              `yaml:"enable_http2,omitempty"`
+	HTTPHeaders     *commoncfg.Headers `yaml:"http_headers,omitempty"`
+	proxyConfig     `yaml:",inline"`
 }
 
 type proxyConfig struct {
@@ -319,12 +333,14 @@ type emailConfig struct {
 	AuthPassword     string            `yaml:"auth_password,omitempty"`
 	AuthPasswordFile string            `yaml:"auth_password_file,omitempty"`
 	AuthSecret       string            `yaml:"auth_secret,omitempty"`
+	AuthSecretFile   string            `yaml:"auth_secret_file,omitempty"`
 	AuthIdentity     string            `yaml:"auth_identity,omitempty"`
 	Headers          map[string]string `yaml:"headers,omitempty"`
 	HTML             *string           `yaml:"html,omitempty"`
 	Text             *string           `yaml:"text,omitempty"`
 	RequireTLS       *bool             `yaml:"require_tls,omitempty"`
 	TLSConfig        *tlsConfig        `yaml:"tls_config,omitempty"`
+	ForceImplicitTLS *bool             `yaml:"force_implicit_tls,omitempty"`
 }
 
 type pushoverConfig struct {
@@ -367,6 +383,7 @@ type telegramConfig struct {
 	BotToken             string            `yaml:"bot_token,omitempty"`
 	BotTokenFile         string            `yaml:"bot_token_file,omitempty"`
 	ChatID               int64             `yaml:"chat_id,omitempty"`
+	ChatIDFile           string            `yaml:"chat_id_file,omitempty"`
 	MessageThreadID      int               `yaml:"message_thread_id,omitempty"`
 	Message              string            `yaml:"message,omitempty"`
 	DisableNotifications bool              `yaml:"disable_notifications,omitempty"`
@@ -448,6 +465,7 @@ type jiraConfig struct {
 	WontFixResolution string            `yaml:"wont_fix_resolution,omitempty"`
 	ReopenDuration    model.Duration    `yaml:"reopen_duration,omitempty"`
 	Fields            map[string]any    `yaml:"fields,omitempty"`
+	APIType           string            `yaml:"api_type,omitempty"`
 }
 
 type rocketchatAttachmentField struct {
@@ -498,7 +516,7 @@ type mattermostConfig struct {
 	WebhookURLFile string                        `yaml:"webhook_url_file,omitempty" json:"webhook_url_file,omitempty"`
 	Channel        string                        `yaml:"channel,omitempty" json:"channel,omitempty"`
 	Username       string                        `yaml:"username,omitempty" json:"username,omitempty"`
-	Text           string                        `yaml:"text" json:"text"`
+	Text           string                        `yaml:"text,omitempty" json:"text,omitempty"`
 	IconURL        string                        `yaml:"icon_url,omitempty" json:"icon_url,omitempty"`
 	IconEmoji      string                        `yaml:"icon_emoji,omitempty" json:"icon_emoji,omitempty"`
 	Attachments    []*mattermostAttachmentConfig `yaml:"attachments,omitempty" json:"attachments,omitempty"`

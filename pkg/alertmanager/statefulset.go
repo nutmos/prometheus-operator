@@ -34,7 +34,7 @@ import (
 
 	"github.com/prometheus-operator/prometheus-operator/pkg/alertmanager/clustertlsconfig"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
-	"github.com/prometheus-operator/prometheus-operator/pkg/k8sutil"
+	"github.com/prometheus-operator/prometheus-operator/pkg/k8s"
 	"github.com/prometheus-operator/prometheus-operator/pkg/operator"
 	"github.com/prometheus-operator/prometheus-operator/pkg/webconfig"
 )
@@ -303,8 +303,14 @@ func makeStatefulSetSpec(logger *slog.Logger, a *monitoringv1.Alertmanager, conf
 
 	}
 
-	if version.GTE(semver.MustParse("0.30.0")) && a.Spec.DispatchStartDelay != nil {
-		amArgs = append(amArgs, monitoringv1.Argument{Name: "dispatch.start-delay", Value: string(*a.Spec.DispatchStartDelay)})
+	if version.GTE(semver.MustParse("0.30.0")) && a.Spec.MinReadySeconds != nil {
+		startDelayArg := monitoringv1.Argument{
+			Name:  "dispatch.start-delay",
+			Value: fmt.Sprintf("%ds", *a.Spec.MinReadySeconds),
+		}
+		if i := operator.ArgumentsIntersection([]monitoringv1.Argument{startDelayArg}, a.Spec.AdditionalArgs); len(i) == 0 {
+			amArgs = append(amArgs, startDelayArg)
+		}
 	}
 
 	if a.Spec.LogLevel != "" && a.Spec.LogLevel != "info" {
@@ -577,7 +583,7 @@ func makeStatefulSetSpec(logger *slog.Logger, a *monitoringv1.Alertmanager, conf
 		watchedDirectories = append(watchedDirectories, alertmanagerTemplatesDir)
 	}
 
-	rn := k8sutil.NewResourceNamerWithPrefix("secret")
+	rn := k8s.NewResourceNamerWithPrefix("secret")
 	for _, s := range a.Spec.Secrets {
 		name, err := rn.DNS1123Label(s)
 		if err != nil {
@@ -603,7 +609,7 @@ func makeStatefulSetSpec(logger *slog.Logger, a *monitoringv1.Alertmanager, conf
 		watchedDirectories = append(watchedDirectories, mountPath)
 	}
 
-	rn = k8sutil.NewResourceNamerWithPrefix("configmap")
+	rn = k8s.NewResourceNamerWithPrefix("configmap")
 	for _, c := range a.Spec.ConfigMaps {
 		name, err := rn.DNS1123Label(c)
 		if err != nil {
@@ -745,7 +751,7 @@ func makeStatefulSetSpec(logger *slog.Logger, a *monitoringv1.Alertmanager, conf
 		),
 	}
 
-	containers, err := k8sutil.MergePatchContainers(defaultContainers, a.Spec.Containers)
+	containers, err := k8s.MergePatchContainers(defaultContainers, a.Spec.Containers)
 	if err != nil {
 		return nil, fmt.Errorf("failed to merge containers spec: %w", err)
 	}
@@ -766,7 +772,7 @@ func makeStatefulSetSpec(logger *slog.Logger, a *monitoringv1.Alertmanager, conf
 		),
 	)
 
-	initContainers, err := k8sutil.MergePatchContainers(operatorInitContainers, a.Spec.InitContainers)
+	initContainers, err := k8s.MergePatchContainers(operatorInitContainers, a.Spec.InitContainers)
 	if err != nil {
 		return nil, fmt.Errorf("failed to merge init containers spec: %w", err)
 	}
@@ -782,9 +788,7 @@ func makeStatefulSetSpec(logger *slog.Logger, a *monitoringv1.Alertmanager, conf
 		Replicas:            a.Spec.Replicas,
 		MinReadySeconds:     ptr.Deref(a.Spec.MinReadySeconds, 0),
 		PodManagementPolicy: appsv1.PodManagementPolicyType(podManagementPolicy),
-		UpdateStrategy: appsv1.StatefulSetUpdateStrategy{
-			Type: appsv1.RollingUpdateStatefulSetStrategyType,
-		},
+		UpdateStrategy:      operator.UpdateStrategyForStatefulSet(a.Spec.UpdateStrategy),
 		Selector: &metav1.LabelSelector{
 			MatchLabels: finalSelectorLabels,
 		},
@@ -809,12 +813,16 @@ func makeStatefulSetSpec(logger *slog.Logger, a *monitoringv1.Alertmanager, conf
 				HostAliases:                   operator.MakeHostAliases(a.Spec.HostAliases),
 				EnableServiceLinks:            a.Spec.EnableServiceLinks,
 				HostUsers:                     a.Spec.HostUsers,
+				HostNetwork:                   a.Spec.HostNetwork,
 			},
 		},
 	}
 
-	k8sutil.UpdateDNSPolicy(&spec.Template.Spec, a.Spec.DNSPolicy)
-	k8sutil.UpdateDNSConfig(&spec.Template.Spec, a.Spec.DNSConfig)
+	if a.Spec.HostNetwork {
+		spec.Template.Spec.DNSPolicy = v1.DNSClusterFirstWithHostNet
+	}
+	k8s.UpdateDNSPolicy(&spec.Template.Spec, a.Spec.DNSPolicy)
+	k8s.UpdateDNSConfig(&spec.Template.Spec, a.Spec.DNSConfig)
 	return &spec, nil
 }
 

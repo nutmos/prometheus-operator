@@ -619,6 +619,23 @@ which incurs a service outage.</p>
 </tr>
 <tr>
 <td>
+<code>updateStrategy</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategy">
+StatefulSetUpdateStrategy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>updateStrategy indicates the strategy that will be employed to update
+Pods in the StatefulSet when a revision is made to statefulset&rsquo;s Pod
+Template.</p>
+<p>The default strategy is RollingUpdate.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>containers</code><br/>
 <em>
 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#container-v1-core">
@@ -832,9 +849,16 @@ int32
 </td>
 <td>
 <em>(Optional)</em>
-<p>minReadySeconds defines the minimum number of seconds for which a newly created pod should be ready
-without any of its container crashing for it to be considered available.</p>
+<p>minReadySeconds defines the minimum number of seconds for which a newly
+created pod should be ready without any of its container crashing for it
+to be considered available.</p>
 <p>If unset, pods will be considered available as soon as they are ready.</p>
+<p>When the Alertmanager version is greater than or equal to v0.30.0, the
+duration is also used to delay the first flush of the aggregation
+groups. This delay helps ensuring that all alerts have been resent by
+the Prometheus instances to Alertmanager after a roll-out. It is
+possible to override this behavior passing a custom value via
+<code>.spec.additionalArgs</code>.</p>
 </td>
 </tr>
 <tr>
@@ -849,6 +873,23 @@ without any of its container crashing for it to be considered available.</p>
 <td>
 <em>(Optional)</em>
 <p>hostAliases Pods configuration</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>hostNetwork</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>hostNetwork controls whether the pod may use the node network namespace.</p>
+<p>Make sure to understand the security implications if you want to enable
+it (<a href="https://kubernetes.io/docs/concepts/configuration/overview/">https://kubernetes.io/docs/concepts/configuration/overview/</a>).</p>
+<p>When hostNetwork is enabled, this will set the DNS policy to
+<code>ClusterFirstWithHostNet</code> automatically (unless <code>.spec.dnsPolicy</code> is set
+to a different value).</p>
 </td>
 </tr>
 <tr>
@@ -877,22 +918,6 @@ AlertmanagerLimitsSpec
 <td>
 <em>(Optional)</em>
 <p>limits defines the limits command line flags when starting Alertmanager.</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>dispatchStartDelay</code><br/>
-<em>
-<a href="#monitoring.coreos.com/v1.GoDuration">
-GoDuration
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>dispatchStartDelay defines the delay duration of the aggregation groups&rsquo; first flush.
-The delay helps ensuring that all alerts have been resent by the Prometheus instances to Alertmanager after a roll-out.</p>
-<p>It requires Alertmanager &gt;= 0.30.0.</p>
 </td>
 </tr>
 <tr>
@@ -2834,6 +2859,23 @@ scaling up and down.</p>
 a rollout.</p>
 <p>Note that updating this value implies the recreation of the StatefulSet
 which incurs a service outage.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>updateStrategy</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategy">
+StatefulSetUpdateStrategy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>updateStrategy indicates the strategy that will be employed to update
+Pods in the StatefulSet when a revision is made to statefulset&rsquo;s Pod
+Template.</p>
+<p>The default strategy is RollingUpdate.</p>
 </td>
 </tr>
 <tr>
@@ -5031,6 +5073,23 @@ which incurs a service outage.</p>
 </tr>
 <tr>
 <td>
+<code>updateStrategy</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategy">
+StatefulSetUpdateStrategy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>updateStrategy indicates the strategy that will be employed to update
+Pods in the StatefulSet when a revision is made to statefulset&rsquo;s Pod
+Template.</p>
+<p>The default strategy is RollingUpdate.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>queryEndpoints</code><br/>
 <em>
 []string
@@ -6486,7 +6545,7 @@ GlobalWebexConfig
 </td>
 <td>
 <em>(Optional)</em>
-<p>webex defines the default configuration for Jira.</p>
+<p>webex defines the default configuration for Webex.</p>
 </td>
 </tr>
 <tr>
@@ -7089,6 +7148,23 @@ which incurs a service outage.</p>
 </tr>
 <tr>
 <td>
+<code>updateStrategy</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategy">
+StatefulSetUpdateStrategy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>updateStrategy indicates the strategy that will be employed to update
+Pods in the StatefulSet when a revision is made to statefulset&rsquo;s Pod
+Template.</p>
+<p>The default strategy is RollingUpdate.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>containers</code><br/>
 <em>
 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#container-v1-core">
@@ -7302,9 +7378,16 @@ int32
 </td>
 <td>
 <em>(Optional)</em>
-<p>minReadySeconds defines the minimum number of seconds for which a newly created pod should be ready
-without any of its container crashing for it to be considered available.</p>
+<p>minReadySeconds defines the minimum number of seconds for which a newly
+created pod should be ready without any of its container crashing for it
+to be considered available.</p>
 <p>If unset, pods will be considered available as soon as they are ready.</p>
+<p>When the Alertmanager version is greater than or equal to v0.30.0, the
+duration is also used to delay the first flush of the aggregation
+groups. This delay helps ensuring that all alerts have been resent by
+the Prometheus instances to Alertmanager after a roll-out. It is
+possible to override this behavior passing a custom value via
+<code>.spec.additionalArgs</code>.</p>
 </td>
 </tr>
 <tr>
@@ -7319,6 +7402,23 @@ without any of its container crashing for it to be considered available.</p>
 <td>
 <em>(Optional)</em>
 <p>hostAliases Pods configuration</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>hostNetwork</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>hostNetwork controls whether the pod may use the node network namespace.</p>
+<p>Make sure to understand the security implications if you want to enable
+it (<a href="https://kubernetes.io/docs/concepts/configuration/overview/">https://kubernetes.io/docs/concepts/configuration/overview/</a>).</p>
+<p>When hostNetwork is enabled, this will set the DNS policy to
+<code>ClusterFirstWithHostNet</code> automatically (unless <code>.spec.dnsPolicy</code> is set
+to a different value).</p>
 </td>
 </tr>
 <tr>
@@ -7347,22 +7447,6 @@ AlertmanagerLimitsSpec
 <td>
 <em>(Optional)</em>
 <p>limits defines the limits command line flags when starting Alertmanager.</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>dispatchStartDelay</code><br/>
-<em>
-<a href="#monitoring.coreos.com/v1.GoDuration">
-GoDuration
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>dispatchStartDelay defines the delay duration of the aggregation groups&rsquo; first flush.
-The delay helps ensuring that all alerts have been resent by the Prometheus instances to Alertmanager after a roll-out.</p>
-<p>It requires Alertmanager &gt;= 0.30.0.</p>
 </td>
 </tr>
 <tr>
@@ -7868,7 +7952,7 @@ ManagedIdentity
 <td>
 <em>(Optional)</em>
 <p>managedIdentity defines the Azure User-assigned Managed identity.
-Cannot be set at the same time as <code>oauth</code> or <code>sdk</code>.</p>
+Cannot be set at the same time as <code>oauth</code>, <code>sdk</code> or <code>workloadIdentity</code>.</p>
 </td>
 </tr>
 <tr>
@@ -7883,7 +7967,7 @@ AzureOAuth
 <td>
 <em>(Optional)</em>
 <p>oauth defines the oauth config that is being used to authenticate.
-Cannot be set at the same time as <code>managedIdentity</code> or <code>sdk</code>.</p>
+Cannot be set at the same time as <code>managedIdentity</code>, <code>sdk</code> or <code>workloadIdentity</code>.</p>
 <p>It requires Prometheus &gt;= v2.48.0 or Thanos &gt;= v0.31.0.</p>
 </td>
 </tr>
@@ -7900,8 +7984,37 @@ AzureSDK
 <em>(Optional)</em>
 <p>sdk defines the Azure SDK config that is being used to authenticate.
 See <a href="https://learn.microsoft.com/en-us/azure/developer/go/azure-sdk-authentication">https://learn.microsoft.com/en-us/azure/developer/go/azure-sdk-authentication</a>
-Cannot be set at the same time as <code>oauth</code> or <code>managedIdentity</code>.</p>
+Cannot be set at the same time as <code>oauth</code>, <code>managedIdentity</code> or <code>workloadIdentity</code>.</p>
 <p>It requires Prometheus &gt;= v2.52.0 or Thanos &gt;= v0.36.0.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>workloadIdentity</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.AzureWorkloadIdentity">
+AzureWorkloadIdentity
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>workloadIdentity defines the Azure Workload Identity authentication.
+Cannot be set at the same time as <code>oauth</code>, <code>managedIdentity</code>, or <code>sdk</code>.</p>
+<p>It requires Prometheus &gt;= 3.7.0. Currently not supported by Thanos.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>scope</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>scope is the custom OAuth 2.0 scope to request when acquiring tokens.
+It requires Prometheus &gt;= 3.9.0. Currently not supported by Thanos.</p>
 </td>
 </tr>
 </tbody>
@@ -7989,6 +8102,46 @@ string
 </tr>
 </tbody>
 </table>
+<h3 id="monitoring.coreos.com/v1.AzureWorkloadIdentity">AzureWorkloadIdentity
+</h3>
+<p>
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.AzureAD">AzureAD</a>)
+</p>
+<div>
+<p>AzureWorkloadIdentity defines the Azure Workload Identity authentication configuration.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>clientId</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<p>clientId is the clientID of the Azure Active Directory application.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>tenantId</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<p>tenantId is the tenant ID of the Azure Active Directory application.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="monitoring.coreos.com/v1.BasicAuth">BasicAuth
 </h3>
 <p>
@@ -8040,7 +8193,7 @@ authentication.</p>
 <h3 id="monitoring.coreos.com/v1.ByteSize">ByteSize
 (<code>string</code> alias)</h3>
 <p>
-(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.AlertmanagerLimitsSpec">AlertmanagerLimitsSpec</a>, <a href="#monitoring.coreos.com/v1.CommonPrometheusFields">CommonPrometheusFields</a>, <a href="#monitoring.coreos.com/v1.PodMonitorSpec">PodMonitorSpec</a>, <a href="#monitoring.coreos.com/v1.PrometheusSpec">PrometheusSpec</a>, <a href="#monitoring.coreos.com/v1.ServiceMonitorSpec">ServiceMonitorSpec</a>)
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.AlertmanagerLimitsSpec">AlertmanagerLimitsSpec</a>, <a href="#monitoring.coreos.com/v1.CommonPrometheusFields">CommonPrometheusFields</a>, <a href="#monitoring.coreos.com/v1.PodMonitorSpec">PodMonitorSpec</a>, <a href="#monitoring.coreos.com/v1.PrometheusSpec">PrometheusSpec</a>, <a href="#monitoring.coreos.com/v1.ServiceMonitorSpec">ServiceMonitorSpec</a>, <a href="#monitoring.coreos.com/v1alpha1.ScrapeConfigSpec">ScrapeConfigSpec</a>)
 </p>
 <div>
 <p>ByteSize is a valid memory size type based on powers-of-2, so 1KB is 1024B.
@@ -8931,6 +9084,23 @@ scaling up and down.</p>
 a rollout.</p>
 <p>Note that updating this value implies the recreation of the StatefulSet
 which incurs a service outage.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>updateStrategy</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategy">
+StatefulSetUpdateStrategy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>updateStrategy indicates the strategy that will be employed to update
+Pods in the StatefulSet when a revision is made to statefulset&rsquo;s Pod
+Template.</p>
+<p>The default strategy is RollingUpdate.</p>
 </td>
 </tr>
 <tr>
@@ -11257,6 +11427,22 @@ SafeTLSConfig
 <p>tlsConfig defines the default TLS configuration for SMTP receivers</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>forceImplicitTLS</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>forceImplicitTLS defines whether to force use of implicit TLS (direct TLS connection) for better security.
+true: force use of implicit TLS (direct TLS connection on any port)
+false: force disable implicit TLS (use explicit TLS/STARTTLS if required)
+nil (default): auto-detect based on port (465=implicit, other=explicit) for backward compatibility
+It requires Alertmanager &gt;= v0.31.0.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="monitoring.coreos.com/v1.GlobalTelegramConfig">GlobalTelegramConfig
@@ -12543,7 +12729,7 @@ It requires Prometheus &gt;= v3.0.0.</p>
 <h3 id="monitoring.coreos.com/v1.NonEmptyDuration">NonEmptyDuration
 (<code>string</code> alias)</h3>
 <p>
-(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.Rule">Rule</a>)
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.Rule">Rule</a>, <a href="#monitoring.coreos.com/v1alpha1.Route">Route</a>, <a href="#monitoring.coreos.com/v1beta1.Route">Route</a>)
 </p>
 <div>
 <p>NonEmptyDuration is a valid time duration that can be parsed by Prometheus model.ParseDuration() function.
@@ -15442,6 +15628,23 @@ which incurs a service outage.</p>
 </tr>
 <tr>
 <td>
+<code>updateStrategy</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategy">
+StatefulSetUpdateStrategy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>updateStrategy indicates the strategy that will be employed to update
+Pods in the StatefulSet when a revision is made to statefulset&rsquo;s Pod
+Template.</p>
+<p>The default strategy is RollingUpdate.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>enableServiceLinks</code><br/>
 <em>
 bool
@@ -17991,6 +18194,45 @@ Duration
 </tr>
 </tbody>
 </table>
+<h3 id="monitoring.coreos.com/v1.RollingUpdateStatefulSetStrategy">RollingUpdateStatefulSetStrategy
+</h3>
+<p>
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategy">StatefulSetUpdateStrategy</a>)
+</p>
+<div>
+<p>RollingUpdateStatefulSetStrategy is used to communicate parameter for the RollingUpdate strategy.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>maxUnavailable</code><br/>
+<em>
+<a href="https://pkg.go.dev/k8s.io/apimachinery/pkg/util/intstr#IntOrString">
+k8s.io/apimachinery/pkg/util/intstr.IntOrString
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>maxUnavailable is the maximum number of pods that can be unavailable
+during the update. The value can be an absolute number (ex: 5) or a
+percentage of desired pods (ex: 10%). Absolute number is calculated from
+percentage by rounding up. This can not be 0.  Defaults to 1. This field
+is alpha-level and is only honored by servers that enable the
+MaxUnavailableStatefulSet feature. The field applies to all pods in the
+range 0 to Replicas-1.  That means if there is any unavailable pod in
+the range 0 to Replicas-1, it will be counted towards MaxUnavailable.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="monitoring.coreos.com/v1.Rule">Rule
 </h3>
 <p>
@@ -19372,6 +19614,87 @@ It requires Prometheus &gt;= v2.54.0.</p>
 </tr>
 </tbody>
 </table>
+<h3 id="monitoring.coreos.com/v1.StatefulSetUpdateStrategy">StatefulSetUpdateStrategy
+</h3>
+<p>
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.AlertmanagerSpec">AlertmanagerSpec</a>, <a href="#monitoring.coreos.com/v1.CommonPrometheusFields">CommonPrometheusFields</a>, <a href="#monitoring.coreos.com/v1.ThanosRulerSpec">ThanosRulerSpec</a>)
+</p>
+<div>
+<p>StatefulSetUpdateStrategy indicates the strategy used when updating the
+StatefulSet. It includes any additional parameters necessary to perform the
+update for the indicated strategy.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>type</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategyType">
+StatefulSetUpdateStrategyType
+</a>
+</em>
+</td>
+<td>
+<p>type indicates the type of the StatefulSetUpdateStrategy.</p>
+<p>Default is RollingUpdate.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>rollingUpdate</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.RollingUpdateStatefulSetStrategy">
+RollingUpdateStatefulSetStrategy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>rollingUpdate is used to communicate parameters when type is RollingUpdate.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="monitoring.coreos.com/v1.StatefulSetUpdateStrategyType">StatefulSetUpdateStrategyType
+(<code>string</code> alias)</h3>
+<p>
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategy">StatefulSetUpdateStrategy</a>)
+</p>
+<div>
+<p>StatefulSetUpdateStrategyType is a string enumeration type that enumerates
+all possible update strategies for the StatefulSet pods.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr><td><p>&#34;OnDelete&#34;</p></td>
+<td><p>OnDeleteStatefulSetStrategyType triggers the legacy behavior. Version
+tracking and ordered rolling restarts are disabled. Pods are recreated
+from the StatefulSetSpec when they are manually deleted. When a scale
+operation is performed with this strategy, new Pods will be created from
+the the specification version indicated by the StatefulSet&rsquo;s
+currentRevision.</p>
+</td>
+</tr><tr><td><p>&#34;RollingUpdate&#34;</p></td>
+<td><p>RollingUpdateStatefulSetStrategyType indicates that update will be
+applied to all Pods in the StatefulSet with respect to the StatefulSet
+ordering constraints. When a scale operation is performed with this
+strategy, new Pods will be created from the specification version indicated
+by the StatefulSet&rsquo;s updateRevision.</p>
+</td>
+</tr></tbody>
+</table>
 <h3 id="monitoring.coreos.com/v1.StorageSpec">StorageSpec
 </h3>
 <p>
@@ -20110,6 +20433,23 @@ scaling up and down.</p>
 a rollout.</p>
 <p>Note that updating this value implies the recreation of the StatefulSet
 which incurs a service outage.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>updateStrategy</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategy">
+StatefulSetUpdateStrategy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>updateStrategy indicates the strategy that will be employed to update
+Pods in the StatefulSet when a revision is made to statefulset&rsquo;s Pod
+Template.</p>
+<p>The default strategy is RollingUpdate.</p>
 </td>
 </tr>
 <tr>
@@ -23109,6 +23449,23 @@ which incurs a service outage.</p>
 </tr>
 <tr>
 <td>
+<code>updateStrategy</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategy">
+StatefulSetUpdateStrategy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>updateStrategy indicates the strategy that will be employed to update
+Pods in the StatefulSet when a revision is made to statefulset&rsquo;s Pod
+Template.</p>
+<p>The default strategy is RollingUpdate.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>enableServiceLinks</code><br/>
 <em>
 bool
@@ -24678,6 +25035,23 @@ uint64
 <em>(Optional)</em>
 <p>labelValueLengthLimit defines the per-scrape limit on length of labels value that will be accepted for a sample.
 Only valid in Prometheus versions 2.27.0 and newer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>bodySizeLimit</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.ByteSize">
+ByteSize
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>bodySizeLimit defines a per-scrape limit on the size of the uncompressed
+response body that will be accepted by Prometheus. Targets responding with
+a body larger than this many bytes will cause the scrape to fail.</p>
+<p>It requires Prometheus &gt;= v2.28.0.</p>
 </td>
 </tr>
 <tr>
@@ -30581,7 +30955,9 @@ object and accessible by the Prometheus Operator.</p>
 <td>
 <code>apiURL</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1alpha1.URL">
+URL
+</a>
 </em>
 </td>
 <td>
@@ -30892,7 +31268,9 @@ object and accessible by the Prometheus Operator.</p>
 <td>
 <code>url</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1alpha1.URL">
+URL
+</a>
 </em>
 </td>
 <td>
@@ -32083,6 +32461,23 @@ scaling up and down.</p>
 a rollout.</p>
 <p>Note that updating this value implies the recreation of the StatefulSet
 which incurs a service outage.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>updateStrategy</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.StatefulSetUpdateStrategy">
+StatefulSetUpdateStrategy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>updateStrategy indicates the strategy that will be employed to update
+Pods in the StatefulSet when a revision is made to statefulset&rsquo;s Pod
+Template.</p>
+<p>The default strategy is RollingUpdate.</p>
 </td>
 </tr>
 <tr>
@@ -33689,9 +34084,7 @@ This is the label that appears on the interactive button.</p>
 <td>
 <code>url</code><br/>
 <em>
-<a href="#monitoring.coreos.com/v1alpha1.URL">
-URL
-</a>
+string
 </em>
 </td>
 <td>
@@ -33783,7 +34176,9 @@ Kubernetes core/v1.SecretKeySelector
 </td>
 <td>
 <p>token defines the sender token for RocketChat authentication.
-This is the personal access token or bot token used to authenticate API requests.</p>
+This is the personal access token or bot token used to authenticate API requests.
+The secret needs to be in the same namespace as the AlertmanagerConfig
+object and accessible by the Prometheus Operator.</p>
 </td>
 </tr>
 <tr>
@@ -33797,7 +34192,9 @@ Kubernetes core/v1.SecretKeySelector
 </td>
 <td>
 <p>tokenID defines the sender token ID for RocketChat authentication.
-This is the user ID associated with the token used for API requests.</p>
+This is the user ID associated with the token used for API requests.
+The secret needs to be in the same namespace as the AlertmanagerConfig
+object and accessible by the Prometheus Operator.</p>
 </td>
 </tr>
 <tr>
@@ -33830,9 +34227,7 @@ If provided, this emoji will be used instead of the default avatar or iconURL.</
 <td>
 <code>iconURL</code><br/>
 <em>
-<a href="#monitoring.coreos.com/v1alpha1.URL">
-URL
-</a>
+string
 </em>
 </td>
 <td>
@@ -33912,9 +34307,7 @@ When true, fields may be displayed side by side to save space.</p>
 <td>
 <code>imageURL</code><br/>
 <em>
-<a href="#monitoring.coreos.com/v1alpha1.URL">
-URL
-</a>
+string
 </em>
 </td>
 <td>
@@ -33927,9 +34320,7 @@ This embeds an image directly in the message attachment.</p>
 <td>
 <code>thumbURL</code><br/>
 <em>
-<a href="#monitoring.coreos.com/v1alpha1.URL">
-URL
-</a>
+string
 </em>
 </td>
 <td>
@@ -34086,13 +34477,14 @@ Special label &ldquo;&hellip;&rdquo; (aggregate by all possible labels), if prov
 <td>
 <code>groupWait</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1.NonEmptyDuration">
+NonEmptyDuration
+</a>
 </em>
 </td>
 <td>
 <em>(Optional)</em>
 <p>groupWait defines how long to wait before sending the initial notification.
-Must match the regular expression<code>^(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?$</code>
 Example: &ldquo;30s&rdquo;</p>
 </td>
 </tr>
@@ -34100,13 +34492,15 @@ Example: &ldquo;30s&rdquo;</p>
 <td>
 <code>groupInterval</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1.NonEmptyDuration">
+NonEmptyDuration
+</a>
 </em>
 </td>
 <td>
 <em>(Optional)</em>
 <p>groupInterval defines how long to wait before sending an updated notification.
-Must match the regular expression<code>^(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?$</code>
+Must be greater than 0.
 Example: &ldquo;5m&rdquo;</p>
 </td>
 </tr>
@@ -34114,13 +34508,15 @@ Example: &ldquo;5m&rdquo;</p>
 <td>
 <code>repeatInterval</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1.NonEmptyDuration">
+NonEmptyDuration
+</a>
 </em>
 </td>
 <td>
 <em>(Optional)</em>
 <p>repeatInterval defines how long to wait before repeating the last notification.
-Must match the regular expression<code>^(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?$</code>
+Must be greater than 0.
 Example: &ldquo;4h&rdquo;</p>
 </td>
 </tr>
@@ -35284,6 +35680,23 @@ Only valid in Prometheus versions 2.27.0 and newer.</p>
 </tr>
 <tr>
 <td>
+<code>bodySizeLimit</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.ByteSize">
+ByteSize
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>bodySizeLimit defines a per-scrape limit on the size of the uncompressed
+response body that will be accepted by Prometheus. Targets responding with
+a body larger than this many bytes will cause the scrape to fail.</p>
+<p>It requires Prometheus &gt;= v2.28.0.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>scrapeNativeHistograms</code><br/>
 <em>
 bool
@@ -35904,6 +36317,20 @@ before failing the request and allowing it to be retried.
 It requires Alertmanager &gt;= v0.30.0.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>messageText</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>messageText defines text content of the Slack message.
+If set, this is sent as the top-level &lsquo;text&rsquo; field in the Slack payload.
+It requires Alertmanager &gt;= v0.31.0.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="monitoring.coreos.com/v1alpha1.SlackConfirmationField">SlackConfirmationField
@@ -36394,7 +36821,7 @@ Time
 <h3 id="monitoring.coreos.com/v1alpha1.URL">URL
 (<code>string</code> alias)</h3>
 <p>
-(<em>Appears on:</em><a href="#monitoring.coreos.com/v1alpha1.DiscordConfig">DiscordConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.KumaSDConfig">KumaSDConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.RocketChatActionConfig">RocketChatActionConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.RocketChatConfig">RocketChatConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.TelegramConfig">TelegramConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.WebexConfig">WebexConfig</a>)
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1alpha1.DiscordConfig">DiscordConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.KumaSDConfig">KumaSDConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.OpsGenieConfig">OpsGenieConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.PagerDutyConfig">PagerDutyConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.RocketChatConfig">RocketChatConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.TelegramConfig">TelegramConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.VictorOpsConfig">VictorOpsConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.WeChatConfig">WeChatConfig</a>, <a href="#monitoring.coreos.com/v1alpha1.WebexConfig">WebexConfig</a>)
 </p>
 <div>
 <p>URL represents a valid URL</p>
@@ -36448,7 +36875,9 @@ object and accessible by the Prometheus Operator.</p>
 <td>
 <code>apiUrl</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1alpha1.URL">
+URL
+</a>
 </em>
 </td>
 <td>
@@ -36465,7 +36894,6 @@ string
 </em>
 </td>
 <td>
-<em>(Optional)</em>
 <p>routingKey defines a key used to map the alert to a team.
 This determines which VictorOps team will receive the alert notification.</p>
 </td>
@@ -36602,7 +37030,9 @@ object and accessible by the Prometheus Operator.</p>
 <td>
 <code>apiURL</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1alpha1.URL">
+URL
+</a>
 </em>
 </td>
 <td>
@@ -38214,7 +38644,9 @@ object and accessible by the Prometheus Operator.</p>
 <td>
 <code>apiURL</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1beta1.URL">
+URL
+</a>
 </em>
 </td>
 <td>
@@ -38512,7 +38944,9 @@ object and accessible by the Prometheus Operator.</p>
 <td>
 <code>url</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1beta1.URL">
+URL
+</a>
 </em>
 </td>
 <td>
@@ -39158,7 +39592,7 @@ string
 </td>
 <td>
 <em>(Optional)</em>
-<p>discordConfigs defines the list of Slack configurations.</p>
+<p>discordConfigs defines the list of Discord configurations.</p>
 </td>
 </tr>
 <tr>
@@ -39367,9 +39801,7 @@ This is the label that appears on the interactive button.</p>
 <td>
 <code>url</code><br/>
 <em>
-<a href="#monitoring.coreos.com/v1beta1.URL">
-URL
-</a>
+string
 </em>
 </td>
 <td>
@@ -39461,7 +39893,9 @@ Kubernetes core/v1.SecretKeySelector
 </td>
 <td>
 <p>token defines the sender token for RocketChat authentication.
-This is the personal access token or bot token used to authenticate API requests.</p>
+This is the personal access token or bot token used to authenticate API requests.
+The secret needs to be in the same namespace as the AlertmanagerConfig
+object and accessible by the Prometheus Operator.</p>
 </td>
 </tr>
 <tr>
@@ -39475,7 +39909,9 @@ Kubernetes core/v1.SecretKeySelector
 </td>
 <td>
 <p>tokenID defines the sender token ID for RocketChat authentication.
-This is the user ID associated with the token used for API requests.</p>
+This is the user ID associated with the token used for API requests.
+The secret needs to be in the same namespace as the AlertmanagerConfig
+object and accessible by the Prometheus Operator.</p>
 </td>
 </tr>
 <tr>
@@ -39508,9 +39944,7 @@ If provided, this emoji will be used instead of the default avatar or iconURL.</
 <td>
 <code>iconURL</code><br/>
 <em>
-<a href="#monitoring.coreos.com/v1beta1.URL">
-URL
-</a>
+string
 </em>
 </td>
 <td>
@@ -39590,9 +40024,7 @@ When true, fields may be displayed side by side to save space.</p>
 <td>
 <code>imageURL</code><br/>
 <em>
-<a href="#monitoring.coreos.com/v1beta1.URL">
-URL
-</a>
+string
 </em>
 </td>
 <td>
@@ -39605,9 +40037,7 @@ This embeds an image directly in the message attachment.</p>
 <td>
 <code>thumbURL</code><br/>
 <em>
-<a href="#monitoring.coreos.com/v1beta1.URL">
-URL
-</a>
+string
 </em>
 </td>
 <td>
@@ -39764,13 +40194,14 @@ Special label &ldquo;&hellip;&rdquo; (aggregate by all possible labels), if prov
 <td>
 <code>groupWait</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1.NonEmptyDuration">
+NonEmptyDuration
+</a>
 </em>
 </td>
 <td>
 <em>(Optional)</em>
 <p>groupWait defines how long to wait before sending the initial notification.
-Must match the regular expression<code>^(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?$</code>
 Example: &ldquo;30s&rdquo;</p>
 </td>
 </tr>
@@ -39778,13 +40209,15 @@ Example: &ldquo;30s&rdquo;</p>
 <td>
 <code>groupInterval</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1.NonEmptyDuration">
+NonEmptyDuration
+</a>
 </em>
 </td>
 <td>
 <em>(Optional)</em>
 <p>groupInterval defines how long to wait before sending an updated notification.
-Must match the regular expression<code>^(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?$</code>
+Must be greater than 0.
 Example: &ldquo;5m&rdquo;</p>
 </td>
 </tr>
@@ -39792,13 +40225,15 @@ Example: &ldquo;5m&rdquo;</p>
 <td>
 <code>repeatInterval</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1.NonEmptyDuration">
+NonEmptyDuration
+</a>
 </em>
 </td>
 <td>
 <em>(Optional)</em>
 <p>repeatInterval defines how long to wait before repeating the last notification.
-Must match the regular expression<code>^(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?$</code>
+Must be greater than 0.
 Example: &ldquo;4h&rdquo;</p>
 </td>
 </tr>
@@ -40488,6 +40923,20 @@ before failing the request and allowing it to be retried.
 It requires Alertmanager &gt;= v0.30.0.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>messageText</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>messageText defines text content of the Slack message.
+If set, this is sent as the top-level &lsquo;text&rsquo; field in the Slack payload.
+It requires Alertmanager &gt;= v0.31.0.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="monitoring.coreos.com/v1beta1.SlackConfirmationField">SlackConfirmationField
@@ -40968,7 +41417,7 @@ Time
 <h3 id="monitoring.coreos.com/v1beta1.URL">URL
 (<code>string</code> alias)</h3>
 <p>
-(<em>Appears on:</em><a href="#monitoring.coreos.com/v1beta1.DiscordConfig">DiscordConfig</a>, <a href="#monitoring.coreos.com/v1beta1.RocketChatActionConfig">RocketChatActionConfig</a>, <a href="#monitoring.coreos.com/v1beta1.RocketChatConfig">RocketChatConfig</a>, <a href="#monitoring.coreos.com/v1beta1.TelegramConfig">TelegramConfig</a>, <a href="#monitoring.coreos.com/v1beta1.WebexConfig">WebexConfig</a>)
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1beta1.DiscordConfig">DiscordConfig</a>, <a href="#monitoring.coreos.com/v1beta1.OpsGenieConfig">OpsGenieConfig</a>, <a href="#monitoring.coreos.com/v1beta1.PagerDutyConfig">PagerDutyConfig</a>, <a href="#monitoring.coreos.com/v1beta1.RocketChatConfig">RocketChatConfig</a>, <a href="#monitoring.coreos.com/v1beta1.TelegramConfig">TelegramConfig</a>, <a href="#monitoring.coreos.com/v1beta1.VictorOpsConfig">VictorOpsConfig</a>, <a href="#monitoring.coreos.com/v1beta1.WeChatConfig">WeChatConfig</a>, <a href="#monitoring.coreos.com/v1beta1.WebexConfig">WebexConfig</a>)
 </p>
 <div>
 <p>URL represents a valid URL</p>
@@ -41022,7 +41471,9 @@ object and accessible by the Prometheus Operator.</p>
 <td>
 <code>apiUrl</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1beta1.URL">
+URL
+</a>
 </em>
 </td>
 <td>
@@ -41039,7 +41490,6 @@ string
 </em>
 </td>
 <td>
-<em>(Optional)</em>
 <p>routingKey defines a key used to map the alert to a team.
 This determines which VictorOps team will receive the alert notification.</p>
 </td>
@@ -41176,7 +41626,9 @@ object and accessible by the Prometheus Operator.</p>
 <td>
 <code>apiURL</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1beta1.URL">
+URL
+</a>
 </em>
 </td>
 <td>

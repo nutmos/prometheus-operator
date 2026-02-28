@@ -4877,6 +4877,31 @@ func testPrometheusCRDValidation(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "invalid-updateStrategy",
+			prometheusSpec: monitoringv1.PrometheusSpec{
+				CommonPrometheusFields: monitoringv1.CommonPrometheusFields{
+					Replicas: &replicas,
+					UpdateStrategy: &monitoringv1.StatefulSetUpdateStrategy{
+						Type: monitoringv1.StatefulSetUpdateStrategyType(""),
+					},
+				},
+			},
+			expectedError: true,
+		},
+		{
+			name: "invalid-ondelete-with-rollingupdate",
+			prometheusSpec: monitoringv1.PrometheusSpec{
+				CommonPrometheusFields: monitoringv1.CommonPrometheusFields{
+					Replicas: &replicas,
+					UpdateStrategy: &monitoringv1.StatefulSetUpdateStrategy{
+						Type:          monitoringv1.OnDeleteStatefulSetStrategyType,
+						RollingUpdate: &monitoringv1.RollingUpdateStatefulSetStrategy{},
+					},
+				},
+			},
+			expectedError: true,
+		},
 	}
 
 	for _, test := range tests {
@@ -5163,6 +5188,68 @@ func testPromDegradedConditionStatus(t *testing.T) {
 
 	if err != nil {
 		t.Fatalf("waiting for Prometheus %v/%v: %v: %v", p.Namespace, p.Name, err, pollErr)
+	}
+}
+
+// testPromStatusConditionLastTransitionTime validates that Prometheus status
+// conditions preserve LastTransitionTime when the condition status doesn't
+// actually change. Without the fix in pkg/prometheus/operator.go, this test
+// would fail because LastTransitionTime was being reset on every status update.
+func testPromStatusConditionLastTransitionTime(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	testCtx := framework.NewTestCtx(t)
+	defer testCtx.Cleanup(t)
+
+	ns := framework.CreateNamespace(ctx, t, testCtx)
+	framework.SetupPrometheusRBAC(ctx, t, testCtx, ns)
+
+	// Create Prometheus and wait until it's ready.
+	p := framework.MakeBasicPrometheus(ns, "test-ltt", "", 1)
+	p, err := framework.CreatePrometheusAndWaitUntilReady(ctx, ns, p)
+	require.NoError(t, err)
+
+	// Record the LastTransitionTime values for both conditions.
+	var reconciledLTT, availableLTT metav1.Time
+	for _, cond := range p.Status.Conditions {
+		if cond.Type == monitoringv1.Reconciled {
+			reconciledLTT = cond.LastTransitionTime
+		}
+		if cond.Type == monitoringv1.Available {
+			availableLTT = cond.LastTransitionTime
+		}
+	}
+	require.False(t, reconciledLTT.IsZero(), "Reconciled condition not found")
+	require.False(t, availableLTT.IsZero(), "Available condition not found")
+
+	// Update Prometheus with a non-condition-changing modification (external label).
+	// ExternalLabels only affects the Prometheus configuration (not the StatefulSet
+	// pod template), so it triggers a reconciliation without causing a rolling
+	// update. This means conditions stay True throughout.
+	p, err = framework.PatchPrometheusAndWaitUntilReady(
+		ctx,
+		p.Name,
+		ns,
+		monitoringv1.PrometheusSpec{
+			CommonPrometheusFields: monitoringv1.CommonPrometheusFields{
+				ExternalLabels: map[string]string{"test-update": "true"},
+			},
+		},
+	)
+	require.NoError(t, err)
+
+	// Verify that LastTransitionTime hasn't changed for either condition.
+	// Without the fix, these assertions would fail because LastTransitionTime
+	// was being reset on every status update.
+	for _, cond := range p.Status.Conditions {
+		if cond.Type == monitoringv1.Reconciled {
+			require.Equal(t, reconciledLTT, cond.LastTransitionTime,
+				"Reconciled condition's LastTransitionTime should not change when status is unchanged")
+		}
+		if cond.Type == monitoringv1.Available {
+			require.Equal(t, availableLTT, cond.LastTransitionTime,
+				"Available condition's LastTransitionTime should not change when status is unchanged")
+		}
 	}
 }
 
@@ -6085,4 +6172,34 @@ type alertmanagerDiscovery struct {
 type prometheusAlertmanagerAPIResponse struct {
 	Status string                 `json:"status"`
 	Data   *alertmanagerDiscovery `json:"data"`
+}
+
+func testPromScaleUpWithoutLabels(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	testCtx := framework.NewTestCtx(t)
+	defer testCtx.Cleanup(t)
+	ns := framework.CreateNamespace(ctx, t, testCtx)
+	framework.SetupPrometheusRBAC(ctx, t, testCtx, ns)
+
+	name := "test"
+
+	// Create a Prometheus resource with 1 replica
+	p, err := framework.CreatePrometheusAndWaitUntilReady(ctx, ns, framework.MakeBasicPrometheus(ns, name, name, 1))
+	require.NoError(t, err)
+
+	// Remove all labels on the StatefulSet using Patch
+	stsName := fmt.Sprintf("prometheus-%s", name)
+	err = framework.RemoveAllLabelsFromStatefulSet(ctx, stsName, ns)
+	require.NoError(t, err)
+
+	// Scale up the Prometheus resource to 2 replicas
+	_, err = framework.UpdatePrometheusReplicasAndWaitUntilReady(ctx, p.Name, ns, 2)
+	require.NoError(t, err)
+
+	// Verify the StatefulSet now has labels again (restored by the operator)
+	stsClient := framework.KubeClient.AppsV1().StatefulSets(ns)
+	sts, err := stsClient.Get(ctx, stsName, metav1.GetOptions{})
+	require.NoError(t, err)
+	require.NotEmpty(t, sts.GetLabels(), "expected labels to be restored on the StatefulSet by the operator")
 }
