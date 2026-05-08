@@ -1430,9 +1430,7 @@ func checkSlackConfigs(
 				if slackAPIURL != "https://slack.com/api/chat.postMessage" {
 					return fmt.Errorf(`updateMessage' can only be used with bot tokens. API URL must be set to https://slack.com/api/chat.postMessage`)
 				}
-				return fmt.Errorf("case 1 url is %s", slackAPIURL)
 			}
-			return fmt.Errorf("case 2 url is %s", slackAPIURL)
 		}
 
 		if err := configureHTTPConfigInStore(ctx, config.HTTPConfig, namespace, store); err != nil {
