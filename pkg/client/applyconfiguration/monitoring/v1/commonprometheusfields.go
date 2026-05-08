@@ -100,13 +100,15 @@ type CommonPrometheusFieldsApplyConfiguration struct {
 	// of the custom resource definition. It is recommended to use
 	// `spec.additionalScrapeConfigs` instead.
 	//
-	// Note that the ScrapeConfig custom resource definition is currently at Alpha level.
+	// Note that the ScrapeConfig custom resource definition is currently at Alpha level
+	// and will be graduated to Beta in a future release.
 	ScrapeConfigSelector *metav1.LabelSelectorApplyConfiguration `json:"scrapeConfigSelector,omitempty"`
 	// scrapeConfigNamespaceSelector defines the namespaces to match for ScrapeConfig discovery. An empty label selector
 	// matches all namespaces. A null label selector matches the current
 	// namespace only.
 	//
-	// Note that the ScrapeConfig custom resource definition is currently at Alpha level.
+	// Note that the ScrapeConfig custom resource definition is currently at Alpha level
+	// and will be graduated to Beta in a future release.
 	ScrapeConfigNamespaceSelector *metav1.LabelSelectorApplyConfiguration `json:"scrapeConfigNamespaceSelector,omitempty"`
 	// version of Prometheus being deployed. The operator uses this information
 	// to generate the Prometheus StatefulSet + configuration files.
@@ -168,6 +170,11 @@ type CommonPrometheusFieldsApplyConfiguration struct {
 	// `__tmp_disable_sharding` label with relabeling configuration. When
 	// the label value isn't empty, all Prometheus shards will scrape the target.
 	Shards *int32 `json:"shards,omitempty"`
+	// shardingStrategy defines the sharding strategy for distributing scraped targets across Prometheus shards.
+	//
+	// When not defined, the operator defaults to the 'Address' mode which distributes
+	// targets based on a hash of the target address.
+	ShardingStrategy *ShardingStrategyApplyConfiguration `json:"shardingStrategy,omitempty"`
 	// replicaExternalLabelName defines the name of Prometheus external label used to denote the replica name.
 	// The external label will _not_ be added when the field is set to the
 	// empty string (`""`).
@@ -818,6 +825,14 @@ func (b *CommonPrometheusFieldsApplyConfiguration) WithReplicas(value int32) *Co
 // If called multiple times, the Shards field is set to the value of the last call.
 func (b *CommonPrometheusFieldsApplyConfiguration) WithShards(value int32) *CommonPrometheusFieldsApplyConfiguration {
 	b.Shards = &value
+	return b
+}
+
+// WithShardingStrategy sets the ShardingStrategy field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the ShardingStrategy field is set to the value of the last call.
+func (b *CommonPrometheusFieldsApplyConfiguration) WithShardingStrategy(value *ShardingStrategyApplyConfiguration) *CommonPrometheusFieldsApplyConfiguration {
+	b.ShardingStrategy = value
 	return b
 }
 
