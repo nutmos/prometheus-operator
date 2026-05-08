@@ -4825,7 +4825,7 @@ func TestSanitizeConfig(t *testing.T) {
 					{
 						SlackConfigs: []*slackConfig{
 							{
-								AppToken:      "https://api.url",
+								APIURL:        "https://api.url",
 								UpdateMessage: new(true),
 							},
 						},
