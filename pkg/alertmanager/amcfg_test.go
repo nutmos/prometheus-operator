@@ -3492,7 +3492,7 @@ func TestGenerateConfig(t *testing.T) {
 										},
 									},
 								},
-								UpdateMessage: ptr.To(true),
+								UpdateMessage: new(true),
 							}},
 						}},
 					},

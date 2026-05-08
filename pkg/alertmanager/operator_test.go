@@ -1153,7 +1153,7 @@ func TestCheckAlertmanagerConfig(t *testing.T) {
 						Name: "recv1",
 						SlackConfigs: []monitoringv1alpha1.SlackConfig{
 							{
-								UpdateMessage: ptr.To(true),
+								UpdateMessage: new(true),
 							},
 						},
 					}},
@@ -1173,7 +1173,7 @@ func TestCheckAlertmanagerConfig(t *testing.T) {
 						Name: "recv1",
 						SlackConfigs: []monitoringv1alpha1.SlackConfig{
 							{
-								UpdateMessage: ptr.To(true),
+								UpdateMessage: new(true),
 							},
 						},
 					}},
@@ -1197,7 +1197,7 @@ func TestCheckAlertmanagerConfig(t *testing.T) {
 									LocalObjectReference: corev1.LocalObjectReference{Name: "secret"},
 									Key:                  "key1",
 								},
-								UpdateMessage: ptr.To(true),
+								UpdateMessage: new(true),
 							},
 						},
 					}},
