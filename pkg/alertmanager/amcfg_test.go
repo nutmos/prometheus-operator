@@ -4391,8 +4391,8 @@ func TestGenerateConfig(t *testing.T) {
 								Name: "test",
 								WebhookConfigs: []monitoringv1alpha1.WebhookConfig{
 									{
-										URL:     ptr.To("https://example.com/"),
-										Payload: ptr.To("{\"foo\": \"bar\"}"),
+										URL:     new("https://example.com/"),
+										Payload: new("{\"foo\": \"bar\"}"),
 									},
 								},
 							},
@@ -4427,8 +4427,8 @@ func TestGenerateConfig(t *testing.T) {
 								Name: "test",
 								WebhookConfigs: []monitoringv1alpha1.WebhookConfig{
 									{
-										URL:     ptr.To("https://example.com/"),
-										Payload: ptr.To("{\"foo\": \"bar\"}"),
+										URL:     new("https://example.com/"),
+										Payload: new("{\"foo\": \"bar\"}"),
 									},
 								},
 							},
