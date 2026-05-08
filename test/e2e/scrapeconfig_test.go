@@ -94,7 +94,7 @@ func testScrapeConfigCreation(t *testing.T) {
 						Selectors: []monitoringv1alpha1.K8SSelectorConfig{
 							{
 								Role:  "Pod",
-								Label: ptr.To("component=executor"),
+								Label: new("component=executor"),
 							},
 						},
 					},
@@ -111,7 +111,7 @@ func testScrapeConfigCreation(t *testing.T) {
 						},
 						RefreshInterval: &fiveMins,
 						Type:            ptr.To(monitoringv1alpha1.DNSRecordType("A")),
-						Port:            ptr.To(int32(9100)),
+						Port:            new(int32(9100)),
 					},
 				},
 			},
@@ -124,7 +124,7 @@ func testScrapeConfigCreation(t *testing.T) {
 						Names:           []string{""},
 						RefreshInterval: &fiveMins,
 						Type:            ptr.To(monitoringv1alpha1.DNSRecordType("A")),
-						Port:            ptr.To(int32(9100)),
+						Port:            new(int32(9100)),
 					},
 				},
 			},
@@ -470,7 +470,7 @@ func testScrapeConfigKubernetesNodeRole(t *testing.T) {
 	}
 	sc.Spec.TLSConfig = &monitoringv1.SafeTLSConfig{
 		// since we cannot validate server name in cert
-		InsecureSkipVerify: ptr.To(true),
+		InsecureSkipVerify: new(true),
 		CA: monitoringv1.SecretOrConfigMap{
 			Secret: &corev1.SecretKeySelector{
 				LocalObjectReference: corev1.LocalObjectReference{
@@ -545,7 +545,7 @@ func testScrapeConfigDNSSDConfig(t *testing.T) {
 		{
 			Names: []string{"node.demo.do.prometheus.io"},
 			Type:  ptr.To(monitoringv1alpha1.DNSRecordType("A")),
-			Port:  ptr.To(int32(9100)),
+			Port:  new(int32(9100)),
 		},
 	}
 	_, err = framework.CreateScrapeConfig(context.Background(), ns, sc)
@@ -754,7 +754,7 @@ var ConsulSDTestCases = []scrapeCRDTestCase{
 			ConsulSDConfigs: []monitoringv1alpha1.ConsulSDConfig{
 				{
 					Server:     "valid-server",
-					PathPrefix: ptr.To("valid-server"),
+					PathPrefix: new("valid-server"),
 				},
 			},
 		},
@@ -766,7 +766,7 @@ var ConsulSDTestCases = []scrapeCRDTestCase{
 			ConsulSDConfigs: []monitoringv1alpha1.ConsulSDConfig{
 				{
 					Server:     "valid-server",
-					PathPrefix: ptr.To(""),
+					PathPrefix: new(""),
 				},
 			},
 		},
@@ -789,7 +789,7 @@ var ConsulSDTestCases = []scrapeCRDTestCase{
 			ConsulSDConfigs: []monitoringv1alpha1.ConsulSDConfig{
 				{
 					Server:     "valid-server",
-					Datacenter: ptr.To("valid-server"),
+					Datacenter: new("valid-server"),
 				},
 			},
 		},
@@ -801,7 +801,7 @@ var ConsulSDTestCases = []scrapeCRDTestCase{
 			ConsulSDConfigs: []monitoringv1alpha1.ConsulSDConfig{
 				{
 					Server:     "valid-server",
-					Datacenter: ptr.To(""),
+					Datacenter: new(""),
 				},
 			},
 		},
@@ -824,7 +824,7 @@ var ConsulSDTestCases = []scrapeCRDTestCase{
 			ConsulSDConfigs: []monitoringv1alpha1.ConsulSDConfig{
 				{
 					Server:    "valid-server",
-					Namespace: ptr.To("valid-server"),
+					Namespace: new("valid-server"),
 				},
 			},
 		},
@@ -836,7 +836,7 @@ var ConsulSDTestCases = []scrapeCRDTestCase{
 			ConsulSDConfigs: []monitoringv1alpha1.ConsulSDConfig{
 				{
 					Server:    "valid-server",
-					Namespace: ptr.To(""),
+					Namespace: new(""),
 				},
 			},
 		},
@@ -859,7 +859,7 @@ var ConsulSDTestCases = []scrapeCRDTestCase{
 			ConsulSDConfigs: []monitoringv1alpha1.ConsulSDConfig{
 				{
 					Server:    "valid-server",
-					Partition: ptr.To("valid-server"),
+					Partition: new("valid-server"),
 				},
 			},
 		},
@@ -871,7 +871,7 @@ var ConsulSDTestCases = []scrapeCRDTestCase{
 			ConsulSDConfigs: []monitoringv1alpha1.ConsulSDConfig{
 				{
 					Server:    "valid-server",
-					Partition: ptr.To(""),
+					Partition: new(""),
 				},
 			},
 		},
@@ -1023,7 +1023,7 @@ var ConsulSDTestCases = []scrapeCRDTestCase{
 			ConsulSDConfigs: []monitoringv1alpha1.ConsulSDConfig{
 				{
 					Server:       "valid-server",
-					TagSeparator: ptr.To(","),
+					TagSeparator: new(","),
 				},
 			},
 		},
@@ -1035,7 +1035,7 @@ var ConsulSDTestCases = []scrapeCRDTestCase{
 			ConsulSDConfigs: []monitoringv1alpha1.ConsulSDConfig{
 				{
 					Server:       "valid-server",
-					TagSeparator: ptr.To(""),
+					TagSeparator: new(""),
 				},
 			},
 		},
@@ -1117,7 +1117,7 @@ var K8STestCases = []scrapeCRDTestCase{
 			KubernetesSDConfigs: []monitoringv1alpha1.KubernetesSDConfig{
 				{
 					Role:      "EndpointSlice",
-					APIServer: ptr.To(""),
+					APIServer: new(""),
 				},
 			},
 		},
@@ -1210,7 +1210,7 @@ var K8STestCases = []scrapeCRDTestCase{
 					Selectors: []monitoringv1alpha1.K8SSelectorConfig{
 						{
 							Role:  "Pod",
-							Label: ptr.To(""),
+							Label: new(""),
 						},
 					},
 				},
@@ -1227,7 +1227,7 @@ var K8STestCases = []scrapeCRDTestCase{
 					Selectors: []monitoringv1alpha1.K8SSelectorConfig{
 						{
 							Role:  "Pod",
-							Label: ptr.To("node.kubernetes.io/instance-type=master"),
+							Label: new("node.kubernetes.io/instance-type=master"),
 						},
 					},
 				},
@@ -1244,7 +1244,7 @@ var K8STestCases = []scrapeCRDTestCase{
 					Selectors: []monitoringv1alpha1.K8SSelectorConfig{
 						{
 							Role:  "Pod",
-							Field: ptr.To(""),
+							Field: new(""),
 						},
 					},
 				},
@@ -1261,7 +1261,7 @@ var K8STestCases = []scrapeCRDTestCase{
 					Selectors: []monitoringv1alpha1.K8SSelectorConfig{
 						{
 							Role:  "Pod",
-							Field: ptr.To("metadata.name=foobar"),
+							Field: new("metadata.name=foobar"),
 						},
 					},
 				},
@@ -1278,7 +1278,7 @@ var K8STestCases = []scrapeCRDTestCase{
 					Selectors: []monitoringv1alpha1.K8SSelectorConfig{
 						{
 							Role:  "Pod",
-							Field: ptr.To("metadata.name=foobar"),
+							Field: new("metadata.name=foobar"),
 						},
 					},
 				},
@@ -1295,13 +1295,13 @@ var K8STestCases = []scrapeCRDTestCase{
 					Selectors: []monitoringv1alpha1.K8SSelectorConfig{
 						{
 							Role:  "Pod",
-							Label: ptr.To("node.kubernetes.io/instance-type=master"),
-							Field: ptr.To("metadata.name=foobar"),
+							Label: new("node.kubernetes.io/instance-type=master"),
+							Field: new("metadata.name=foobar"),
 						},
 						{
 							Role:  "Pod",
-							Label: ptr.To("node.kubernetes.io/instance-type=master"),
-							Field: ptr.To("metadata.name=foobar"),
+							Label: new("node.kubernetes.io/instance-type=master"),
+							Field: new("metadata.name=foobar"),
 						},
 					},
 				},
@@ -1316,7 +1316,7 @@ var K8STestCases = []scrapeCRDTestCase{
 				{
 					Role: "Pod",
 					Namespaces: &monitoringv1alpha1.NamespaceDiscovery{
-						IncludeOwnNamespace: ptr.To(true),
+						IncludeOwnNamespace: new(true),
 					},
 				},
 			},
@@ -1330,7 +1330,7 @@ var K8STestCases = []scrapeCRDTestCase{
 				{
 					Role: "Pod",
 					Namespaces: &monitoringv1alpha1.NamespaceDiscovery{
-						IncludeOwnNamespace: ptr.To(false),
+						IncludeOwnNamespace: new(false),
 						Names:               []string{},
 					},
 				},
@@ -1373,7 +1373,7 @@ var K8STestCases = []scrapeCRDTestCase{
 				{
 					Role: "Pod",
 					Namespaces: &monitoringv1alpha1.NamespaceDiscovery{
-						IncludeOwnNamespace: ptr.To(true),
+						IncludeOwnNamespace: new(true),
 						Names:               []string{"default", "kube-system"},
 					},
 				},
@@ -1388,7 +1388,7 @@ var K8STestCases = []scrapeCRDTestCase{
 				{
 					Role: "Pod",
 					Namespaces: &monitoringv1alpha1.NamespaceDiscovery{
-						IncludeOwnNamespace: ptr.To(true),
+						IncludeOwnNamespace: new(true),
 						Names:               []string{"default", "default"},
 					},
 				},
@@ -1402,7 +1402,7 @@ var K8STestCases = []scrapeCRDTestCase{
 			KubernetesSDConfigs: []monitoringv1alpha1.KubernetesSDConfig{
 				{
 					Role:           "Pod",
-					AttachMetadata: &monitoringv1alpha1.AttachMetadata{Node: ptr.To(true)},
+					AttachMetadata: &monitoringv1alpha1.AttachMetadata{Node: new(true)},
 				},
 			},
 		},
@@ -1547,7 +1547,7 @@ var DNSSDTestCases = []scrapeCRDTestCase{
 			DNSSDConfigs: []monitoringv1alpha1.DNSSDConfig{
 				{
 					Names: []string{"test1"},
-					Port:  ptr.To(int32(8080)),
+					Port:  new(int32(8080)),
 				},
 			},
 		},
@@ -1559,7 +1559,7 @@ var DNSSDTestCases = []scrapeCRDTestCase{
 			DNSSDConfigs: []monitoringv1alpha1.DNSSDConfig{
 				{
 					Names: []string{"test1"},
-					Port:  ptr.To(int32(80809)),
+					Port:  new(int32(80809)),
 				},
 			},
 		},
@@ -1597,7 +1597,7 @@ var EC2SDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			EC2SDConfigs: []monitoringv1alpha1.EC2SDConfig{
 				{
-					Region: ptr.To("us-west"),
+					Region: new("us-west"),
 				},
 			},
 		},
@@ -1617,7 +1617,7 @@ var EC2SDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			EC2SDConfigs: []monitoringv1alpha1.EC2SDConfig{
 				{
-					Region: ptr.To(""),
+					Region: new(""),
 				},
 			},
 		},
@@ -1628,7 +1628,7 @@ var EC2SDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			EC2SDConfigs: []monitoringv1alpha1.EC2SDConfig{
 				{
-					RoleARN: ptr.To("valid-role"),
+					RoleARN: new("valid-role"),
 				},
 			},
 		},
@@ -1648,7 +1648,7 @@ var EC2SDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			EC2SDConfigs: []monitoringv1alpha1.EC2SDConfig{
 				{
-					RoleARN: ptr.To(""),
+					RoleARN: new(""),
 				},
 			},
 		},
@@ -1659,7 +1659,7 @@ var EC2SDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			EC2SDConfigs: []monitoringv1alpha1.EC2SDConfig{
 				{
-					Port: ptr.To(int32(8080)),
+					Port: new(int32(8080)),
 				},
 			},
 		},
@@ -1670,7 +1670,7 @@ var EC2SDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			EC2SDConfigs: []monitoringv1alpha1.EC2SDConfig{
 				{
-					Port: ptr.To(int32(80809)),
+					Port: new(int32(80809)),
 				},
 			},
 		},
@@ -1681,7 +1681,7 @@ var EC2SDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			EC2SDConfigs: []monitoringv1alpha1.EC2SDConfig{
 				{
-					Region: ptr.To("us-west"),
+					Region: new("us-west"),
 					Filters: []monitoringv1alpha1.Filter{
 						{
 							Name:   "foo",
@@ -1698,7 +1698,7 @@ var EC2SDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			EC2SDConfigs: []monitoringv1alpha1.EC2SDConfig{
 				{
-					Region: ptr.To("us-west"),
+					Region: new("us-west"),
 					Filters: []monitoringv1alpha1.Filter{
 						{
 							Name:   "foo",
@@ -1715,7 +1715,7 @@ var EC2SDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			EC2SDConfigs: []monitoringv1alpha1.EC2SDConfig{
 				{
-					Region: ptr.To("us-west"),
+					Region: new("us-west"),
 					Filters: []monitoringv1alpha1.Filter{
 						{
 							Name:   "foo",
@@ -1732,7 +1732,7 @@ var EC2SDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			EC2SDConfigs: []monitoringv1alpha1.EC2SDConfig{
 				{
-					Region: ptr.To("us-west"),
+					Region: new("us-west"),
 					Filters: []monitoringv1alpha1.Filter{
 						{
 							Name:   "foo",
@@ -1755,14 +1755,14 @@ var ScrapeConfigCRDTestCases = []scrapeCRDTestCase{
 	{
 		name: "JobName: Empty String",
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
-			JobName: ptr.To(""),
+			JobName: new(""),
 		},
 		expectedError: true,
 	},
 	{
 		name: "JobName: Valid Value",
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
-			JobName: ptr.To("validJob"),
+			JobName: new("validJob"),
 		},
 		expectedError: false,
 	},
@@ -1800,14 +1800,14 @@ var ScrapeConfigCRDTestCases = []scrapeCRDTestCase{
 	{
 		name: "ScrapeClassName: Empty String",
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
-			ScrapeClassName: ptr.To(""),
+			ScrapeClassName: new(""),
 		},
 		expectedError: true,
 	},
 	{
 		name: "ScrapeClassName: Valid Value",
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
-			ScrapeClassName: ptr.To("default"),
+			ScrapeClassName: new("default"),
 		},
 		expectedError: false,
 	},
@@ -2074,7 +2074,7 @@ var DigitalOceanSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			DigitalOceanSDConfigs: []monitoringv1alpha1.DigitalOceanSDConfig{
 				{
-					Port: ptr.To(int32(8080)),
+					Port: new(int32(8080)),
 				},
 			},
 		},
@@ -2085,7 +2085,7 @@ var DigitalOceanSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			DigitalOceanSDConfigs: []monitoringv1alpha1.DigitalOceanSDConfig{
 				{
-					Port: ptr.To(int32(65536)), // maximum Port number = 65535
+					Port: new(int32(65536)), // maximum Port number = 65535
 				},
 			},
 		},
@@ -2096,7 +2096,7 @@ var DigitalOceanSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			DigitalOceanSDConfigs: []monitoringv1alpha1.DigitalOceanSDConfig{
 				{
-					Port: ptr.To(int32(-1)), // minimum Port number = 0;
+					Port: new(int32(-1)), // minimum Port number = 0;
 				},
 			},
 		},
@@ -2164,7 +2164,7 @@ var IonosSDTestCases = []scrapeCRDTestCase{
 			IonosSDConfigs: []monitoringv1alpha1.IonosSDConfig{
 				{
 					DataCenterID: "11111111-1111-1111-1111-111111111111",
-					Port:         ptr.To(int32(8080)),
+					Port:         new(int32(8080)),
 				},
 			},
 		},
@@ -2176,7 +2176,7 @@ var IonosSDTestCases = []scrapeCRDTestCase{
 			IonosSDConfigs: []monitoringv1alpha1.IonosSDConfig{
 				{
 					DataCenterID: "11111111-1111-1111-1111-111111111111",
-					Port:         ptr.To(int32(65536)), // maximum Port number = 65535
+					Port:         new(int32(65536)), // maximum Port number = 65535
 				},
 			},
 		},
@@ -2188,7 +2188,7 @@ var IonosSDTestCases = []scrapeCRDTestCase{
 			IonosSDConfigs: []monitoringv1alpha1.IonosSDConfig{
 				{
 					DataCenterID: "11111111-1111-1111-1111-111111111111",
-					Port:         ptr.To(int32(-1)), // minimum Port number = 0
+					Port:         new(int32(-1)), // minimum Port number = 0
 				},
 			},
 		},
@@ -2202,7 +2202,7 @@ var LightSailSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LightSailSDConfigs: []monitoringv1alpha1.LightSailSDConfig{
 				{
-					Region: ptr.To("us-east-1"),
+					Region: new("us-east-1"),
 				},
 			},
 		},
@@ -2213,7 +2213,7 @@ var LightSailSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LightSailSDConfigs: []monitoringv1alpha1.LightSailSDConfig{
 				{
-					Region: ptr.To(""),
+					Region: new(""),
 				},
 			},
 		},
@@ -2224,7 +2224,7 @@ var LightSailSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LightSailSDConfigs: []monitoringv1alpha1.LightSailSDConfig{
 				{
-					Endpoint: ptr.To("https://custom-endpoint.example.com"),
+					Endpoint: new("https://custom-endpoint.example.com"),
 				},
 			},
 		},
@@ -2236,7 +2236,7 @@ var LightSailSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LightSailSDConfigs: []monitoringv1alpha1.LightSailSDConfig{
 				{
-					Endpoint: ptr.To(""),
+					Endpoint: new(""),
 				},
 			},
 		},
@@ -2247,7 +2247,7 @@ var LightSailSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LightSailSDConfigs: []monitoringv1alpha1.LightSailSDConfig{
 				{
-					Port: ptr.To(int32(80)),
+					Port: new(int32(80)),
 				},
 			},
 		},
@@ -2258,7 +2258,7 @@ var LightSailSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LightSailSDConfigs: []monitoringv1alpha1.LightSailSDConfig{
 				{
-					Port: ptr.To(int32(-1)),
+					Port: new(int32(-1)),
 				},
 			},
 		},
@@ -2269,7 +2269,7 @@ var LightSailSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LightSailSDConfigs: []monitoringv1alpha1.LightSailSDConfig{
 				{
-					Port: ptr.To(int32(65536)),
+					Port: new(int32(65536)),
 				},
 			},
 		},
@@ -2280,7 +2280,7 @@ var LightSailSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LightSailSDConfigs: []monitoringv1alpha1.LightSailSDConfig{
 				{
-					RoleARN: ptr.To("arn:aws:iam::123456789012:role/MyRole"),
+					RoleARN: new("arn:aws:iam::123456789012:role/MyRole"),
 				},
 			},
 		},
@@ -2291,7 +2291,7 @@ var LightSailSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LightSailSDConfigs: []monitoringv1alpha1.LightSailSDConfig{
 				{
-					RoleARN: ptr.To(""),
+					RoleARN: new(""),
 				},
 			},
 		},
@@ -2374,7 +2374,7 @@ var GCESDTestCases = []scrapeCRDTestCase{
 				{
 					Project: "devops-dev",
 					Zone:    "us-west-1",
-					Port:    ptr.To(int32(65534)),
+					Port:    new(int32(65534)),
 				},
 			},
 		},
@@ -2385,7 +2385,7 @@ var GCESDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			GCESDConfigs: []monitoringv1alpha1.GCESDConfig{
 				{
-					Port: ptr.To(int32(-1)),
+					Port: new(int32(-1)),
 				},
 			},
 		},
@@ -2398,7 +2398,7 @@ var GCESDTestCases = []scrapeCRDTestCase{
 				{
 					Project: "devops-dev",
 					Zone:    "us-west-1",
-					Filter:  ptr.To("filter-expression"),
+					Filter:  new("filter-expression"),
 				},
 			},
 		},
@@ -2409,7 +2409,7 @@ var GCESDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			GCESDConfigs: []monitoringv1alpha1.GCESDConfig{
 				{
-					Filter: ptr.To(""),
+					Filter: new(""),
 				},
 			},
 		},
@@ -2422,7 +2422,7 @@ var GCESDTestCases = []scrapeCRDTestCase{
 				{
 					Project:      "devops-dev",
 					Zone:         "us-west-1",
-					TagSeparator: ptr.To("tag-value"),
+					TagSeparator: new("tag-value"),
 				},
 			},
 		},
@@ -2433,7 +2433,7 @@ var GCESDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			GCESDConfigs: []monitoringv1alpha1.GCESDConfig{
 				{
-					TagSeparator: ptr.To(""),
+					TagSeparator: new(""),
 				},
 			},
 		},
@@ -2458,7 +2458,7 @@ var AzureSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			AzureSDConfigs: []monitoringv1alpha1.AzureSDConfig{
 				{
-					Environment:          ptr.To("AzurePublicCloud"),
+					Environment:          new("AzurePublicCloud"),
 					AuthenticationMethod: ptr.To(monitoringv1alpha1.AuthMethodTypeSDK),
 				},
 			},
@@ -2490,7 +2490,7 @@ var AzureSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			AzureSDConfigs: []monitoringv1alpha1.AzureSDConfig{
 				{
-					Environment:    ptr.To("AzurePublicCloud"),
+					Environment:    new("AzurePublicCloud"),
 					SubscriptionID: "11111111-1111-1111-1111-111111111111",
 				},
 			},
@@ -2502,7 +2502,7 @@ var AzureSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			AzureSDConfigs: []monitoringv1alpha1.AzureSDConfig{
 				{
-					Environment:    ptr.To(""),
+					Environment:    new(""),
 					SubscriptionID: "11111111-1111-1111-1111-111111111111",
 				},
 			},
@@ -2514,7 +2514,7 @@ var AzureSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			AzureSDConfigs: []monitoringv1alpha1.AzureSDConfig{
 				{
-					ResourceGroup:  ptr.To("my-resource-group"),
+					ResourceGroup:  new("my-resource-group"),
 					SubscriptionID: "11111111-1111-1111-1111-111111111111",
 				},
 			},
@@ -2526,7 +2526,7 @@ var AzureSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			AzureSDConfigs: []monitoringv1alpha1.AzureSDConfig{
 				{
-					ResourceGroup:  ptr.To(""),
+					ResourceGroup:  new(""),
 					SubscriptionID: "11111111-1111-1111-1111-111111111111",
 				},
 			},
@@ -2563,8 +2563,8 @@ var AzureSDTestCases = []scrapeCRDTestCase{
 			AzureSDConfigs: []monitoringv1alpha1.AzureSDConfig{
 				{
 					AuthenticationMethod: ptr.To(monitoringv1alpha1.AuthMethodTypeOAuth),
-					TenantID:             ptr.To("22222222-2222-2222-2222-222222222222"),
-					ClientID:             ptr.To("33333333-3333-3333-3333-333333333333"),
+					TenantID:             new("22222222-2222-2222-2222-222222222222"),
+					ClientID:             new("33333333-3333-3333-3333-333333333333"),
 					SubscriptionID:       "11111111-1111-1111-1111-111111111111",
 					ClientSecret: &corev1.SecretKeySelector{
 						LocalObjectReference: corev1.LocalObjectReference{
@@ -2583,7 +2583,7 @@ var AzureSDTestCases = []scrapeCRDTestCase{
 			AzureSDConfigs: []monitoringv1alpha1.AzureSDConfig{
 				{
 					AuthenticationMethod: ptr.To(monitoringv1alpha1.AuthMethodTypeOAuth),
-					TenantID:             ptr.To(""),
+					TenantID:             new(""),
 					SubscriptionID:       "11111111-1111-1111-1111-111111111111",
 				},
 			},
@@ -2596,7 +2596,7 @@ var AzureSDTestCases = []scrapeCRDTestCase{
 			AzureSDConfigs: []monitoringv1alpha1.AzureSDConfig{
 				{
 					AuthenticationMethod: ptr.To(monitoringv1alpha1.AuthMethodTypeOAuth),
-					ClientID:             ptr.To(""),
+					ClientID:             new(""),
 					SubscriptionID:       "11111111-1111-1111-1111-111111111111",
 				},
 			},
@@ -2633,7 +2633,7 @@ var AzureSDTestCases = []scrapeCRDTestCase{
 			AzureSDConfigs: []monitoringv1alpha1.AzureSDConfig{
 				{
 					SubscriptionID: "11111111-1111-1111-1111-111111111111",
-					Port:           ptr.To(int32(65534)),
+					Port:           new(int32(65534)),
 				},
 			},
 		},
@@ -2645,7 +2645,7 @@ var AzureSDTestCases = []scrapeCRDTestCase{
 			AzureSDConfigs: []monitoringv1alpha1.AzureSDConfig{
 				{
 					SubscriptionID: "11111111-1111-1111-1111-111111111111",
-					Port:           ptr.To(int32(-1)),
+					Port:           new(int32(-1)),
 				},
 			},
 		},
@@ -2663,7 +2663,7 @@ var OVHCloudSDTestCases = []scrapeCRDTestCase{
 					ApplicationSecret: corev1.SecretKeySelector{Key: "valid-secret-key"},
 					ConsumerKey:       corev1.SecretKeySelector{Key: "valid-consumer-key"},
 					Service:           monitoringv1alpha1.OVHServiceDedicatedServer,
-					Endpoint:          ptr.To("https://api.ovh.com/endpoint"),
+					Endpoint:          new("https://api.ovh.com/endpoint"),
 					RefreshInterval:   ptr.To(monitoringv1.Duration("30s")),
 				},
 			},
@@ -2803,7 +2803,7 @@ var OVHCloudSDTestCases = []scrapeCRDTestCase{
 					ApplicationSecret: corev1.SecretKeySelector{Key: "valid-secret-key"},
 					ConsumerKey:       corev1.SecretKeySelector{Key: "valid-consumer-key"},
 					Service:           monitoringv1alpha1.OVHServiceVPS,
-					Endpoint:          ptr.To(""),
+					Endpoint:          new(""),
 				},
 			},
 		},
@@ -3004,7 +3004,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:     monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:   "default",
-					Username: ptr.To("admin"),
+					Username: new("admin"),
 				},
 			},
 		},
@@ -3017,7 +3017,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:     monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:   "default",
-					Username: ptr.To(""),
+					Username: new(""),
 				},
 			},
 		},
@@ -3030,7 +3030,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:   monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region: "default",
-					UserID: ptr.To("ac3377633149401296f6c0d92d79dc16"),
+					UserID: new("ac3377633149401296f6c0d92d79dc16"),
 				},
 			},
 		},
@@ -3043,7 +3043,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:   monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region: "default",
-					UserID: ptr.To(""),
+					UserID: new(""),
 				},
 			},
 		},
@@ -3056,7 +3056,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:     monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:   "default",
-					DomainID: ptr.To("e0353a670a9e496da891347c589539e9"),
+					DomainID: new("e0353a670a9e496da891347c589539e9"),
 				},
 			},
 		},
@@ -3069,7 +3069,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:     monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:   "default",
-					DomainID: ptr.To(""),
+					DomainID: new(""),
 				},
 			},
 		},
@@ -3082,7 +3082,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:       monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:     "default",
-					DomainName: ptr.To("default"),
+					DomainName: new("default"),
 				},
 			},
 		},
@@ -3095,7 +3095,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:       monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:     "default",
-					DomainName: ptr.To(""),
+					DomainName: new(""),
 				},
 			},
 		},
@@ -3108,7 +3108,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:        monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:      "default",
-					ProjectName: ptr.To("default"),
+					ProjectName: new("default"),
 				},
 			},
 		},
@@ -3121,7 +3121,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:        monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:      "default",
-					ProjectName: ptr.To(""),
+					ProjectName: new(""),
 				},
 			},
 		},
@@ -3134,7 +3134,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:      monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:    "default",
-					ProjectID: ptr.To("343d245e850143a096806dfaefa9afdc"),
+					ProjectID: new("343d245e850143a096806dfaefa9afdc"),
 				},
 			},
 		},
@@ -3147,7 +3147,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:      monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:    "default",
-					ProjectID: ptr.To(""),
+					ProjectID: new(""),
 				},
 			},
 		},
@@ -3160,7 +3160,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:                      monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:                    "default",
-					ApplicationCredentialName: ptr.To("monitoring"),
+					ApplicationCredentialName: new("monitoring"),
 				},
 			},
 		},
@@ -3173,7 +3173,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:                      monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:                    "default",
-					ApplicationCredentialName: ptr.To(""),
+					ApplicationCredentialName: new(""),
 				},
 			},
 		},
@@ -3186,7 +3186,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:                    monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:                  "default",
-					ApplicationCredentialID: ptr.To("aa809205ed614a0e854bac92c0768bb9"),
+					ApplicationCredentialID: new("aa809205ed614a0e854bac92c0768bb9"),
 				},
 			},
 		},
@@ -3199,7 +3199,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:                    monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:                  "default",
-					ApplicationCredentialID: ptr.To(""),
+					ApplicationCredentialID: new(""),
 				},
 			},
 		},
@@ -3212,7 +3212,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:       monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:     "default",
-					AllTenants: ptr.To(true),
+					AllTenants: new(true),
 				},
 			},
 		},
@@ -3225,7 +3225,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:       monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:     "default",
-					AllTenants: ptr.To(false),
+					AllTenants: new(false),
 				},
 			},
 		},
@@ -3264,7 +3264,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:   monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region: "default",
-					Port:   ptr.To(int32(8080)),
+					Port:   new(int32(8080)),
 				},
 			},
 		},
@@ -3277,7 +3277,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:   monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region: "default",
-					Port:   ptr.To(int32(-1)),
+					Port:   new(int32(-1)),
 				},
 			},
 		},
@@ -3290,7 +3290,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:   monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region: "default",
-					Port:   ptr.To(int32(65537)),
+					Port:   new(int32(65537)),
 				},
 			},
 		},
@@ -3303,7 +3303,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:         monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:       "default",
-					Availability: ptr.To("public"),
+					Availability: new("public"),
 				},
 			},
 		},
@@ -3316,7 +3316,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:         monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:       "default",
-					Availability: ptr.To("admin"),
+					Availability: new("admin"),
 				},
 			},
 		},
@@ -3329,7 +3329,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:         monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:       "default",
-					Availability: ptr.To("internal"),
+					Availability: new("internal"),
 				},
 			},
 		},
@@ -3342,7 +3342,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:         monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:       "default",
-					Availability: ptr.To("private"),
+					Availability: new("private"),
 				},
 			},
 		},
@@ -3355,7 +3355,7 @@ var OpenStackSDTestCases = []scrapeCRDTestCase{
 				{
 					Role:         monitoringv1alpha1.OpenStackRoleHypervisor,
 					Region:       "default",
-					Availability: ptr.To(""),
+					Availability: new(""),
 				},
 			},
 		},
@@ -3412,7 +3412,7 @@ var KumaSDTestCases = []scrapeCRDTestCase{
 			KumaSDConfigs: []monitoringv1alpha1.KumaSDConfig{
 				{
 					Server:   "http://example.com",
-					ClientID: ptr.To("valid-client-id"),
+					ClientID: new("valid-client-id"),
 				},
 			},
 		},
@@ -3424,7 +3424,7 @@ var KumaSDTestCases = []scrapeCRDTestCase{
 			KumaSDConfigs: []monitoringv1alpha1.KumaSDConfig{
 				{
 					Server:   "http://example.com",
-					ClientID: ptr.To(""),
+					ClientID: new(""),
 				},
 			},
 		},
@@ -3484,7 +3484,7 @@ var KumaSDTestCases = []scrapeCRDTestCase{
 			KumaSDConfigs: []monitoringv1alpha1.KumaSDConfig{
 				{
 					Server:          "http://example.com",
-					FollowRedirects: ptr.To(true),
+					FollowRedirects: new(true),
 				},
 			},
 		},
@@ -3496,7 +3496,7 @@ var KumaSDTestCases = []scrapeCRDTestCase{
 			KumaSDConfigs: []monitoringv1alpha1.KumaSDConfig{
 				{
 					Server:          "http://example.com",
-					FollowRedirects: ptr.To(false),
+					FollowRedirects: new(false),
 				},
 			},
 		},
@@ -3508,7 +3508,7 @@ var KumaSDTestCases = []scrapeCRDTestCase{
 			KumaSDConfigs: []monitoringv1alpha1.KumaSDConfig{
 				{
 					Server:      "http://example.com",
-					EnableHTTP2: ptr.To(true),
+					EnableHTTP2: new(true),
 				},
 			},
 		},
@@ -3520,7 +3520,7 @@ var KumaSDTestCases = []scrapeCRDTestCase{
 			KumaSDConfigs: []monitoringv1alpha1.KumaSDConfig{
 				{
 					Server:      "http://example.com",
-					EnableHTTP2: ptr.To(false),
+					EnableHTTP2: new(false),
 				},
 			},
 		},
@@ -3769,7 +3769,7 @@ var ScalewaySDTestCases = []scrapeCRDTestCase{
 						},
 						Key: "key.pem",
 					},
-					NameFilter: ptr.To("my-server"),
+					NameFilter: new("my-server"),
 				},
 			},
 		},
@@ -3789,7 +3789,7 @@ var ScalewaySDTestCases = []scrapeCRDTestCase{
 						},
 						Key: "key.pem",
 					},
-					NameFilter: ptr.To(""),
+					NameFilter: new(""),
 				},
 			},
 		},
@@ -3869,7 +3869,7 @@ var ScalewaySDTestCases = []scrapeCRDTestCase{
 						},
 						Key: "key.pem",
 					},
-					Zone: ptr.To("fr-par-1"),
+					Zone: new("fr-par-1"),
 				},
 			},
 		},
@@ -3889,7 +3889,7 @@ var ScalewaySDTestCases = []scrapeCRDTestCase{
 						},
 						Key: "key.pem",
 					},
-					Zone: ptr.To(""),
+					Zone: new(""),
 				},
 			},
 		},
@@ -3909,7 +3909,7 @@ var ScalewaySDTestCases = []scrapeCRDTestCase{
 						},
 						Key: "key.pem",
 					},
-					Port: ptr.To(int32(8080)),
+					Port: new(int32(8080)),
 				},
 			},
 		},
@@ -3929,7 +3929,7 @@ var ScalewaySDTestCases = []scrapeCRDTestCase{
 						},
 						Key: "key.pem",
 					},
-					Port: ptr.To(int32(65536)), // maximum Port number = 65535
+					Port: new(int32(65536)), // maximum Port number = 65535
 				},
 			},
 		},
@@ -3949,7 +3949,7 @@ var ScalewaySDTestCases = []scrapeCRDTestCase{
 						},
 						Key: "key.pem",
 					},
-					Port: ptr.To(int32(-1)), // minimum Port number = 0;
+					Port: new(int32(-1)), // minimum Port number = 0;
 				},
 			},
 		},
@@ -4037,7 +4037,7 @@ var DockerSDTestCases = []scrapeCRDTestCase{
 			DockerSDConfigs: []monitoringv1alpha1.DockerSDConfig{
 				{
 					Host: "unix:///var/run/docker.sock",
-					Port: ptr.To(int32(80)),
+					Port: new(int32(80)),
 				},
 			},
 		},
@@ -4049,7 +4049,7 @@ var DockerSDTestCases = []scrapeCRDTestCase{
 			DockerSDConfigs: []monitoringv1alpha1.DockerSDConfig{
 				{
 					Host: "unix:///var/run/docker.sock",
-					Port: ptr.To(int32(-1)),
+					Port: new(int32(-1)),
 				},
 			},
 		},
@@ -4061,7 +4061,7 @@ var DockerSDTestCases = []scrapeCRDTestCase{
 			DockerSDConfigs: []monitoringv1alpha1.DockerSDConfig{
 				{
 					Host:               "unix:///var/run/docker.sock",
-					HostNetworkingHost: ptr.To("localhost"),
+					HostNetworkingHost: new("localhost"),
 				},
 			},
 		},
@@ -4073,7 +4073,7 @@ var DockerSDTestCases = []scrapeCRDTestCase{
 			DockerSDConfigs: []monitoringv1alpha1.DockerSDConfig{
 				{
 					Host:               "unix:///var/run/docker.sock",
-					HostNetworkingHost: ptr.To(""),
+					HostNetworkingHost: new(""),
 				},
 			},
 		},
@@ -4085,7 +4085,7 @@ var DockerSDTestCases = []scrapeCRDTestCase{
 			DockerSDConfigs: []monitoringv1alpha1.DockerSDConfig{
 				{
 					Host:              "unix:///var/run/docker.sock",
-					MatchFirstNetwork: ptr.To(true),
+					MatchFirstNetwork: new(true),
 				},
 			},
 		},
@@ -4097,7 +4097,7 @@ var DockerSDTestCases = []scrapeCRDTestCase{
 			DockerSDConfigs: []monitoringv1alpha1.DockerSDConfig{
 				{
 					Host:              "unix:///var/run/docker.sock",
-					MatchFirstNetwork: ptr.To(false),
+					MatchFirstNetwork: new(false),
 				},
 			},
 		},
@@ -4201,7 +4201,7 @@ var DockerSDTestCases = []scrapeCRDTestCase{
 			DockerSDConfigs: []monitoringv1alpha1.DockerSDConfig{
 				{
 					Host:            "unix:///var/run/docker.sock",
-					FollowRedirects: ptr.To(true),
+					FollowRedirects: new(true),
 				},
 			},
 		},
@@ -4213,7 +4213,7 @@ var DockerSDTestCases = []scrapeCRDTestCase{
 			DockerSDConfigs: []monitoringv1alpha1.DockerSDConfig{
 				{
 					Host:            "unix:///var/run/docker.sock",
-					FollowRedirects: ptr.To(false),
+					FollowRedirects: new(false),
 				},
 			},
 		},
@@ -4225,7 +4225,7 @@ var DockerSDTestCases = []scrapeCRDTestCase{
 			DockerSDConfigs: []monitoringv1alpha1.DockerSDConfig{
 				{
 					Host:        "unix:///var/run/docker.sock",
-					EnableHTTP2: ptr.To(true),
+					EnableHTTP2: new(true),
 				},
 			},
 		},
@@ -4237,7 +4237,7 @@ var DockerSDTestCases = []scrapeCRDTestCase{
 			DockerSDConfigs: []monitoringv1alpha1.DockerSDConfig{
 				{
 					Host:        "unix:///var/run/docker.sock",
-					EnableHTTP2: ptr.To(false),
+					EnableHTTP2: new(false),
 				},
 			},
 		},
@@ -4265,7 +4265,7 @@ var DockerSwarmSDTestCases = []scrapeCRDTestCase{
 				{
 					Host: "tcp://localhost",
 					Role: "Services",
-					Port: ptr.To(int32(80)),
+					Port: new(int32(80)),
 				},
 			},
 		},
@@ -4278,7 +4278,7 @@ var DockerSwarmSDTestCases = []scrapeCRDTestCase{
 				{
 					Host: "tcp://localhost",
 					Role: "Services",
-					Port: ptr.To(int32(-1)),
+					Port: new(int32(-1)),
 				},
 			},
 		},
@@ -4388,7 +4388,7 @@ var DockerSwarmSDTestCases = []scrapeCRDTestCase{
 				{
 					Host:            "tcp://localhost",
 					Role:            "Services",
-					FollowRedirects: ptr.To(true),
+					FollowRedirects: new(true),
 				},
 			},
 		},
@@ -4401,7 +4401,7 @@ var DockerSwarmSDTestCases = []scrapeCRDTestCase{
 				{
 					Host:            "tcp://localhost",
 					Role:            "Services",
-					FollowRedirects: ptr.To(false),
+					FollowRedirects: new(false),
 				},
 			},
 		},
@@ -4414,7 +4414,7 @@ var DockerSwarmSDTestCases = []scrapeCRDTestCase{
 				{
 					Host:        "tcp://localhost",
 					Role:        "Services",
-					EnableHTTP2: ptr.To(true),
+					EnableHTTP2: new(true),
 				},
 			},
 		},
@@ -4427,7 +4427,7 @@ var DockerSwarmSDTestCases = []scrapeCRDTestCase{
 				{
 					Host:        "tcp://localhost",
 					Role:        "Services",
-					EnableHTTP2: ptr.To(false),
+					EnableHTTP2: new(false),
 				},
 			},
 		},
@@ -4464,7 +4464,7 @@ var HetznerSDTestCases = []scrapeCRDTestCase{
 			HetznerSDConfigs: []monitoringv1alpha1.HetznerSDConfig{
 				{
 					Role:            "Hcloud",
-					FollowRedirects: ptr.To(true),
+					FollowRedirects: new(true),
 				},
 			},
 		},
@@ -4476,7 +4476,7 @@ var HetznerSDTestCases = []scrapeCRDTestCase{
 			HetznerSDConfigs: []monitoringv1alpha1.HetznerSDConfig{
 				{
 					Role:            "Hcloud",
-					FollowRedirects: ptr.To(false),
+					FollowRedirects: new(false),
 				},
 			},
 		},
@@ -4488,7 +4488,7 @@ var HetznerSDTestCases = []scrapeCRDTestCase{
 			HetznerSDConfigs: []monitoringv1alpha1.HetznerSDConfig{
 				{
 					Role:        "Hcloud",
-					EnableHTTP2: ptr.To(true),
+					EnableHTTP2: new(true),
 				},
 			},
 		},
@@ -4500,7 +4500,7 @@ var HetznerSDTestCases = []scrapeCRDTestCase{
 			HetznerSDConfigs: []monitoringv1alpha1.HetznerSDConfig{
 				{
 					Role:        "Hcloud",
-					EnableHTTP2: ptr.To(false),
+					EnableHTTP2: new(false),
 				},
 			},
 		},
@@ -4512,7 +4512,7 @@ var HetznerSDTestCases = []scrapeCRDTestCase{
 			HetznerSDConfigs: []monitoringv1alpha1.HetznerSDConfig{
 				{
 					Role: "Hcloud",
-					Port: ptr.To(int32(80)),
+					Port: new(int32(80)),
 				},
 			},
 		},
@@ -4524,7 +4524,7 @@ var HetznerSDTestCases = []scrapeCRDTestCase{
 			HetznerSDConfigs: []monitoringv1alpha1.HetznerSDConfig{
 				{
 					Role: "Hcloud",
-					Port: ptr.To(int32(-1)),
+					Port: new(int32(-1)),
 				},
 			},
 		},
@@ -4560,7 +4560,7 @@ var HetznerSDTestCases = []scrapeCRDTestCase{
 			HetznerSDConfigs: []monitoringv1alpha1.HetznerSDConfig{
 				{
 					Role:          "Hcloud",
-					LabelSelector: ptr.To("foo"),
+					LabelSelector: new("foo"),
 				},
 			},
 		},
@@ -4572,7 +4572,7 @@ var HetznerSDTestCases = []scrapeCRDTestCase{
 			HetznerSDConfigs: []monitoringv1alpha1.HetznerSDConfig{
 				{
 					Role:          "Hcloud",
-					LabelSelector: ptr.To(""),
+					LabelSelector: new(""),
 				},
 			},
 		},
@@ -4586,7 +4586,7 @@ var LinodeSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LinodeSDConfigs: []monitoringv1alpha1.LinodeSDConfig{
 				{
-					Region: ptr.To("us-east"),
+					Region: new("us-east"),
 				},
 			},
 		},
@@ -4597,7 +4597,7 @@ var LinodeSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LinodeSDConfigs: []monitoringv1alpha1.LinodeSDConfig{
 				{
-					Region: ptr.To(""),
+					Region: new(""),
 				},
 			},
 		},
@@ -4608,7 +4608,7 @@ var LinodeSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LinodeSDConfigs: []monitoringv1alpha1.LinodeSDConfig{
 				{
-					Port: ptr.To(int32(80)),
+					Port: new(int32(80)),
 				},
 			},
 		},
@@ -4619,7 +4619,7 @@ var LinodeSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LinodeSDConfigs: []monitoringv1alpha1.LinodeSDConfig{
 				{
-					Port: ptr.To(int32(-1)),
+					Port: new(int32(-1)),
 				},
 			},
 		},
@@ -4630,7 +4630,7 @@ var LinodeSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LinodeSDConfigs: []monitoringv1alpha1.LinodeSDConfig{
 				{
-					TagSeparator: ptr.To(","),
+					TagSeparator: new(","),
 				},
 			},
 		},
@@ -4663,7 +4663,7 @@ var LinodeSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LinodeSDConfigs: []monitoringv1alpha1.LinodeSDConfig{
 				{
-					FollowRedirects: ptr.To(true),
+					FollowRedirects: new(true),
 				},
 			},
 		},
@@ -4674,7 +4674,7 @@ var LinodeSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LinodeSDConfigs: []monitoringv1alpha1.LinodeSDConfig{
 				{
-					FollowRedirects: ptr.To(false),
+					FollowRedirects: new(false),
 				},
 			},
 		},
@@ -4685,7 +4685,7 @@ var LinodeSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LinodeSDConfigs: []monitoringv1alpha1.LinodeSDConfig{
 				{
-					EnableHTTP2: ptr.To(true),
+					EnableHTTP2: new(true),
 				},
 			},
 		},
@@ -4696,7 +4696,7 @@ var LinodeSDTestCases = []scrapeCRDTestCase{
 		scrapeConfigSpec: monitoringv1alpha1.ScrapeConfigSpec{
 			LinodeSDConfigs: []monitoringv1alpha1.LinodeSDConfig{
 				{
-					EnableHTTP2: ptr.To(false),
+					EnableHTTP2: new(false),
 				},
 			},
 		},
@@ -4744,7 +4744,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server:     "http://localhost:4646",
-					AllowStale: ptr.To(true),
+					AllowStale: new(true),
 				},
 			},
 		},
@@ -4756,7 +4756,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server:     "http://localhost:4646",
-					AllowStale: ptr.To(false),
+					AllowStale: new(false),
 				},
 			},
 		},
@@ -4768,7 +4768,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server:    "http://localhost:4646",
-					Namespace: ptr.To("default"),
+					Namespace: new("default"),
 				},
 			},
 		},
@@ -4780,7 +4780,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server:    "http://localhost:4646",
-					Namespace: ptr.To(""),
+					Namespace: new(""),
 				},
 			},
 		},
@@ -4816,7 +4816,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server: "http://localhost:4646",
-					Region: ptr.To("us-east"),
+					Region: new("us-east"),
 				},
 			},
 		},
@@ -4828,7 +4828,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server: "http://localhost:4646",
-					Region: ptr.To(""),
+					Region: new(""),
 				},
 			},
 		},
@@ -4840,7 +4840,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server:       "http://localhost:4646",
-					TagSeparator: ptr.To(","),
+					TagSeparator: new(","),
 				},
 			},
 		},
@@ -4852,7 +4852,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server:       "http://localhost:4646",
-					TagSeparator: ptr.To(""),
+					TagSeparator: new(""),
 				},
 			},
 		},
@@ -4864,7 +4864,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server:          "http://localhost:4646",
-					FollowRedirects: ptr.To(true),
+					FollowRedirects: new(true),
 				},
 			},
 		},
@@ -4876,7 +4876,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server:          "http://localhost:4646",
-					FollowRedirects: ptr.To(false),
+					FollowRedirects: new(false),
 				},
 			},
 		},
@@ -4888,7 +4888,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server:      "http://localhost:4646",
-					EnableHTTP2: ptr.To(true),
+					EnableHTTP2: new(true),
 				},
 			},
 		},
@@ -4900,7 +4900,7 @@ var NomadSDTestCases = []scrapeCRDTestCase{
 			NomadSDConfigs: []monitoringv1alpha1.NomadSDConfig{
 				{
 					Server:      "http://localhost:4646",
-					EnableHTTP2: ptr.To(false),
+					EnableHTTP2: new(false),
 				},
 			},
 		},
@@ -4974,7 +4974,7 @@ var PuppetDBSDTestCases = []scrapeCRDTestCase{
 				{
 					URL:               "https://puppetdb.example.com",
 					Query:             "nodes { certname = \"macbook-pro.local\" }",
-					IncludeParameters: ptr.To(true),
+					IncludeParameters: new(true),
 				},
 			},
 		},
@@ -4987,7 +4987,7 @@ var PuppetDBSDTestCases = []scrapeCRDTestCase{
 				{
 					URL:               "https://puppetdb.example.com",
 					Query:             "nodes { certname = \"macbook-pro.local\" }",
-					IncludeParameters: ptr.To(false),
+					IncludeParameters: new(false),
 				},
 			},
 		},
@@ -5026,7 +5026,7 @@ var PuppetDBSDTestCases = []scrapeCRDTestCase{
 				{
 					URL:   "https://puppetdb.example.com",
 					Query: "nodes { certname = \"macbook-pro.local\" }",
-					Port:  ptr.To(int32(80)),
+					Port:  new(int32(80)),
 				},
 			},
 		},
@@ -5039,7 +5039,7 @@ var PuppetDBSDTestCases = []scrapeCRDTestCase{
 				{
 					URL:   "https://puppetdb.example.com",
 					Query: "nodes { certname = \"macbook-pro.local\" }",
-					Port:  ptr.To(int32(-1)),
+					Port:  new(int32(-1)),
 				},
 			},
 		},
@@ -5052,7 +5052,7 @@ var PuppetDBSDTestCases = []scrapeCRDTestCase{
 				{
 					URL:             "https://puppetdb.example.com",
 					Query:           "nodes { certname = \"macbook-pro.local\" }",
-					FollowRedirects: ptr.To(true),
+					FollowRedirects: new(true),
 				},
 			},
 		},
@@ -5065,7 +5065,7 @@ var PuppetDBSDTestCases = []scrapeCRDTestCase{
 				{
 					URL:             "https://puppetdb.example.com",
 					Query:           "nodes { certname = \"macbook-pro.local\" }",
-					FollowRedirects: ptr.To(false),
+					FollowRedirects: new(false),
 				},
 			},
 		},
@@ -5078,7 +5078,7 @@ var PuppetDBSDTestCases = []scrapeCRDTestCase{
 				{
 					URL:         "https://puppetdb.example.com",
 					Query:       "nodes { certname = \"macbook-pro.local\" }",
-					EnableHTTP2: ptr.To(true),
+					EnableHTTP2: new(true),
 				},
 			},
 		},
@@ -5091,7 +5091,7 @@ var PuppetDBSDTestCases = []scrapeCRDTestCase{
 				{
 					URL:         "https://puppetdb.example.com",
 					Query:       "nodes { certname = \"macbook-pro.local\" }",
-					EnableHTTP2: ptr.To(false),
+					EnableHTTP2: new(false),
 				},
 			},
 		},
@@ -5139,7 +5139,7 @@ var EurekaSDTestCases = []scrapeCRDTestCase{
 			EurekaSDConfigs: []monitoringv1alpha1.EurekaSDConfig{
 				{
 					Server:          "http://localhost:8761/eureka",
-					FollowRedirects: ptr.To(true),
+					FollowRedirects: new(true),
 				},
 			},
 		},
@@ -5151,7 +5151,7 @@ var EurekaSDTestCases = []scrapeCRDTestCase{
 			EurekaSDConfigs: []monitoringv1alpha1.EurekaSDConfig{
 				{
 					Server:          "http://localhost:8761/eureka",
-					FollowRedirects: ptr.To(false),
+					FollowRedirects: new(false),
 				},
 			},
 		},
@@ -5163,7 +5163,7 @@ var EurekaSDTestCases = []scrapeCRDTestCase{
 			EurekaSDConfigs: []monitoringv1alpha1.EurekaSDConfig{
 				{
 					Server:      "http://localhost:8761/eureka",
-					EnableHTTP2: ptr.To(true),
+					EnableHTTP2: new(true),
 				},
 			},
 		},
@@ -5175,7 +5175,7 @@ var EurekaSDTestCases = []scrapeCRDTestCase{
 			EurekaSDConfigs: []monitoringv1alpha1.EurekaSDConfig{
 				{
 					Server:      "http://localhost:8761/eureka",
-					EnableHTTP2: ptr.To(false),
+					EnableHTTP2: new(false),
 				},
 			},
 		},
