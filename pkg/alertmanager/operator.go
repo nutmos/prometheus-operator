@@ -1408,7 +1408,8 @@ func checkSlackConfigs(
 
 		slackAPIURL := ""
 		if config.APIURL != nil {
-			slackAPIURL, err := store.GetSecretKey(ctx, namespace, *config.APIURL)
+			var err error
+			slackAPIURL, err = store.GetSecretKey(ctx, namespace, *config.APIURL)
 			if err != nil {
 				return err
 			}
