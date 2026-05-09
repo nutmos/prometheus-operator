@@ -1274,7 +1274,7 @@ func TestCheckAlertmanagerConfig(t *testing.T) {
 						Name: "recv1",
 						JiraConfigs: []monitoringv1alpha1.JiraConfig{{
 							Project:   "projectA",
-							APIURL:    ptr.To(monitoringv1alpha1.URL("http://test.com")),
+							APIURL:    new(monitoringv1alpha1.URL("http://test.com")),
 							IssueType: "bug",
 							Labels:    []string{"aa", "bb"},
 							Fields: []monitoringv1alpha1.JiraField{
@@ -1336,9 +1336,9 @@ func TestCheckAlertmanagerConfig(t *testing.T) {
 						Name: "recv1",
 						JiraConfigs: []monitoringv1alpha1.JiraConfig{{
 							Project:   "projectA",
-							APIURL:    ptr.To(monitoringv1alpha1.URL("http://test.com")),
+							APIURL:    new(monitoringv1alpha1.URL("http://test.com")),
 							IssueType: "Bug",
-							APIType:   ptr.To(monitoringv1alpha1.JiraAPITypeDatacenter),
+							APIType:   new(monitoringv1alpha1.JiraAPITypeDatacenter),
 						}},
 					}},
 				},

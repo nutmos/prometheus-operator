@@ -200,17 +200,17 @@ func TestInitializeFromAlertmanagerConfig(t *testing.T) {
 							JiraConfigs: []monitoringv1alpha1.JiraConfig{
 								{
 									Project:           "projectA",
-									SendResolved:      ptr.To(true),
-									APIURL:            ptr.To(monitoringv1alpha1.URL("https://test.com")),
-									Summary:           ptr.To("summary"),
-									Description:       ptr.To("description"),
-									Priority:          ptr.To("priority"),
+									SendResolved:      new(true),
+									APIURL:            new(monitoringv1alpha1.URL("https://test.com")),
+									Summary:           new("summary"),
+									Description:       new("description"),
+									Priority:          new("priority"),
 									Labels:            []string{"aa", "bb"},
 									IssueType:         "bug",
-									ResolveTransition: ptr.To("ResolveTransition"),
-									ReopenTransition:  ptr.To("ReopenTransition"),
-									WontFixResolution: ptr.To("WontFixResolution"),
-									ReopenDuration:    ptr.To(monitoringv1.Duration("5s")),
+									ResolveTransition: new("ResolveTransition"),
+									ReopenTransition:  new("ReopenTransition"),
+									WontFixResolution: new("WontFixResolution"),
+									ReopenDuration:    new(monitoringv1.Duration("5s")),
 									Fields: []monitoringv1alpha1.JiraField{
 										{
 											Key:   "customField1",
