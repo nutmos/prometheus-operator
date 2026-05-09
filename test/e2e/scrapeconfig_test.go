@@ -5214,7 +5214,7 @@ var AWSSDTestCases = []scrapeCRDTestCase{
 			AWSSDConfigs: []monitoringv1alpha1.AWSSDConfig{
 				{
 					Role:   monitoringv1alpha1.AWSRoleEC2,
-					Region: ptr.To("us-west"),
+					Region: new("us-west"),
 				},
 			},
 		},
@@ -5297,7 +5297,7 @@ var AWSSDTestCases = []scrapeCRDTestCase{
 			AWSSDConfigs: []monitoringv1alpha1.AWSSDConfig{
 				{
 					Role:   monitoringv1alpha1.AWSRoleEC2,
-					Region: ptr.To("us-west"),
+					Region: new("us-west"),
 					Filters: []monitoringv1alpha1.Filter{
 						{
 							Name:   "foo",
@@ -5315,7 +5315,7 @@ var AWSSDTestCases = []scrapeCRDTestCase{
 			AWSSDConfigs: []monitoringv1alpha1.AWSSDConfig{
 				{
 					Role:   monitoringv1alpha1.AWSRoleEC2,
-					Region: ptr.To("us-west"),
+					Region: new("us-west"),
 					Filters: []monitoringv1alpha1.Filter{
 						{
 							Name:   "foo",
@@ -5333,7 +5333,7 @@ var AWSSDTestCases = []scrapeCRDTestCase{
 			AWSSDConfigs: []monitoringv1alpha1.AWSSDConfig{
 				{
 					Role:   monitoringv1alpha1.AWSRoleEC2,
-					Region: ptr.To("us-west"),
+					Region: new("us-west"),
 					Filters: []monitoringv1alpha1.Filter{
 						{
 							Name:   "foo",
@@ -5351,7 +5351,7 @@ var AWSSDTestCases = []scrapeCRDTestCase{
 			AWSSDConfigs: []monitoringv1alpha1.AWSSDConfig{
 				{
 					Role:   monitoringv1alpha1.AWSRoleEC2,
-					Region: ptr.To("us-west"),
+					Region: new("us-west"),
 					Filters: []monitoringv1alpha1.Filter{
 						{
 							Name:   "foo",
