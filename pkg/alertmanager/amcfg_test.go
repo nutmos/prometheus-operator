@@ -4456,9 +4456,6 @@ func TestSanitizeConfig(t *testing.T) {
 	versionSlackAppConfigAllowed := semver.Version{Major: 0, Minor: 30}
 	versionSlackAppConfigNotAllowed := semver.Version{Major: 0, Minor: 29}
 
-	versionSlackUpdateMessageAllowed := semver.Version{Major: 0, Minor: 32}
-	versionSlackUpdateMessageNotAllowed := semver.Version{Major: 0, Minor: 31}
-
 	versionJiraAllowed := semver.Version{Major: 0, Minor: 28}
 	versionJiraNotAllowed := semver.Version{Major: 0, Minor: 27}
 	jiraURL := commoncfg.URL{}
@@ -4665,57 +4662,6 @@ func TestSanitizeConfig(t *testing.T) {
 				},
 			},
 			golden: "test_mattermost_webhook_url_takes_precedence_over_mattermost_webhook_url_file_in_global_config.golden",
-		},
-		{
-			name:           "Test slack config happy path",
-			againstVersion: versionFileURLAllowed,
-			in: &alertmanagerConfig{
-				Global: &globalConfig{
-					SlackAPIURLFile: "/test",
-				},
-				Receivers: []*receiver{
-					{
-						SlackConfigs: []*slackConfig{
-							{
-								APIURLFile: "/test/case",
-							},
-						},
-					},
-				},
-			},
-			golden: "test_slack_config_happy_path.golden",
-		},
-		{
-			name:           "Test slack update_message supported version",
-			againstVersion: versionSlackUpdateMessageAllowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						SlackConfigs: []*slackConfig{
-							{
-								UpdateMessage: new(true),
-							},
-						},
-					},
-				},
-			},
-			golden: "test_slack_update_message_supported_version.golden",
-		},
-		{
-			name:           "Test slack update_message unsupported version",
-			againstVersion: versionSlackUpdateMessageNotAllowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						SlackConfigs: []*slackConfig{
-							{
-								UpdateMessage: new(true),
-							},
-						},
-					},
-				},
-			},
-			golden: "test_slack_update_message_unsupported_version.golden",
 		},
 		{
 			name:           "Test inhibit rules error with unsupported syntax",
@@ -5647,7 +5593,8 @@ func TestSanitizeConfig(t *testing.T) {
 				},
 			},
 			golden: "test_slack_app_token_and_slack_api_url_with_same_url_is_allowed.golden",
-		}, {
+		},
+		{
 			name:           "jira_config for supported versions",
 			againstVersion: versionJiraAllowed,
 			in: &alertmanagerConfig{
@@ -9072,6 +9019,9 @@ func TestSanitizeSlackConfig(t *testing.T) {
 	versionTimeoutConfigAllowed := semver.Version{Major: 0, Minor: 30}
 	versionTimeoutConfigNotAllowed := semver.Version{Major: 0, Minor: 29}
 
+	versionSlackUpdateMessageAllowed := semver.Version{Major: 0, Minor: 32}
+	versionSlackUpdateMessageNotAllowed := semver.Version{Major: 0, Minor: 31}
+
 	for _, tc := range []struct {
 		name           string
 		againstVersion semver.Version
@@ -9079,7 +9029,25 @@ func TestSanitizeSlackConfig(t *testing.T) {
 		golden         string
 		expectErr      bool
 	}{
-
+		{
+			name:           "Test slack config happy path",
+			againstVersion: versionFileURLAllowed,
+			in: &alertmanagerConfig{
+				Global: &globalConfig{
+					SlackAPIURLFile: "/test",
+				},
+				Receivers: []*receiver{
+					{
+						SlackConfigs: []*slackConfig{
+							{
+								APIURLFile: "/test/case",
+							},
+						},
+					},
+				},
+			},
+			golden: "test_slack_config_happy_path.golden",
+		},
 		{
 			name:           "Test api_url takes precedence in slack config",
 			againstVersion: versionFileURLAllowed,
@@ -9137,7 +9105,7 @@ func TestSanitizeSlackConfig(t *testing.T) {
 					{
 						SlackConfigs: []*slackConfig{
 							{
-								Timeout: ptr.To(model.Duration(time.Minute)),
+								Timeout: new(model.Duration(time.Minute)),
 							},
 						},
 					},
@@ -9176,6 +9144,38 @@ func TestSanitizeSlackConfig(t *testing.T) {
 				},
 			},
 			golden: "test_slack_message_text_is_added_in_slack_config_for_supported_versions.golden",
+		},
+		{
+			name:           "Test slack update_message unsupported version",
+			againstVersion: versionSlackUpdateMessageNotAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						SlackConfigs: []*slackConfig{
+							{
+								UpdateMessage: new(true),
+							},
+						},
+					},
+				},
+			},
+			golden: "test_slack_update_message_unsupported_version.golden",
+		},
+		{
+			name:           "Test slack update_message supported version",
+			againstVersion: versionSlackUpdateMessageAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						SlackConfigs: []*slackConfig{
+							{
+								UpdateMessage: new(true),
+							},
+						},
+					},
+				},
+			},
+			golden: "test_slack_update_message_supported_version.golden",
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
