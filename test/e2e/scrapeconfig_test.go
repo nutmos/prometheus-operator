@@ -5237,7 +5237,7 @@ var AWSSDTestCases = []scrapeCRDTestCase{
 			AWSSDConfigs: []monitoringv1alpha1.AWSSDConfig{
 				{
 					Role:   monitoringv1alpha1.AWSRoleEC2,
-					Region: ptr.To(""),
+					Region: new(""),
 				},
 			},
 		},
@@ -5249,7 +5249,7 @@ var AWSSDTestCases = []scrapeCRDTestCase{
 			AWSSDConfigs: []monitoringv1alpha1.AWSSDConfig{
 				{
 					Role:    monitoringv1alpha1.AWSRoleEC2,
-					RoleARN: ptr.To("valid-role"),
+					RoleARN: new("valid-role"),
 				},
 			},
 		},
@@ -5261,7 +5261,7 @@ var AWSSDTestCases = []scrapeCRDTestCase{
 			AWSSDConfigs: []monitoringv1alpha1.AWSSDConfig{
 				{
 					Role:    monitoringv1alpha1.AWSRoleEC2,
-					RoleARN: ptr.To(""),
+					RoleARN: new(""),
 				},
 			},
 		},
@@ -5273,7 +5273,7 @@ var AWSSDTestCases = []scrapeCRDTestCase{
 			AWSSDConfigs: []monitoringv1alpha1.AWSSDConfig{
 				{
 					Role: monitoringv1alpha1.AWSRoleEC2,
-					Port: ptr.To(int32(8080)),
+					Port: new(int32(8080)),
 				},
 			},
 		},
@@ -5285,7 +5285,7 @@ var AWSSDTestCases = []scrapeCRDTestCase{
 			AWSSDConfigs: []monitoringv1alpha1.AWSSDConfig{
 				{
 					Role: monitoringv1alpha1.AWSRoleEC2,
-					Port: ptr.To(int32(80809)),
+					Port: new(int32(80809)),
 				},
 			},
 		},
