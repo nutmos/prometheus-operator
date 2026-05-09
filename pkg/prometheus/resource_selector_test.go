@@ -4596,7 +4596,7 @@ func TestSelectScrapeConfigs(t *testing.T) {
 				sc.AWSSDConfigs = []monitoringv1alpha1.AWSSDConfig{
 					{
 						Role:   monitoringv1alpha1.AWSRoleEC2,
-						Region: ptr.To("us-east-1"),
+						Region: new("us-east-1"),
 					},
 				}
 			},
@@ -4609,7 +4609,7 @@ func TestSelectScrapeConfigs(t *testing.T) {
 				sc.AWSSDConfigs = []monitoringv1alpha1.AWSSDConfig{
 					{
 						Role:   monitoringv1alpha1.AWSRoleEC2,
-						Region: ptr.To("us-east-1"),
+						Region: new("us-east-1"),
 					},
 				}
 			},
@@ -4622,7 +4622,7 @@ func TestSelectScrapeConfigs(t *testing.T) {
 				sc.AWSSDConfigs = []monitoringv1alpha1.AWSSDConfig{
 					{
 						Role:   monitoringv1alpha1.AWSRoleMSK,
-						Region: ptr.To("us-east-1"),
+						Region: new("us-east-1"),
 					},
 				}
 			},
@@ -4635,7 +4635,7 @@ func TestSelectScrapeConfigs(t *testing.T) {
 				sc.AWSSDConfigs = []monitoringv1alpha1.AWSSDConfig{
 					{
 						Role:   monitoringv1alpha1.AWSRoleMSK,
-						Region: ptr.To("us-east-1"),
+						Region: new("us-east-1"),
 					},
 				}
 			},
@@ -4648,7 +4648,7 @@ func TestSelectScrapeConfigs(t *testing.T) {
 				sc.AWSSDConfigs = []monitoringv1alpha1.AWSSDConfig{
 					{
 						Role:   monitoringv1alpha1.AWSRoleElastiCache,
-						Region: ptr.To("us-east-1"),
+						Region: new("us-east-1"),
 					},
 				}
 			},
@@ -4661,7 +4661,7 @@ func TestSelectScrapeConfigs(t *testing.T) {
 				sc.AWSSDConfigs = []monitoringv1alpha1.AWSSDConfig{
 					{
 						Role:   monitoringv1alpha1.AWSRoleElastiCache,
-						Region: ptr.To("us-east-1"),
+						Region: new("us-east-1"),
 					},
 				}
 			},
@@ -4674,7 +4674,7 @@ func TestSelectScrapeConfigs(t *testing.T) {
 				sc.AWSSDConfigs = []monitoringv1alpha1.AWSSDConfig{
 					{
 						Role:   monitoringv1alpha1.AWSRoleRDS,
-						Region: ptr.To("us-east-1"),
+						Region: new("us-east-1"),
 					},
 				}
 			},
@@ -4687,7 +4687,7 @@ func TestSelectScrapeConfigs(t *testing.T) {
 				sc.AWSSDConfigs = []monitoringv1alpha1.AWSSDConfig{
 					{
 						Role:   monitoringv1alpha1.AWSRoleRDS,
-						Region: ptr.To("us-east-1"),
+						Region: new("us-east-1"),
 					},
 				}
 			},

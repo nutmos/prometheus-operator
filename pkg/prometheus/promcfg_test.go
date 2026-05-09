@@ -12834,7 +12834,7 @@ func TestScrapeConfigSpecConfigWithAWSSD(t *testing.T) {
 				AWSSDConfigs: []monitoringv1alpha1.AWSSDConfig{
 					{
 						Role:   monitoringv1alpha1.AWSRoleEC2,
-						Region: ptr.To("us-east-1"),
+						Region: new("us-east-1"),
 						AccessKey: &corev1.SecretKeySelector{
 							LocalObjectReference: corev1.LocalObjectReference{
 								Name: "aws-access-api",
@@ -12940,7 +12940,7 @@ func TestScrapeConfigSpecConfigWithAWSSD(t *testing.T) {
 								},
 							},
 						},
-						RefreshInterval: (*monitoringv1.Duration)(ptr.To("30s")),
+						RefreshInterval: new(monitoringv1.Duration("30s")),
 						FollowRedirects: new(true),
 						EnableHTTP2:     new(true),
 					},
