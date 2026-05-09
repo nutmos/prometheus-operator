@@ -204,6 +204,12 @@ func TestCheckAlertmanagerConfig(t *testing.T) {
 	version26, err := semver.ParseTolerant("v0.26.0")
 	require.NoError(t, err)
 
+	version27, err := semver.ParseTolerant("v0.27.0")
+	require.NoError(t, err)
+
+	version28, err := semver.ParseTolerant("v0.28.0")
+	require.NoError(t, err)
+
 	version31, err := semver.ParseTolerant("v0.31.0")
 	require.NoError(t, err)
 
@@ -228,14 +234,6 @@ func TestCheckAlertmanagerConfig(t *testing.T) {
 			},
 		},
 	)
-	version27, err := semver.ParseTolerant("v0.27.0")
-	require.NoError(t, err)
-
-	version28, err := semver.ParseTolerant("v0.28.0")
-	require.NoError(t, err)
-
-	version29, err := semver.ParseTolerant("v0.29.0")
-	require.NoError(t, err)
 
 	for _, tc := range []struct {
 		amConfig *monitoringv1alpha1.AlertmanagerConfig
