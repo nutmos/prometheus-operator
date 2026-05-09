@@ -1356,7 +1356,9 @@ var (
 )
 
 type RetainConfig struct {
-	// retentionPeriod defines the retentionPeriod for shard retention policy.
+	// retentionPeriod defines how long the scaled-down shard(s) need to be
+	// kept before being deleted.
+	//
 	// +required
 	RetentionPeriod Duration `json:"retentionPeriod"`
 }
@@ -1367,11 +1369,17 @@ type ShardRetentionPolicy struct {
 	// * `Retain`, the operator will keep the pods from the scaled-down shard(s), so the data can still be queried.
 	//
 	// If not defined, the operator assumes the `Delete` value.
+	//
 	// +kubebuilder:validation:Enum=Retain;Delete
 	// +optional
 	WhenScaled *WhenScaledRetentionType `json:"whenScaled,omitempty"`
-	// retain defines the config for retention when the retention policy is set to `Retain`.
-	// This field is ineffective as of now.
+	// retain defines the config for retention when the retention policy is set
+	// to `Retain`.
+	//
+	// If not defined, the operator will use the retention duration configured
+	// for the Prometheus data. If the resource uses size-based retention, the
+	// shard(s) are kept forever (unless manually deleted).
+	//
 	// +optional
 	Retain *RetainConfig `json:"retain,omitempty"`
 }
@@ -1646,10 +1654,10 @@ type ThanosSpec struct {
 
 	// grpcServerTlsConfig defines the TLS parameters for the gRPC server providing the StoreAPI.
 	//
-	// Note: Currently only the `minVersion`, `caFile`, `certFile`, and `keyFile` fields are supported.
+	// Note: Currently only the `minVersion`, `caFile`, `certFile`, `keyFile`, `cipherSuites` and `curves` fields are supported.
 	//
 	// +optional
-	GRPCServerTLSConfig *TLSConfig `json:"grpcServerTlsConfig,omitempty"`
+	GRPCServerTLSConfig *GRPCServerTLSConfig `json:"grpcServerTlsConfig,omitempty"`
 
 	// logLevel for the Thanos sidecar.
 	// +kubebuilder:validation:Enum="";debug;info;warn;error
@@ -1934,6 +1942,7 @@ type QueueConfig struct {
 
 // Sigv4 defines AWS's Signature Verification 4 signing process to
 // sign requests.
+// +kubebuilder:validation:XValidation:rule="!has(self.externalId) || has(self.roleArn)",message="externalId can only be used when roleArn is specified"
 // +k8s:openapi-gen=true
 type Sigv4 struct {
 	// region defines the AWS region. If blank, the region from the default credentials chain used.
@@ -1953,6 +1962,12 @@ type Sigv4 struct {
 	// roleArn defines the named AWS profile used to authenticate.
 	// +optional
 	RoleArn string `json:"roleArn,omitempty"`
+	// externalId defines the external ID used when assuming an AWS role. Can only be used with roleArn.
+	// It requires Prometheus >= v3.11.0 or Alertmanager >= v0.33.0. Currently not supported by Thanos.
+	//
+	// +kubebuilder:validation:MinLength=1
+	// +optional
+	ExternalID string `json:"externalId,omitempty"`
 	// useFIPSSTSEndpoint defines the FIPS mode for the AWS STS endpoint.
 	// It requires Prometheus >= v2.54.0.
 	//

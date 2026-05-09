@@ -36,7 +36,7 @@ jobs:
           go-version: '${{ env.golang-version }}'
           check-latest: true
       - name: Install cosign
-        uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
       - name: Check the Docker version
         run: docker version
       - name: Check the cosign version
@@ -44,13 +44,13 @@ jobs:
       - name: Install crane
         uses: imjasonh/setup-crane@6da1ae018866400525525ce74ff892880c099987 # v0.5
       - name: Login to quay.io
-        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: quay.io
           username: ${{ secrets.quay_username }}
           password: ${{ secrets.quay_password }}
       - name: Login to ghcr.io
-        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}

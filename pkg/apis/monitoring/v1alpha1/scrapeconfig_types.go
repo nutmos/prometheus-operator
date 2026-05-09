@@ -15,10 +15,11 @@
 package v1alpha1
 
 import (
-	v1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+
+	v1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 )
 
 const (
@@ -561,11 +562,17 @@ type ConsulSDConfig struct {
 	//nolint:kubeapilinter
 	NodeMeta map[string]string `json:"nodeMeta,omitempty"`
 	// filter defines the filter expression used to filter the catalog results.
-	// See https://www.consul.io/api-docs/catalog#list-services
+	// See https://developer.hashicorp.com/consul/api-docs/catalog#filtering
 	// It requires Prometheus >= 3.0.0.
 	// +kubebuilder:validation:MinLength=1
 	// +optional
 	Filter *string `json:"filter,omitempty"`
+	// healthFilter defines the filter expression used to filter the health results.
+	// See https://developer.hashicorp.com/consul/api-docs/health#filtering
+	// It requires Prometheus >= 3.11.2.
+	// +kubebuilder:validation:MinLength=1
+	// +optional
+	HealthFilter *string `json:"healthFilter,omitempty"`
 	// allowStale Consul results (see https://www.consul.io/api/features/consistency.html). Will reduce load on Consul.
 	// If unset, Prometheus uses its default value.
 	// +optional
@@ -696,13 +703,14 @@ type EC2SDConfig struct {
 	EnableHTTP2 *bool `json:"enableHTTP2,omitempty"` // nolint:kubeapilinter
 }
 
-// +kubebuilder:validation:Enum=OAuth;ManagedIdentity;SDK
+// +kubebuilder:validation:Enum=OAuth;ManagedIdentity;SDK;WorkloadIdentity
 type AuthenticationMethodType string
 
 const (
-	AuthMethodTypeOAuth           AuthenticationMethodType = "OAuth"
-	AuthMethodTypeManagedIdentity AuthenticationMethodType = "ManagedIdentity"
-	AuthMethodTypeSDK             AuthenticationMethodType = "SDK"
+	AuthMethodTypeOAuth            AuthenticationMethodType = "OAuth"
+	AuthMethodTypeManagedIdentity  AuthenticationMethodType = "ManagedIdentity"
+	AuthMethodTypeSDK              AuthenticationMethodType = "SDK"
+	AuthMethodTypeWorkloadIdentity AuthenticationMethodType = "WorkloadIdentity"
 )
 
 // AzureSDConfig allow retrieving scrape targets from Azure VMs.
