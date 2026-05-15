@@ -4748,87 +4748,6 @@ func TestSanitizeConfig(t *testing.T) {
 			golden: "test_slack_timeout_is_added_in_slack_config_for_supported_versions.golden",
 		},
 		{
-			name:           "Test message_text is dropped in slack config for unsupported versions",
-			againstVersion: versionSlackMessageTextNotAllowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						SlackConfigs: []*slackConfig{
-							{
-								MessageText: "test message text",
-							},
-						},
-					},
-				},
-			},
-			golden: "test_slack_message_text_is_dropped_in_slack_config_for_unsupported_versions.golden",
-		},
-		{
-			name:           "Test message_text is added in slack config for supported versions",
-			againstVersion: versionSlackMessageTextAllowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						SlackConfigs: []*slackConfig{
-							{
-								MessageText: "test message text",
-							},
-						},
-					},
-				},
-			},
-			golden: "test_slack_message_text_is_added_in_slack_config_for_supported_versions.golden",
-		},
-		{
-			name:           "Test slack update_message supported version",
-			againstVersion: versionSlackUpdateMessageAllowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						SlackConfigs: []*slackConfig{
-							{
-								UpdateMessage: new(true),
-							},
-						},
-					},
-				},
-			},
-			golden: "test_slack_update_message_supported_version.golden",
-		},
-		{
-			name:           "Test slack update_message unsupported version",
-			againstVersion: versionSlackUpdateMessageNotAllowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						SlackConfigs: []*slackConfig{
-							{
-								UpdateMessage: new(true),
-							},
-						},
-					},
-				},
-			},
-			golden: "test_slack_update_message_unsupported_version.golden",
-		},
-		{
-			name:           "Test slack update_message custom api url",
-			againstVersion: versionSlackUpdateMessageAllowed,
-			in: &alertmanagerConfig{
-				Receivers: []*receiver{
-					{
-						SlackConfigs: []*slackConfig{
-							{
-								APIURL:        "https://api.url",
-								UpdateMessage: new(true),
-							},
-						},
-					},
-				},
-			},
-			expectErr: true,
-		},
-		{
 			name:           "Test inhibit rules error with unsupported syntax",
 			againstVersion: matcherV2SyntaxNotAllowed,
 			in: &alertmanagerConfig{
@@ -9341,6 +9260,23 @@ func TestSanitizeSlackConfig(t *testing.T) {
 				},
 			},
 			golden: "test_slack_update_message_supported_version.golden",
+		},
+		{
+			name:           "Test slack update_message custom api url",
+			againstVersion: versionSlackUpdateMessageAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						SlackConfigs: []*slackConfig{
+							{
+								APIURL:        "https://api.url",
+								UpdateMessage: new(true),
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
