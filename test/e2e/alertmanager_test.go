@@ -2220,9 +2220,9 @@ func testUserDefinedAlertmanagerConfigFromCustomResource(t *testing.T) {
   smtp_auth_identity: dev@smtp.example.org
   smtp_require_tls: true
   slack_api_url: https://slack.api.url
+  pagerduty_url: https://pagerduty.url
   opsgenie_api_url: https://opsgenie.api.url
   opsgenie_api_key: abcdef1234567890
-  pagerduty_url: https://pagerduty.url
   wechat_api_url: https://wechat.api.url
   wechat_api_secret: abcdef1234567890
   wechat_api_corp_id: abc123
