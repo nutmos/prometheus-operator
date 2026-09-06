@@ -723,7 +723,7 @@ func TestValidateOpsGenieAlertmanagerConfig(t *testing.T) {
 							Name: "different",
 							OpsGenieConfigs: []monitoringv1beta1.OpsGenieConfig{
 								{
-									APIURL: ptr.To(monitoringv1beta1.URL("www.test.com")),
+									APIURL: ptr.To(monitoringv1beta1.URL("https://www.test.com")),
 								},
 							},
 						},
