@@ -1986,6 +1986,25 @@ func testUserDefinedAlertmanagerConfigFromCustomResource(t *testing.T) {
 					},
 				},
 			},
+			SlackAPIURL: &corev1.SecretKeySelector{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: "slack",
+				},
+				Key: "apiurl",
+			},
+			OpsGenieAPIURL: &corev1.SecretKeySelector{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: "opsgenie",
+				},
+				Key: "apiurl",
+			},
+			OpsGenieAPIKey: &corev1.SecretKeySelector{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: "opsgenie",
+				},
+				Key: "apikey",
+			},
+			PagerdutyURL: ptr.To(monitoringv1.URL("https://pagerduty.url")),
 			TelegramConfig: &monitoringv1.GlobalTelegramConfig{
 				APIURL: ptr.To(monitoringv1.URL("https://telegram.api.url")),
 			},
@@ -2135,6 +2154,23 @@ func testUserDefinedAlertmanagerConfigFromCustomResource(t *testing.T) {
 			"webhookurl": []byte(`https://mattermost.webhook.url`),
 		},
 	}
+	slack := corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "slack",
+		},
+		Data: map[string][]byte{
+			"apiurl": []byte(`https://slack.api.url`),
+		},
+	}
+	opsgenie := corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "opsgenie",
+		},
+		Data: map[string][]byte{
+			"apiurl": []byte(`https://opsgenie.api.url`),
+			"apikey": []byte(`abcdef1234567890`),
+		},
+	}
 
 	ctx := context.Background()
 	_, err = framework.KubeClient.CoreV1().ConfigMaps(ns).Create(ctx, &cm, metav1.CreateOptions{})
@@ -2154,6 +2190,10 @@ func testUserDefinedAlertmanagerConfigFromCustomResource(t *testing.T) {
 	_, err = framework.KubeClient.CoreV1().Secrets(ns).Create(ctx, &rocketchat, metav1.CreateOptions{})
 	require.NoError(t, err)
 	_, err = framework.KubeClient.CoreV1().Secrets(ns).Create(ctx, &mattermost, metav1.CreateOptions{})
+	require.NoError(t, err)
+	_, err = framework.KubeClient.CoreV1().Secrets(ns).Create(ctx, &slack, metav1.CreateOptions{})
+	require.NoError(t, err)
+	_, err = framework.KubeClient.CoreV1().Secrets(ns).Create(ctx, &opsgenie, metav1.CreateOptions{})
 	require.NoError(t, err)
 
 	_, err = framework.CreateAlertmanagerAndWaitUntilReady(ctx, alertmanager)
@@ -2179,6 +2219,10 @@ func testUserDefinedAlertmanagerConfigFromCustomResource(t *testing.T) {
   smtp_auth_secret: secret
   smtp_auth_identity: dev@smtp.example.org
   smtp_require_tls: true
+  slack_api_url: https://slack.api.url
+  opsgenie_api_url: https://opsgenie.api.url
+  opsgenie_api_key: abcdef1234567890
+  pagerduty_url: https://pagerduty.url
   wechat_api_url: https://wechat.api.url
   wechat_api_secret: abcdef1234567890
   wechat_api_corp_id: abc123
