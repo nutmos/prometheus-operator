@@ -768,7 +768,7 @@ func TestValidateOpsGenieAlertmanagerConfig(t *testing.T) {
 							OpsGenieConfigs: []monitoringv1beta1.OpsGenieConfig{
 								{
 									Responders: []monitoringv1beta1.OpsGenieConfigResponder{
-										{ID: new("1234abcd")},
+										{Type: "team", ID: new("1234abcd")},
 									},
 								},
 							},
@@ -791,7 +791,7 @@ func TestValidateOpsGenieAlertmanagerConfig(t *testing.T) {
 							OpsGenieConfigs: []monitoringv1beta1.OpsGenieConfig{
 								{
 									Responders: []monitoringv1beta1.OpsGenieConfigResponder{
-										{Name: new("respondername")},
+										{Type: "team", Name: new("respondername")},
 									},
 								},
 							},
@@ -814,7 +814,7 @@ func TestValidateOpsGenieAlertmanagerConfig(t *testing.T) {
 							OpsGenieConfigs: []monitoringv1beta1.OpsGenieConfig{
 								{
 									Responders: []monitoringv1beta1.OpsGenieConfigResponder{
-										{Username: new("responderuser")},
+										{Type: "team", Username: new("responderuser")},
 									},
 								},
 							},
