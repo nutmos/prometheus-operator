@@ -702,7 +702,7 @@ func TestValidateOpsGenieAlertmanagerConfig(t *testing.T) {
 							Name: "different",
 							OpsGenieConfigs: []monitoringv1beta1.OpsGenieConfig{
 								{
-									APIURL: new("http://%><invalid.com"),
+									APIURL: ptr.To(monitoringv1beta1.URL("http://%><invalid.com")),
 								},
 							},
 						},
@@ -723,7 +723,7 @@ func TestValidateOpsGenieAlertmanagerConfig(t *testing.T) {
 							Name: "different",
 							OpsGenieConfigs: []monitoringv1beta1.OpsGenieConfig{
 								{
-									APIURL: new("www.test.com"),
+									APIURL: ptr.To(monitoringv1beta1.URL("www.test.com")),
 								},
 							},
 						},
