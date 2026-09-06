@@ -691,7 +691,49 @@ func TestValidateOpsGenieAlertmanagerConfig(t *testing.T) {
 		expectErr bool
 	}{
 		{
-			name: "Test fail to validate on opsgenie config - missing required fields",
+			name: "validate opsgenie config - url validation failed",
+			in: &monitoringv1beta1.AlertmanagerConfig{
+				Spec: monitoringv1beta1.AlertmanagerConfigSpec{
+					Receivers: []monitoringv1beta1.Receiver{
+						{
+							Name: "same",
+						},
+						{
+							Name: "different",
+							OpsGenieConfigs: []monitoringv1beta1.OpsGenieConfig{
+								{
+									APIURL: new("http://%><invalid.com"),
+								},
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name: "validate opsgenie config - url validation success",
+			in: &monitoringv1beta1.AlertmanagerConfig{
+				Spec: monitoringv1beta1.AlertmanagerConfigSpec{
+					Receivers: []monitoringv1beta1.Receiver{
+						{
+							Name: "same",
+						},
+						{
+							Name: "different",
+							OpsGenieConfigs: []monitoringv1beta1.OpsGenieConfig{
+								{
+									APIURL: new("www.test.com"),
+								},
+							},
+						},
+					},
+				},
+			},
+			expectErr: false,
+		},
+		{
+			name: "Test fail to validate on opsgenie config - missing required fields in responders",
 			in: &monitoringv1beta1.AlertmanagerConfig{
 				Spec: monitoringv1beta1.AlertmanagerConfigSpec{
 					Receivers: []monitoringv1beta1.Receiver{
@@ -714,7 +756,7 @@ func TestValidateOpsGenieAlertmanagerConfig(t *testing.T) {
 			expectErr: true,
 		},
 		{
-			name: "validate opsgenie config - url validation failed",
+			name: "Test fail to validate on opsgenie config - responder with id",
 			in: &monitoringv1beta1.AlertmanagerConfig{
 				Spec: monitoringv1beta1.AlertmanagerConfigSpec{
 					Receivers: []monitoringv1beta1.Receiver{
@@ -725,17 +767,19 @@ func TestValidateOpsGenieAlertmanagerConfig(t *testing.T) {
 							Name: "different",
 							OpsGenieConfigs: []monitoringv1beta1.OpsGenieConfig{
 								{
-									APIKey: new("http://%><invalid.com"),
+									Responders: []monitoringv1beta1.OpsGenieConfigResponder{
+										{ID: new("1234abcd")},
+									},
 								},
 							},
 						},
 					},
 				},
 			},
-			expectErr: true,
+			expectErr: false,
 		},
 		{
-			name: "validate opsgenie config - url validation success",
+			name: "Test fail to validate on opsgenie config - responder with name",
 			in: &monitoringv1beta1.AlertmanagerConfig{
 				Spec: monitoringv1beta1.AlertmanagerConfigSpec{
 					Receivers: []monitoringv1beta1.Receiver{
@@ -746,7 +790,32 @@ func TestValidateOpsGenieAlertmanagerConfig(t *testing.T) {
 							Name: "different",
 							OpsGenieConfigs: []monitoringv1beta1.OpsGenieConfig{
 								{
-									APIKey: new("www.test.com"),
+									Responders: []monitoringv1beta1.OpsGenieConfigResponder{
+										{Name: new("respondername")},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectErr: false,
+		},
+		{
+			name: "Test fail to validate on opsgenie config - responder with username",
+			in: &monitoringv1beta1.AlertmanagerConfig{
+				Spec: monitoringv1beta1.AlertmanagerConfigSpec{
+					Receivers: []monitoringv1beta1.Receiver{
+						{
+							Name: "same",
+						},
+						{
+							Name: "different",
+							OpsGenieConfigs: []monitoringv1beta1.OpsGenieConfig{
+								{
+									Responders: []monitoringv1beta1.OpsGenieConfigResponder{
+										{Username: new("responderuser")},
+									},
 								},
 							},
 						},
