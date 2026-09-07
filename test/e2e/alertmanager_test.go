@@ -1091,7 +1091,7 @@ func testAlertmanagerConfigCRD(t *testing.T) {
 	msteamsv2WebhookURL := "https://msteamsv2.webhook.url"
 	msteamsv2Secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "msteams",
+			Name: "msteamsv2",
 		},
 		Data: map[string][]byte{
 			"webhook-url": []byte(msteamsv2WebhookURL),
