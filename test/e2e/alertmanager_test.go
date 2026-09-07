@@ -1088,6 +1088,18 @@ func testAlertmanagerConfigCRD(t *testing.T) {
 	_, err = framework.KubeClient.CoreV1().Secrets(configNs).Create(context.Background(), msteamsSecret, metav1.CreateOptions{})
 	require.NoError(t, err)
 
+	msteamsv2WebhookURL := "https://msteamsv2.webhook.url"
+	msteamsv2Secret := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "msteams",
+		},
+		Data: map[string][]byte{
+			"webhook-url": []byte(msteamsv2WebhookURL),
+		},
+	}
+	_, err = framework.KubeClient.CoreV1().Secrets(configNs).Create(context.Background(), msteamsv2Secret, metav1.CreateOptions{})
+	require.NoError(t, err)
+
 	// A valid AlertmanagerConfig resource with many receivers.
 	configCR := &monitoringv1alpha1.AlertmanagerConfig{
 		ObjectMeta: metav1.ObjectMeta{
@@ -1255,6 +1267,15 @@ func testAlertmanagerConfigCRD(t *testing.T) {
 					WebhookURL: corev1.SecretKeySelector{
 						LocalObjectReference: corev1.LocalObjectReference{
 							Name: "msteams",
+						},
+						Key: "webhook-url",
+					},
+					Title: new("Alert"),
+				}},
+				MSTeamsV2Configs: []monitoringv1alpha1.MSTeamsV2Config{{
+					WebhookURL: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: "msteamsv2",
 						},
 						Key: "webhook-url",
 					},
@@ -1607,6 +1628,9 @@ receivers:
     room_id: testingRoomID
   msteams_configs:
   - webhook_url: https://msteams.webhook.url
+    title: Alert
+  msteamsv2_configs:
+  - webhook_url: https://msteamsv2.webhook.url
     title: Alert
 - name: %s/e2e-test-amconfig-sub-routes/e2e
   webhook_configs:
