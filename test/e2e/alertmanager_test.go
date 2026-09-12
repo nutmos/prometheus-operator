@@ -1294,7 +1294,7 @@ func testAlertmanagerConfigCRD(t *testing.T) {
 					Title: new("Alert"),
 				}},
 				DiscordConfigs: []monitoringv1alpha1.DiscordConfig{{
-					APIURL: &corev1.SecretKeySelector{
+					APIURL: corev1.SecretKeySelector{
 						LocalObjectReference: corev1.LocalObjectReference{
 							Name: "discord",
 						},
