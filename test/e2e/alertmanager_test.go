@@ -1100,6 +1100,18 @@ func testAlertmanagerConfigCRD(t *testing.T) {
 	_, err = framework.KubeClient.CoreV1().Secrets(configNs).Create(context.Background(), msteamsv2Secret, metav1.CreateOptions{})
 	require.NoError(t, err)
 
+	discordAPIURL := "https://discord.api.url"
+	discordSecret := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "discord",
+		},
+		Data: map[string][]byte{
+			"api-url": []byte(discordAPIURL),
+		},
+	}
+	_, err = framework.KubeClient.CoreV1().Secrets(configNs).Create(context.Background(), discordSecret, metav1.CreateOptions{})
+	require.NoError(t, err)
+
 	// A valid AlertmanagerConfig resource with many receivers.
 	configCR := &monitoringv1alpha1.AlertmanagerConfig{
 		ObjectMeta: metav1.ObjectMeta{
@@ -1280,6 +1292,14 @@ func testAlertmanagerConfigCRD(t *testing.T) {
 						Key: "webhook-url",
 					},
 					Title: new("Alert"),
+				}},
+				DiscordConfigs: []monitoringv1alpha1.DiscordConfig{{
+					APIURL: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: "discord",
+						},
+						Key: "api-url",
+					},
 				}},
 			}},
 		},
@@ -1632,6 +1652,8 @@ receivers:
   msteamsv2_configs:
   - webhook_url: https://msteamsv2.webhook.url
     title: Alert
+  discord_configs:
+  - api_url: https://discord.api.url
 - name: %s/e2e-test-amconfig-sub-routes/e2e
   webhook_configs:
   - url: http://test.url
