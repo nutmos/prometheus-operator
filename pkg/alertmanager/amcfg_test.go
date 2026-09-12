@@ -2402,19 +2402,7 @@ func TestGenerateConfig(t *testing.T) {
 	version24, err := semver.ParseTolerant("v0.24.0")
 	require.NoError(t, err)
 
-	version26, err := semver.ParseTolerant("v0.26.0")
-	require.NoError(t, err)
-
-	version27, err := semver.ParseTolerant("v0.27.0")
-	require.NoError(t, err)
-
 	version28, err := semver.ParseTolerant("v0.28.0")
-	require.NoError(t, err)
-
-	version31, err := semver.ParseTolerant("v0.31.0")
-	require.NoError(t, err)
-
-	version32, err := semver.ParseTolerant("v0.32.0")
 	require.NoError(t, err)
 
 	globalSlackAPIURL, err := url.Parse("http://slack.example.com")
@@ -3076,79 +3064,6 @@ func TestGenerateConfig(t *testing.T) {
 			golden: "CR_with_Pagerduty_Receiver.golden",
 		},
 		{
-			name: "CR with Webhook Receiver and custom http config (oauth2)",
-			kclient: fake.NewClientset(
-				&corev1.ConfigMap{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "webhook-client-id",
-						Namespace: "mynamespace",
-					},
-					Data: map[string]string{
-						"test": "clientID",
-					},
-				},
-				&corev1.Secret{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "webhook-client-secret",
-						Namespace: "mynamespace",
-					},
-					Data: map[string][]byte{
-						"test": []byte("clientSecret"),
-					},
-				},
-			),
-			baseConfig: alertmanagerConfig{
-				Route: &route{
-					Receiver: "null",
-				},
-				Receivers: []*receiver{{Name: "null"}},
-			},
-			amConfigs: map[string]*monitoringv1alpha1.AlertmanagerConfig{
-				"mynamespace": {
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "myamc",
-						Namespace: "mynamespace",
-					},
-					Spec: monitoringv1alpha1.AlertmanagerConfigSpec{
-						Route: &monitoringv1alpha1.Route{
-							Receiver: "test",
-						},
-						Receivers: []monitoringv1alpha1.Receiver{{
-							Name: "test",
-							WebhookConfigs: []monitoringv1alpha1.WebhookConfig{{
-								URL: new("http://test.url"),
-								HTTPConfig: &monitoringv1alpha1.HTTPConfig{
-									OAuth2: &monitoringv1.OAuth2{
-										ClientID: monitoringv1.SecretOrConfigMap{
-											ConfigMap: &corev1.ConfigMapKeySelector{
-												LocalObjectReference: corev1.LocalObjectReference{
-													Name: "webhook-client-id",
-												},
-												Key: "test",
-											},
-										},
-										ClientSecret: corev1.SecretKeySelector{
-											LocalObjectReference: corev1.LocalObjectReference{
-												Name: "webhook-client-secret",
-											},
-											Key: "test",
-										},
-										TokenURL: "https://test.com",
-										Scopes:   []string{"any"},
-										EndpointParams: map[string]string{
-											"some": "value",
-										},
-									},
-									FollowRedirects: new(true),
-								},
-							}},
-						}},
-					},
-				},
-			},
-			golden: "CR_with_Webhook_Receiver_and_custom_http_config_oauth2.golden",
-		},
-		{
 			name: "CR with Opsgenie Receiver",
 			kclient: fake.NewClientset(
 				&corev1.Secret{
@@ -3396,6 +3311,38 @@ func TestGenerateConfig(t *testing.T) {
 				},
 			},
 			golden: "CR_with_Pushover_Receiver.golden",
+		},
+		{
+			name:      "CR with Pushover Receiver and file-based credentials",
+			amVersion: &version28,
+			kclient:   fake.NewClientset(),
+			baseConfig: alertmanagerConfig{
+				Route: &route{
+					Receiver: "null",
+				},
+				Receivers: []*receiver{{Name: "null"}},
+			},
+			amConfigs: map[string]*monitoringv1alpha1.AlertmanagerConfig{
+				"mynamespace": {
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "myamc",
+						Namespace: "mynamespace",
+					},
+					Spec: monitoringv1alpha1.AlertmanagerConfigSpec{
+						Route: &monitoringv1alpha1.Route{
+							Receiver: "test",
+						},
+						Receivers: []monitoringv1alpha1.Receiver{{
+							Name: "test",
+							PushoverConfigs: []monitoringv1alpha1.PushoverConfig{{
+								UserKeyFile: new("/etc/pushover/user_key"),
+								TokenFile:   new("/etc/pushover/token"),
+							}},
+						}},
+					},
+				},
+			},
+			golden: "CR_with_Pushover_Receiver_and_file_credentials.golden",
 		},
 		{
 			name:      "CR with Telegram Receiver",
@@ -3995,7 +3942,7 @@ func TestGenerateConfig(t *testing.T) {
 		},
 		{
 			name:      "CR with SNS Receiver with roleARN and externalId",
-			amVersion: &semver.Version{Major: 0, Minor: 33},
+			amVersion: &semver.Version{Major: 0, Minor: 34},
 			kclient: fake.NewClientset(
 				&corev1.Secret{
 					ObjectMeta: metav1.ObjectMeta{
@@ -4323,6 +4270,167 @@ func TestGenerateConfig(t *testing.T) {
 			golden: "CR_with_Active_Time_Intervals.golden",
 		},
 		{
+			name:      "CR with MSTeamsV2 Receiver",
+			amVersion: &version28,
+			kclient: fake.NewClientset(
+				&corev1.Secret{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "ms-teams-secret",
+						Namespace: "mynamespace",
+					},
+					Data: map[string][]byte{
+						"url": []byte("https://prod-108.westeurope.logic.azure.com:443/workflows/id"),
+					},
+				},
+			),
+			baseConfig: alertmanagerConfig{
+				Route: &route{
+					Receiver: "null",
+				},
+				Receivers: []*receiver{{Name: "null"}},
+			},
+			amConfigs: map[string]*monitoringv1alpha1.AlertmanagerConfig{
+				"mynamespace": {
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "myamc",
+						Namespace: "mynamespace",
+					},
+					Spec: monitoringv1alpha1.AlertmanagerConfigSpec{
+						Route: &monitoringv1alpha1.Route{
+							Receiver: "test",
+						},
+						Receivers: []monitoringv1alpha1.Receiver{
+							{
+								Name: "test",
+								MSTeamsV2Configs: []monitoringv1alpha1.MSTeamsV2Config{
+									{
+										WebhookURL: &corev1.SecretKeySelector{
+											Key: "url",
+											LocalObjectReference: corev1.LocalObjectReference{
+												Name: "ms-teams-secret",
+											},
+										},
+										Title: new("test title"),
+										Text:  new("test text"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			golden: "CR_with_MSTeamsV2_Receiver.golden",
+		},
+		{
+			name:      "CR with MSTeamsV2 Receiver with Partial Conf",
+			amVersion: &version28,
+			kclient: fake.NewClientset(
+				&corev1.Secret{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "ms-teams-secret",
+						Namespace: "mynamespace",
+					},
+					Data: map[string][]byte{
+						"url": []byte("https://prod-108.westeurope.logic.azure.com:443/workflows/id"),
+					},
+				},
+			),
+			baseConfig: alertmanagerConfig{
+				Route: &route{
+					Receiver: "null",
+				},
+				Receivers: []*receiver{{Name: "null"}},
+			},
+			amConfigs: map[string]*monitoringv1alpha1.AlertmanagerConfig{
+				"mynamespace": {
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "myamc",
+						Namespace: "mynamespace",
+					},
+					Spec: monitoringv1alpha1.AlertmanagerConfigSpec{
+						Route: &monitoringv1alpha1.Route{
+							Receiver: "test",
+						},
+						Receivers: []monitoringv1alpha1.Receiver{
+							{
+								Name: "test",
+								MSTeamsV2Configs: []monitoringv1alpha1.MSTeamsV2Config{
+									{
+										WebhookURL: &corev1.SecretKeySelector{
+											Key: "url",
+											LocalObjectReference: corev1.LocalObjectReference{
+												Name: "ms-teams-secret",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			golden: "CR_with_MSTeamsV2_Receiver_Partial_Conf.golden",
+		},
+	}
+
+	logger := newNopLogger(t)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			store := assets.NewStoreBuilder(tc.kclient.CoreV1(), tc.kclient.CoreV1())
+
+			if tc.amVersion == nil {
+				version, err := semver.ParseTolerant("v0.22.2")
+				require.NoError(t, err)
+				tc.amVersion = &version
+			}
+
+			cb := NewConfigBuilder(logger, *tc.amVersion, store,
+				&monitoringv1.Alertmanager{
+					ObjectMeta: metav1.ObjectMeta{Namespace: "alertmanager-namespace"},
+					Spec:       monitoringv1.AlertmanagerSpec{AlertmanagerConfigMatcherStrategy: tc.matcherStrategy},
+				},
+			)
+			cb.cfg = &tc.baseConfig
+
+			if tc.expectedError {
+				require.Error(t, cb.AddAlertmanagerConfigs(context.Background(), tc.amConfigs))
+				return
+			}
+			require.NoError(t, cb.AddAlertmanagerConfigs(context.Background(), tc.amConfigs))
+
+			cfgBytes, err := cb.MarshalJSON()
+			require.NoError(t, err)
+
+			// Verify the generated yaml is as expected
+			golden.Assert(t, string(cfgBytes), tc.golden)
+
+			// Verify the generated config is something that Alertmanager will be happy with
+			_, err = alertmanagerConfigFromBytes(cfgBytes)
+			require.NoError(t, err)
+		})
+	}
+}
+
+func TestGenerateConfigMSTeamsReceiver(t *testing.T) {
+	type testCase struct {
+		name            string
+		kclient         kubernetes.Interface
+		baseConfig      alertmanagerConfig
+		amVersion       *semver.Version
+		matcherStrategy monitoringv1.AlertmanagerConfigMatcherStrategy
+		amConfigs       map[string]*monitoringv1alpha1.AlertmanagerConfig
+		golden          string
+		expectedError   bool
+	}
+
+	version26, err := semver.ParseTolerant("v0.26.0")
+	require.NoError(t, err)
+
+	version27, err := semver.ParseTolerant("v0.27.0")
+	require.NoError(t, err)
+
+	testCases := []testCase{
+		{
 			name:      "CR with MSTeams Receiver",
 			amVersion: &version26,
 			kclient: fake.NewClientset(
@@ -4477,17 +4585,90 @@ func TestGenerateConfig(t *testing.T) {
 			},
 			golden: "CR_with_MSTeams_Receiver_Partial_Conf.golden",
 		},
+	}
+
+	logger := newNopLogger(t)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			store := assets.NewStoreBuilder(tc.kclient.CoreV1(), tc.kclient.CoreV1())
+
+			if tc.amVersion == nil {
+				version, err := semver.ParseTolerant("v0.22.2")
+				require.NoError(t, err)
+				tc.amVersion = &version
+			}
+
+			cb := NewConfigBuilder(logger, *tc.amVersion, store,
+				&monitoringv1.Alertmanager{
+					ObjectMeta: metav1.ObjectMeta{Namespace: "alertmanager-namespace"},
+					Spec:       monitoringv1.AlertmanagerSpec{AlertmanagerConfigMatcherStrategy: tc.matcherStrategy},
+				},
+			)
+			cb.cfg = &tc.baseConfig
+
+			if tc.expectedError {
+				require.Error(t, cb.AddAlertmanagerConfigs(context.Background(), tc.amConfigs))
+				return
+			}
+			require.NoError(t, cb.AddAlertmanagerConfigs(context.Background(), tc.amConfigs))
+
+			cfgBytes, err := cb.MarshalJSON()
+			require.NoError(t, err)
+
+			// Verify the generated yaml is as expected
+			golden.Assert(t, string(cfgBytes), tc.golden)
+
+			// Verify the generated config is something that Alertmanager will be happy with
+			_, err = alertmanagerConfigFromBytes(cfgBytes)
+			require.NoError(t, err)
+		})
+	}
+}
+func TestGenerateConfigWebhookReceiver(t *testing.T) {
+	type testCase struct {
+		name            string
+		kclient         kubernetes.Interface
+		baseConfig      alertmanagerConfig
+		amVersion       *semver.Version
+		matcherStrategy monitoringv1.AlertmanagerConfigMatcherStrategy
+		amConfigs       map[string]*monitoringv1alpha1.AlertmanagerConfig
+		golden          string
+		expectedError   bool
+	}
+
+	version26, err := semver.ParseTolerant("v0.26.0")
+	require.NoError(t, err)
+
+	version28, err := semver.ParseTolerant("v0.28.0")
+	require.NoError(t, err)
+
+	version31, err := semver.ParseTolerant("v0.31.0")
+	require.NoError(t, err)
+
+	version32, err := semver.ParseTolerant("v0.32.0")
+	require.NoError(t, err)
+
+	testCases := []testCase{
+
 		{
-			name:      "CR with MSTeamsV2 Receiver",
-			amVersion: &version28,
+			name: "CR with Webhook Receiver and custom http config (oauth2)",
 			kclient: fake.NewClientset(
+				&corev1.ConfigMap{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "webhook-client-id",
+						Namespace: "mynamespace",
+					},
+					Data: map[string]string{
+						"test": "clientID",
+					},
+				},
 				&corev1.Secret{
 					ObjectMeta: metav1.ObjectMeta{
-						Name:      "ms-teams-secret",
+						Name:      "webhook-client-secret",
 						Namespace: "mynamespace",
 					},
 					Data: map[string][]byte{
-						"url": []byte("https://prod-108.westeurope.logic.azure.com:443/workflows/id"),
+						"test": []byte("clientSecret"),
 					},
 				},
 			),
@@ -4507,42 +4688,46 @@ func TestGenerateConfig(t *testing.T) {
 						Route: &monitoringv1alpha1.Route{
 							Receiver: "test",
 						},
-						Receivers: []monitoringv1alpha1.Receiver{
-							{
-								Name: "test",
-								MSTeamsV2Configs: []monitoringv1alpha1.MSTeamsV2Config{
-									{
-										WebhookURL: &corev1.SecretKeySelector{
-											Key: "url",
-											LocalObjectReference: corev1.LocalObjectReference{
-												Name: "ms-teams-secret",
+						Receivers: []monitoringv1alpha1.Receiver{{
+							Name: "test",
+							WebhookConfigs: []monitoringv1alpha1.WebhookConfig{{
+								URL: new("http://test.url"),
+								HTTPConfig: &monitoringv1alpha1.HTTPConfig{
+									OAuth2: &monitoringv1.OAuth2{
+										ClientID: monitoringv1.SecretOrConfigMap{
+											ConfigMap: &corev1.ConfigMapKeySelector{
+												LocalObjectReference: corev1.LocalObjectReference{
+													Name: "webhook-client-id",
+												},
+												Key: "test",
 											},
 										},
-										Title: new("test title"),
-										Text:  new("test text"),
+										ClientSecret: corev1.SecretKeySelector{
+											LocalObjectReference: corev1.LocalObjectReference{
+												Name: "webhook-client-secret",
+											},
+											Key: "test",
+										},
+										TokenURL: "https://test.com",
+										Scopes:   []string{"any"},
+										EndpointParams: map[string]string{
+											"some": "value",
+										},
 									},
+									FollowRedirects: new(true),
 								},
-							},
-						},
+							}},
+						}},
 					},
 				},
 			},
-			golden: "CR_with_MSTeamsV2_Receiver.golden",
+			golden: "CR_with_Webhook_Receiver_and_custom_http_config_oauth2.golden",
 		},
+
 		{
-			name:      "CR with MSTeamsV2 Receiver with Partial Conf",
+			name:      "CR with Webhook Receiver and Timeout Setup",
 			amVersion: &version28,
-			kclient: fake.NewClientset(
-				&corev1.Secret{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "ms-teams-secret",
-						Namespace: "mynamespace",
-					},
-					Data: map[string][]byte{
-						"url": []byte("https://prod-108.westeurope.logic.azure.com:443/workflows/id"),
-					},
-				},
-			),
+			kclient:   fake.NewClientset(),
 			baseConfig: alertmanagerConfig{
 				Route: &route{
 					Receiver: "null",
@@ -4562,14 +4747,10 @@ func TestGenerateConfig(t *testing.T) {
 						Receivers: []monitoringv1alpha1.Receiver{
 							{
 								Name: "test",
-								MSTeamsV2Configs: []monitoringv1alpha1.MSTeamsV2Config{
+								WebhookConfigs: []monitoringv1alpha1.WebhookConfig{
 									{
-										WebhookURL: &corev1.SecretKeySelector{
-											Key: "url",
-											LocalObjectReference: corev1.LocalObjectReference{
-												Name: "ms-teams-secret",
-											},
-										},
+										URL:     new("https://example.com/"),
+										Timeout: ptr.To(monitoringv1.Duration("5s")),
 									},
 								},
 							},
@@ -4577,8 +4758,175 @@ func TestGenerateConfig(t *testing.T) {
 					},
 				},
 			},
-			golden: "CR_with_MSTeamsV2_Receiver_Partial_Conf.golden",
+			golden: "CR_with_Webhook_Receiver_and_Timeout_Setup.golden",
 		},
+		{
+			name:      "CR with Webhook Receiver and Timeout Setup Older Version",
+			amVersion: &version26,
+			kclient:   fake.NewClientset(),
+			baseConfig: alertmanagerConfig{
+				Route: &route{
+					Receiver: "null",
+				},
+				Receivers: []*receiver{{Name: "null"}},
+			},
+			amConfigs: map[string]*monitoringv1alpha1.AlertmanagerConfig{
+				"mynamespace": {
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "myamc",
+						Namespace: "mynamespace",
+					},
+					Spec: monitoringv1alpha1.AlertmanagerConfigSpec{
+						Route: &monitoringv1alpha1.Route{
+							Receiver: "test",
+						},
+						Receivers: []monitoringv1alpha1.Receiver{
+							{
+								Name: "test",
+								WebhookConfigs: []monitoringv1alpha1.WebhookConfig{
+									{
+										URL:     new("https://example.com/"),
+										Timeout: ptr.To(monitoringv1.Duration("5s")),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			golden: "CR_with_Webhook_Receiver_and_Timeout_Setup_Older_Version.golden",
+		},
+		{
+			name:      "CR with Webhook Receiver and Payload",
+			amVersion: &version32,
+			kclient:   fake.NewClientset(),
+			baseConfig: alertmanagerConfig{
+				Route: &route{
+					Receiver: "null",
+				},
+				Receivers: []*receiver{{Name: "null"}},
+			},
+			amConfigs: map[string]*monitoringv1alpha1.AlertmanagerConfig{
+				"mynamespace": {
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "myamc",
+						Namespace: "mynamespace",
+					},
+					Spec: monitoringv1alpha1.AlertmanagerConfigSpec{
+						Route: &monitoringv1alpha1.Route{
+							Receiver: "test",
+						},
+						Receivers: []monitoringv1alpha1.Receiver{
+							{
+								Name: "test",
+								WebhookConfigs: []monitoringv1alpha1.WebhookConfig{
+									{
+										URL:     new("https://example.com/"),
+										Payload: new("{\"foo\": \"bar\"}"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			golden: "CR_with_Webhook_Receiver_and_Payload.golden",
+		},
+		{
+			name:      "CR with Webhook Receiver and Payload Unsupported Version",
+			amVersion: &version31,
+			kclient:   fake.NewClientset(),
+			baseConfig: alertmanagerConfig{
+				Route: &route{
+					Receiver: "null",
+				},
+				Receivers: []*receiver{{Name: "null"}},
+			},
+			amConfigs: map[string]*monitoringv1alpha1.AlertmanagerConfig{
+				"mynamespace": {
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "myamc",
+						Namespace: "mynamespace",
+					},
+					Spec: monitoringv1alpha1.AlertmanagerConfigSpec{
+						Route: &monitoringv1alpha1.Route{
+							Receiver: "test",
+						},
+						Receivers: []monitoringv1alpha1.Receiver{
+							{
+								Name: "test",
+								WebhookConfigs: []monitoringv1alpha1.WebhookConfig{
+									{
+										URL:     new("https://example.com/"),
+										Payload: new("{\"foo\": \"bar\"}"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			golden: "CR_with_Webhook_Receiver_and_Payload_Unsupported_Version.golden",
+		},
+	}
+
+	logger := newNopLogger(t)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			store := assets.NewStoreBuilder(tc.kclient.CoreV1(), tc.kclient.CoreV1())
+
+			if tc.amVersion == nil {
+				version, err := semver.ParseTolerant("v0.22.2")
+				require.NoError(t, err)
+				tc.amVersion = &version
+			}
+
+			cb := NewConfigBuilder(logger, *tc.amVersion, store,
+				&monitoringv1.Alertmanager{
+					ObjectMeta: metav1.ObjectMeta{Namespace: "alertmanager-namespace"},
+					Spec:       monitoringv1.AlertmanagerSpec{AlertmanagerConfigMatcherStrategy: tc.matcherStrategy},
+				},
+			)
+			cb.cfg = &tc.baseConfig
+
+			if tc.expectedError {
+				require.Error(t, cb.AddAlertmanagerConfigs(context.Background(), tc.amConfigs))
+				return
+			}
+			require.NoError(t, cb.AddAlertmanagerConfigs(context.Background(), tc.amConfigs))
+
+			cfgBytes, err := cb.MarshalJSON()
+			require.NoError(t, err)
+
+			// Verify the generated yaml is as expected
+			golden.Assert(t, string(cfgBytes), tc.golden)
+
+			// Verify the generated config is something that Alertmanager will be happy with
+			_, err = alertmanagerConfigFromBytes(cfgBytes)
+			require.NoError(t, err)
+		})
+	}
+}
+
+func TestGenerateConfigEmailReceiver(t *testing.T) {
+	type testCase struct {
+		name            string
+		kclient         kubernetes.Interface
+		baseConfig      alertmanagerConfig
+		amVersion       *semver.Version
+		matcherStrategy monitoringv1.AlertmanagerConfigMatcherStrategy
+		amConfigs       map[string]*monitoringv1alpha1.AlertmanagerConfig
+		golden          string
+		expectedError   bool
+	}
+
+	version26, err := semver.ParseTolerant("v0.26.0")
+	require.NoError(t, err)
+
+	version31, err := semver.ParseTolerant("v0.31.0")
+	require.NoError(t, err)
+
+	testCases := []testCase{
 		{
 			name:      "CR with EmailConfig with Required Fields specified at Receiver level",
 			amVersion: &version26,
@@ -4807,150 +5155,6 @@ func TestGenerateConfig(t *testing.T) {
 				},
 			},
 			golden: "CR_with_EmailConfig_with_Threading.golden",
-		},
-		{
-			name:      "CR with WebhookConfig with Timeout Setup",
-			amVersion: &version28,
-			kclient:   fake.NewClientset(),
-			baseConfig: alertmanagerConfig{
-				Route: &route{
-					Receiver: "null",
-				},
-				Receivers: []*receiver{{Name: "null"}},
-			},
-			amConfigs: map[string]*monitoringv1alpha1.AlertmanagerConfig{
-				"mynamespace": {
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "myamc",
-						Namespace: "mynamespace",
-					},
-					Spec: monitoringv1alpha1.AlertmanagerConfigSpec{
-						Route: &monitoringv1alpha1.Route{
-							Receiver: "test",
-						},
-						Receivers: []monitoringv1alpha1.Receiver{
-							{
-								Name: "test",
-								WebhookConfigs: []monitoringv1alpha1.WebhookConfig{
-									{
-										URL:     new("https://example.com/"),
-										Timeout: ptr.To(monitoringv1.Duration("5s")),
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-			golden: "CR_with_WebhookConfig_with_Timeout_Setup.golden",
-		},
-		{
-			name:      "CR with WebhookConfig with Timeout Setup Older Version",
-			amVersion: &version26,
-			kclient:   fake.NewClientset(),
-			baseConfig: alertmanagerConfig{
-				Route: &route{
-					Receiver: "null",
-				},
-				Receivers: []*receiver{{Name: "null"}},
-			},
-			amConfigs: map[string]*monitoringv1alpha1.AlertmanagerConfig{
-				"mynamespace": {
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "myamc",
-						Namespace: "mynamespace",
-					},
-					Spec: monitoringv1alpha1.AlertmanagerConfigSpec{
-						Route: &monitoringv1alpha1.Route{
-							Receiver: "test",
-						},
-						Receivers: []monitoringv1alpha1.Receiver{
-							{
-								Name: "test",
-								WebhookConfigs: []monitoringv1alpha1.WebhookConfig{
-									{
-										URL:     new("https://example.com/"),
-										Timeout: ptr.To(monitoringv1.Duration("5s")),
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-			golden: "CR_with_WebhookConfig_with_Timeout_Setup_Older_Version.golden",
-		},
-		{
-			name:      "CR with WebhookConfig with Payload",
-			amVersion: &version32,
-			kclient:   fake.NewClientset(),
-			baseConfig: alertmanagerConfig{
-				Route: &route{
-					Receiver: "null",
-				},
-				Receivers: []*receiver{{Name: "null"}},
-			},
-			amConfigs: map[string]*monitoringv1alpha1.AlertmanagerConfig{
-				"mynamespace": {
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "myamc",
-						Namespace: "mynamespace",
-					},
-					Spec: monitoringv1alpha1.AlertmanagerConfigSpec{
-						Route: &monitoringv1alpha1.Route{
-							Receiver: "test",
-						},
-						Receivers: []monitoringv1alpha1.Receiver{
-							{
-								Name: "test",
-								WebhookConfigs: []monitoringv1alpha1.WebhookConfig{
-									{
-										URL:     new("https://example.com/"),
-										Payload: new("{\"foo\": \"bar\"}"),
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-			golden: "CR_with_WebhookConfig_with_Payload.golden",
-		},
-		{
-			name:      "CR with WebhookConfig with Payload Unsupported Version",
-			amVersion: &version31,
-			kclient:   fake.NewClientset(),
-			baseConfig: alertmanagerConfig{
-				Route: &route{
-					Receiver: "null",
-				},
-				Receivers: []*receiver{{Name: "null"}},
-			},
-			amConfigs: map[string]*monitoringv1alpha1.AlertmanagerConfig{
-				"mynamespace": {
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      "myamc",
-						Namespace: "mynamespace",
-					},
-					Spec: monitoringv1alpha1.AlertmanagerConfigSpec{
-						Route: &monitoringv1alpha1.Route{
-							Receiver: "test",
-						},
-						Receivers: []monitoringv1alpha1.Receiver{
-							{
-								Name: "test",
-								WebhookConfigs: []monitoringv1alpha1.WebhookConfig{
-									{
-										URL:     new("https://example.com/"),
-										Payload: new("{\"foo\": \"bar\"}"),
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-			golden: "CR_with_WebhookConfig_with_Payload_Unsupported_Version.golden",
 		},
 	}
 
@@ -5508,6 +5712,55 @@ func TestSanitizeConfig(t *testing.T) {
 			golden: "test_avatar_url_field_added_in_discord_config_for_supported_versions.golden",
 		},
 		{
+			name:           "discord_config with webhook url file set",
+			againstVersion: versionDiscordMessageFieldsAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						DiscordConfigs: []*discordConfig{
+							{
+								WebhookURLFile: "/var/secrets/webhook-url-file",
+							},
+						},
+					},
+				},
+			},
+			golden: "discord_config_with_webhook_url_file_set.golden",
+		},
+		{
+			name:           "discord_config both webhook url and webhook url file set",
+			againstVersion: versionDiscordMessageFieldsAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						DiscordConfigs: []*discordConfig{
+							{
+								WebhookURL:     "http://example.com",
+								WebhookURLFile: "/var/secrets/webhook-url-file",
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "discord_config webhook url file dropped for unsupported versions",
+			againstVersion: versionDiscordMessageFieldsNotAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						DiscordConfigs: []*discordConfig{
+							{
+								WebhookURLFile: "/var/secrets/webhook-url-file",
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
 			name:           "webex_config for supported versions",
 			againstVersion: versionWebexAllowed,
 			in: &alertmanagerConfig{
@@ -5852,7 +6105,7 @@ func TestSanitizeConfig(t *testing.T) {
 					{
 						MattermostConfigs: []*mattermostConfig{
 							{
-								WebhookURL: "www.test.com",
+								WebhookURL: "http://www.test.com",
 								Text:       "test text",
 							},
 						},
@@ -5869,7 +6122,7 @@ func TestSanitizeConfig(t *testing.T) {
 					{
 						MattermostConfigs: []*mattermostConfig{
 							{
-								WebhookURL: "www.test.com",
+								WebhookURL: "http://www.test.com",
 								Text:       "test text",
 							},
 						},
@@ -5886,7 +6139,7 @@ func TestSanitizeConfig(t *testing.T) {
 					{
 						MattermostConfigs: []*mattermostConfig{
 							{
-								WebhookURL:     "www.test.com",
+								WebhookURL:     "http://www.test.com",
 								WebhookURLFile: "/test",
 								Text:           "test text",
 							},
@@ -5948,7 +6201,7 @@ func TestSanitizeConfig(t *testing.T) {
 					{
 						MattermostConfigs: []*mattermostConfig{
 							{
-								WebhookURL: "www.test.com",
+								WebhookURL: "http://www.test.com",
 							},
 						},
 					},
@@ -5964,7 +6217,7 @@ func TestSanitizeConfig(t *testing.T) {
 					{
 						MattermostConfigs: []*mattermostConfig{
 							{
-								WebhookURL: "www.test.com",
+								WebhookURL: "http://www.test.com",
 								AuthorName: "test author",
 							},
 						},
@@ -5981,7 +6234,7 @@ func TestSanitizeConfig(t *testing.T) {
 					{
 						MattermostConfigs: []*mattermostConfig{
 							{
-								WebhookURL: "www.test.com",
+								WebhookURL: "http://www.test.com",
 								AuthorName: "test author",
 							},
 						},
@@ -5998,7 +6251,7 @@ func TestSanitizeConfig(t *testing.T) {
 					{
 						MattermostConfigs: []*mattermostConfig{
 							{
-								WebhookURL: "www.test.com",
+								WebhookURL: "http://www.test.com",
 								Fields: []mattermostField{
 									{
 										Title: "foo",
@@ -6020,7 +6273,7 @@ func TestSanitizeConfig(t *testing.T) {
 					{
 						MattermostConfigs: []*mattermostConfig{
 							{
-								WebhookURL: "www.test.com",
+								WebhookURL: "http://www.test.com",
 								Fields: []mattermostField{
 									{
 										Title: "foo",
@@ -8265,6 +8518,317 @@ func TestSanitizeRocketChatConfig(t *testing.T) {
 	}
 }
 
+func TestSanitizeMattermostConfig(t *testing.T) {
+	logger := newNopLogger(t)
+	versionMattermostAllowed := semver.Version{Major: 0, Minor: 30}
+	for _, tc := range []struct {
+		name           string
+		againstVersion semver.Version
+		in             *alertmanagerConfig
+		golden         string
+		expectErr      bool
+	}{
+		{
+			name:           "mattermost_configs invalid webhook_url returns error",
+			againstVersion: versionMattermostAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "not-a-valid-url",
+								Text:       "test",
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "mattermost_configs invalid icon_url returns error",
+			againstVersion: versionMattermostAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								IconURL:    "not-a-valid-url",
+								Text:       "test",
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "mattermost_configs invalid attachment author_link returns error",
+			againstVersion: versionMattermostAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								Text:       "test",
+								Attachments: []*mattermostAttachmentConfig{
+									{
+										AuthorLink: "not-a-valid-url",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "mattermost_configs invalid attachment author_icon returns error",
+			againstVersion: versionMattermostAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								Text:       "test",
+								Attachments: []*mattermostAttachmentConfig{
+									{
+										AuthorIcon: "not-a-valid-url",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "mattermost_configs invalid attachment title_link returns error",
+			againstVersion: versionMattermostAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								Text:       "test",
+								Attachments: []*mattermostAttachmentConfig{
+									{
+										TitleLink: "not-a-valid-url",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "mattermost_configs invalid attachment thumb_url returns error",
+			againstVersion: versionMattermostAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								Text:       "test",
+								Attachments: []*mattermostAttachmentConfig{
+									{
+										ThumbURL: "not-a-valid-url",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "mattermost_configs invalid attachment footer_icon returns error",
+			againstVersion: versionMattermostAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								Text:       "test",
+								Attachments: []*mattermostAttachmentConfig{
+									{
+										FooterIcon: "not-a-valid-url",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "mattermost_configs invalid attachment image_url returns error",
+			againstVersion: versionMattermostAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								Text:       "test",
+								Attachments: []*mattermostAttachmentConfig{
+									{
+										ImageURL: "not-a-valid-url",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "mattermost_configs valid urls pass validation",
+			againstVersion: versionMattermostAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								IconURL:    "https://example.com/icon.png",
+								Text:       "test",
+								Attachments: []*mattermostAttachmentConfig{
+									{
+										AuthorLink: "https://example.com/author",
+										AuthorIcon: "https://example.com/author-icon.png",
+										TitleLink:  "https://example.com/title",
+										ThumbURL:   "https://example.com/thumb.png",
+										FooterIcon: "https://example.com/footer-icon.png",
+										ImageURL:   "https://example.com/image.png",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			golden: "mattermost_valid_urls_pass_validation.golden",
+		},
+		{
+			name:           "mattermost_configs templated urls pass validation",
+			againstVersion: versionMattermostAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								IconURL:    `{{ .CommonAnnotations.icon }}`,
+								Text:       "test",
+								Attachments: []*mattermostAttachmentConfig{
+									{
+										AuthorLink: `{{ .CommonAnnotations.author }}`,
+										AuthorIcon: `{{ .CommonAnnotations.authorIcon }}`,
+										TitleLink:  `{{ .CommonAnnotations.title }}`,
+										ThumbURL:   `{{ .CommonAnnotations.thumb }}`,
+										FooterIcon: `{{ .CommonAnnotations.footerIcon }}`,
+										ImageURL:   `{{ .CommonAnnotations.image }}`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			golden: "mattermost_templated_urls_pass_validation.golden",
+		},
+		{
+			name:           "mattermost_configs invalid top-level author_link returns error",
+			againstVersion: semver.Version{Major: 0, Minor: 32},
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								AuthorLink: "not-a-valid-url",
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name:           "mattermost_configs valid and templated top-level urls pass validation",
+			againstVersion: semver.Version{Major: 0, Minor: 32},
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								AuthorLink: "https://example.com/author",
+								AuthorIcon: `{{ .CommonAnnotations.authorIcon }}`,
+								TitleLink:  `{{ .CommonAnnotations.title }}`,
+								ThumbURL:   "https://example.com/thumb.png",
+								FooterIcon: `{{ .CommonAnnotations.footerIcon }}`,
+								ImageURL:   "https://example.com/image.png",
+							},
+						},
+					},
+				},
+			},
+			golden: "mattermost_top_level_urls_pass_validation.golden",
+		},
+		{
+			name:           "mattermost_configs invalid template in attachment title_link returns error",
+			againstVersion: versionMattermostAllowed,
+			in: &alertmanagerConfig{
+				Receivers: []*receiver{
+					{
+						MattermostConfigs: []*mattermostConfig{
+							{
+								WebhookURL: "http://mattermost.example.com/hooks/xxx",
+								Attachments: []*mattermostAttachmentConfig{
+									{
+										TitleLink: `{{ .CommonAnnotations.title`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectErr: true,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.in.sanitize(tc.againstVersion, logger)
+			if tc.expectErr {
+				require.Error(t, err)
+				return
+			}
+
+			require.NoError(t, err)
+
+			amConfigs, err := yaml.Marshal(tc.in)
+			require.NoError(t, err)
+
+			golden.Assert(t, string(amConfigs), tc.golden)
+		})
+	}
+}
+
 func TestSanitizeIncidentioConfig(t *testing.T) {
 	logger := newNopLogger(t)
 	versionIncidentioAllowed := semver.Version{Major: 0, Minor: 29}
@@ -8684,6 +9248,11 @@ func TestLoadConfig(t *testing.T) {
 	}
 }
 
+func TestLoadConfigDiscordWebhookURLFile(t *testing.T) {
+	_, err := alertmanagerConfigFromBytes(golden.Get(t, "Discord_webhook_url_file_field.golden"))
+	require.NoError(t, err)
+}
+
 func TestConvertHTTPConfig(t *testing.T) {
 	testCases := []struct {
 		name    string
@@ -9012,6 +9581,7 @@ func TestSanitizeSNSConfig(t *testing.T) {
 	logger := newNopLogger(t)
 	versionSNSAllowed := semver.Version{Major: 0, Minor: 25}
 	versionV33 := semver.Version{Major: 0, Minor: 33}
+	versionV34 := semver.Version{Major: 0, Minor: 34}
 
 	for _, tc := range []struct {
 		name           string
@@ -9056,7 +9626,7 @@ func TestSanitizeSNSConfig(t *testing.T) {
 		},
 		{
 			name:           "sns valid sigv4.externalid passes in support amVersion",
-			againstVersion: versionV33,
+			againstVersion: versionV34,
 			in: &alertmanagerConfig{
 				Receivers: []*receiver{
 					{

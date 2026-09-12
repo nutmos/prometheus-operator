@@ -792,6 +792,26 @@ GoDuration
 </tr>
 <tr>
 <td>
+<code>clusterPeerName</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>clusterPeerName defines the name that this Alertmanager instance uses to
+advertise itself to other cluster peers (the <code>--cluster.peer-name</code> flag,
+available since Alertmanager v0.30.0).</p>
+<p>If not set, the operator defaults to the pod&rsquo;s name (<code>$(POD_NAME)</code>),
+which is injected via the Kubernetes downward API. Setting this field
+lets you override that default with either a literal value or a string
+referencing environment variables that are already available in the
+Alertmanager container (for example <code>$(POD_NAME).$(NAMESPACE)</code>).</p>
+<p>/ It requires Alertmanager &gt;= 0.30.0.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>portName</code><br/>
 <em>
 string
@@ -1232,7 +1252,7 @@ By default, the pods are discovered in the same namespace as the <code>PodMonito
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1245,7 +1265,7 @@ that will be accepted.</p>
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1290,7 +1310,7 @@ ScrapeProtocol
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1303,7 +1323,7 @@ uint64
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1316,7 +1336,7 @@ uint64
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1356,7 +1376,7 @@ It requires Prometheus &gt;= v2.45.0.</p>
 <td>
 <code>nativeHistogramBucketLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1399,7 +1419,7 @@ It requires Prometheus &gt;= v3.0.0.</p>
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1658,7 +1678,7 @@ SafeAuthorization
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1670,7 +1690,7 @@ uint64
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1714,7 +1734,7 @@ ScrapeProtocol
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1727,7 +1747,7 @@ Only valid in Prometheus versions 2.27.0 and newer.</p>
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1740,7 +1760,7 @@ Only valid in Prometheus versions 2.27.0 and newer.</p>
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1780,7 +1800,7 @@ It requires Prometheus &gt;= v2.45.0.</p>
 <td>
 <code>nativeHistogramBucketLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -1823,7 +1843,7 @@ It requires Prometheus &gt;= v3.0.0.</p>
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -2359,6 +2379,7 @@ configuration (either in the monitoring resources or via scrape class).</p>
 <p>You can also disable sharding on a specific target by setting the
 <code>__tmp_disable_sharding</code> label with relabeling configuration. When
 the label value isn&rsquo;t empty, all Prometheus shards will scrape the target.</p>
+<p>Default: 1</p>
 </td>
 </tr>
 <tr>
@@ -3152,7 +3173,7 @@ The label&rsquo;s value is the namespace of the <code>ServiceMonitor</code>,
 <td>
 <code>enforcedSampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3175,7 +3196,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedSampleLimit</code> i
 <td>
 <code>enforcedTargetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3197,7 +3218,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedTargetLimit</code> i
 <td>
 <code>enforcedLabelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3218,7 +3239,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelLimit</code> is
 <td>
 <code>enforcedLabelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3239,7 +3260,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelNameLengthLimit
 <td>
 <code>enforcedLabelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3260,7 +3281,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelValueLengthLimi
 <td>
 <code>enforcedKeepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3521,7 +3542,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3536,7 +3557,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3551,7 +3572,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3566,7 +3587,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3581,7 +3602,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3596,7 +3617,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -3812,7 +3833,8 @@ Duration
 <td>
 <em>(Optional)</em>
 <p>retention defines how long to retain the Prometheus data.</p>
-<p>Default: &ldquo;24h&rdquo; if <code>spec.retention</code> and <code>spec.retentionSize</code> are empty.</p>
+<p>Default: &ldquo;24h&rdquo; if <code>spec.retention</code>, <code>spec.retentionSize</code> and
+<code>spec.retentionPercentage</code> are empty.</p>
 </td>
 </tr>
 <tr>
@@ -3831,6 +3853,24 @@ ByteSize
 </tr>
 <tr>
 <td>
+<code>retentionPercentage</code><br/>
+<em>
+<a href="https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity">
+k8s.io/apimachinery/pkg/api/resource.Quantity
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>retentionPercentage defines the maximum percentage of the data volume&rsquo;s
+capacity used by the Prometheus data.</p>
+<p>The value is a number between 0 and 100. If set to 0, percentage-based
+retention is disabled.</p>
+<p>It requires Prometheus &gt;= v3.11.0 and is ignored by older versions.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>shardRetentionPolicy</code><br/>
 <em>
 <a href="#monitoring.coreos.com/v1.ShardRetentionPolicy">
@@ -3840,11 +3880,8 @@ ShardRetentionPolicy
 </td>
 <td>
 <em>(Optional)</em>
-<p>shardRetentionPolicy defines the retention policy for the Prometheus shards.
-(Alpha) Using this field requires the &lsquo;PrometheusShardRetentionPolicy&rsquo; feature gate to be enabled.</p>
-<p>The final goals for this feature can be seen at <a href="https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/proposals/202310-shard-autoscaling.md#graceful-scale-down-of-prometheus-servers">https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/proposals/202310-shard-autoscaling.md#graceful-scale-down-of-prometheus-servers</a>,
-however, the feature is not yet fully implemented in this PR. The limitation being:
-* Retention duration is not settable, for now, shards are retained forever.</p>
+<p>shardRetentionPolicy defines the retention policy for the Prometheus shards.</p>
+<p>(Beta) Using this mode requires the <code>PrometheusShardRetentionPolicy</code> feature gate (enabled by default).</p>
 </td>
 </tr>
 <tr>
@@ -3856,9 +3893,15 @@ bool
 </td>
 <td>
 <em>(Optional)</em>
-<p>disableCompaction when true, the Prometheus compaction is disabled.
-When <code>spec.thanos.objectStorageConfig</code> or <code>spec.objectStorageConfigFile</code> are defined, the operator automatically
-disables block compaction to avoid race conditions during block uploads (as the Thanos documentation recommends).</p>
+<p>disableCompaction when true, the Prometheus compaction is disabled.</p>
+<p>When <code>spec.thanos.objectStorageConfig</code> or <code>spec.thanos.objectStorageConfigFile</code> are defined, the operator&rsquo;s
+default handling depends on the Prometheus and Thanos sidecar versions:
+- With Prometheus &lt; v3.9.0 or a Thanos sidecar &lt; v0.42.0, block compaction is disabled to avoid race
+conditions during block uploads (as the Thanos documentation recommends).
+- With Prometheus &gt;= v3.9.0 and a Thanos sidecar &gt;= v0.42.0, local compaction is kept enabled and coordinated
+with the sidecar through the shipper meta file (<code>--storage.tsdb.delay-compact-file.path</code>), so blocks are only
+compacted after they have been uploaded.
+Setting this field to true always disables local compaction regardless of the versions.</p>
 </td>
 </tr>
 <tr>
@@ -4422,7 +4465,7 @@ By default, the services are discovered in the same namespace as the <code>Servi
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -4467,7 +4510,7 @@ ScrapeProtocol
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -4480,7 +4523,7 @@ be accepted.</p>
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -4493,7 +4536,7 @@ uint64
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -4506,7 +4549,7 @@ uint64
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -4546,7 +4589,7 @@ It requires Prometheus &gt;= v2.45.0.</p>
 <td>
 <code>nativeHistogramBucketLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -4589,7 +4632,7 @@ It requires Prometheus &gt;= v3.0.0.</p>
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -7397,6 +7440,26 @@ GoDuration
 </tr>
 <tr>
 <td>
+<code>clusterPeerName</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>clusterPeerName defines the name that this Alertmanager instance uses to
+advertise itself to other cluster peers (the <code>--cluster.peer-name</code> flag,
+available since Alertmanager v0.30.0).</p>
+<p>If not set, the operator defaults to the pod&rsquo;s name (<code>$(POD_NAME)</code>),
+which is injected via the Kubernetes downward API. Setting this field
+lets you override that default with either a literal value or a string
+referencing environment variables that are already available in the
+Alertmanager container (for example <code>$(POD_NAME).$(NAMESPACE)</code>).</p>
+<p>/ It requires Alertmanager &gt;= 0.30.0.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>portName</code><br/>
 <em>
 string
@@ -8298,6 +8361,64 @@ authentication.</p>
 <p>ByteSize is a valid memory size type based on powers-of-2, so 1KB is 1024B.
 Supported units: B, KB, KiB, MB, MiB, GB, GiB, TB, TiB, PB, PiB, EB, EiB Ex: <code>512MB</code>.</p>
 </div>
+<h3 id="monitoring.coreos.com/v1.ChunkEncodingFloats">ChunkEncodingFloats
+(<code>string</code> alias)</h3>
+<p>
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.ChunkEncodingSpec">ChunkEncodingSpec</a>)
+</p>
+<div>
+</div>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr><td><p>&#34;Xor&#34;</p></td>
+<td></td>
+</tr><tr><td><p>&#34;Xor2&#34;</p></td>
+<td></td>
+</tr></tbody>
+</table>
+<h3 id="monitoring.coreos.com/v1.ChunkEncodingSpec">ChunkEncodingSpec
+</h3>
+<p>
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.TSDBSpec">TSDBSpec</a>)
+</p>
+<div>
+<p>ChunkEncodingSpec configures per-chunk-type encoding overrides.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>floats</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.ChunkEncodingFloats">
+ChunkEncodingFloats
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>floats selects the encoding used for float chunks.
+Valid values are &ldquo;Xor&rdquo; and &ldquo;Xor2&rdquo;.</p>
+<p>Notice:
+* Setting &ldquo;Xor&rdquo; is incompatible with &ndash;enable-feature=st-storage
+(XOR chunks do not store start timestamps).
+* Setting &ldquo;Xor2&rdquo; automatically adds the <code>xor2-encoding</code> feature flag.</p>
+<p>It requires Prometheus &gt;= v3.13.0.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="monitoring.coreos.com/v1.ClusterTLSConfig">ClusterTLSConfig
 </h3>
 <p>
@@ -8663,6 +8784,7 @@ configuration (either in the monitoring resources or via scrape class).</p>
 <p>You can also disable sharding on a specific target by setting the
 <code>__tmp_disable_sharding</code> label with relabeling configuration. When
 the label value isn&rsquo;t empty, all Prometheus shards will scrape the target.</p>
+<p>Default: 1</p>
 </td>
 </tr>
 <tr>
@@ -9456,7 +9578,7 @@ The label&rsquo;s value is the namespace of the <code>ServiceMonitor</code>,
 <td>
 <code>enforcedSampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -9479,7 +9601,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedSampleLimit</code> i
 <td>
 <code>enforcedTargetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -9501,7 +9623,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedTargetLimit</code> i
 <td>
 <code>enforcedLabelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -9522,7 +9644,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelLimit</code> is
 <td>
 <code>enforcedLabelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -9543,7 +9665,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelNameLengthLimit
 <td>
 <code>enforcedLabelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -9564,7 +9686,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelValueLengthLimi
 <td>
 <code>enforcedKeepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -9825,7 +9947,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -9840,7 +9962,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -9855,7 +9977,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -9870,7 +9992,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -9885,7 +10007,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -9900,7 +10022,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -10822,8 +10944,8 @@ Kubernetes core/v1.TypedLocalObjectReference
 * An existing PVC (PersistentVolumeClaim)
 If the provisioner or an external controller can support the specified data source,
 it will create a new volume based on the contents of the specified data source.
-When the AnyVolumeDataSource feature gate is enabled, dataSource contents will be copied to dataSourceRef,
-and dataSourceRef contents will be copied to dataSource when dataSourceRef.namespace is not specified.
+dataSource contents will be copied to dataSourceRef, and dataSourceRef contents will be
+copied to dataSource when dataSourceRef.namespace is not specified.
 If the namespace is specified, then dataSourceRef will not be copied to dataSource.</p>
 </td>
 </tr>
@@ -10859,7 +10981,6 @@ preserves all values, and generates an error if a disallowed value is
 specified.
 * While dataSource only allows local objects, dataSourceRef allows objects
 in any namespaces.
-(Beta) Using this field requires the AnyVolumeDataSource feature gate to be enabled.
 (Alpha) Using the namespace field of dataSourceRef requires the CrossNamespaceVolumeDataSource feature gate to be enabled.</p>
 </td>
 </tr>
@@ -10936,7 +11057,8 @@ string
 </td>
 <td>
 <em>(Optional)</em>
-<p>port defines the name of the Service port which this endpoint refers to.</p>
+<p>port defines the name of the Service port which this endpoint refers to
+(e.g. <code>.spec.ports[].name</code>).</p>
 <p>It takes precedence over <code>targetPort</code>.</p>
 </td>
 </tr>
@@ -10951,8 +11073,10 @@ k8s.io/apimachinery/pkg/util/intstr.IntOrString
 </td>
 <td>
 <em>(Optional)</em>
-<p>targetPort defines the name or number of the target port of the <code>Pod</code> object behind the
-Service. The port must be specified with the container&rsquo;s port property.</p>
+<p>targetPort defines the name or number of a container port on Pods selected
+by the Service.
+If a name, it matches against <code>.spec.containers[].ports[].name</code> of the Pods.
+If a number, it matches against <code>.spec.containers[].ports[].containerPort</code> of the Pods.</p>
 </td>
 </tr>
 <tr>
@@ -12876,6 +13000,7 @@ bool
 <td>
 <em>(Optional)</em>
 <p>send defines whether metric metadata is sent to the remote storage or not.</p>
+<p>The setting is ignored when Remote Write message&rsquo;s version 2.0 is used.</p>
 </td>
 </tr>
 <tr>
@@ -13064,7 +13189,7 @@ It requires Prometheus &gt;= v2.45.0.</p>
 <td>
 <code>nativeHistogramBucketLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14119,7 +14244,7 @@ By default, the pods are discovered in the same namespace as the <code>PodMonito
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14132,7 +14257,7 @@ that will be accepted.</p>
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14177,7 +14302,7 @@ ScrapeProtocol
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14190,7 +14315,7 @@ uint64
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14203,7 +14328,7 @@ uint64
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14243,7 +14368,7 @@ It requires Prometheus &gt;= v2.45.0.</p>
 <td>
 <code>nativeHistogramBucketLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14286,7 +14411,7 @@ It requires Prometheus &gt;= v3.0.0.</p>
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14517,7 +14642,7 @@ SafeAuthorization
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14529,7 +14654,7 @@ uint64
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14573,7 +14698,7 @@ ScrapeProtocol
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14586,7 +14711,7 @@ Only valid in Prometheus versions 2.27.0 and newer.</p>
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14599,7 +14724,7 @@ Only valid in Prometheus versions 2.27.0 and newer.</p>
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14639,7 +14764,7 @@ It requires Prometheus &gt;= v2.45.0.</p>
 <td>
 <code>nativeHistogramBucketLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -14682,7 +14807,7 @@ It requires Prometheus &gt;= v3.0.0.</p>
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -15517,6 +15642,7 @@ configuration (either in the monitoring resources or via scrape class).</p>
 <p>You can also disable sharding on a specific target by setting the
 <code>__tmp_disable_sharding</code> label with relabeling configuration. When
 the label value isn&rsquo;t empty, all Prometheus shards will scrape the target.</p>
+<p>Default: 1</p>
 </td>
 </tr>
 <tr>
@@ -16310,7 +16436,7 @@ The label&rsquo;s value is the namespace of the <code>ServiceMonitor</code>,
 <td>
 <code>enforcedSampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16333,7 +16459,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedSampleLimit</code> i
 <td>
 <code>enforcedTargetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16355,7 +16481,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedTargetLimit</code> i
 <td>
 <code>enforcedLabelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16376,7 +16502,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelLimit</code> is
 <td>
 <code>enforcedLabelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16397,7 +16523,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelNameLengthLimit
 <td>
 <code>enforcedLabelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16418,7 +16544,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelValueLengthLimi
 <td>
 <code>enforcedKeepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16679,7 +16805,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16694,7 +16820,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16709,7 +16835,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16724,7 +16850,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16739,7 +16865,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16754,7 +16880,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -16970,7 +17096,8 @@ Duration
 <td>
 <em>(Optional)</em>
 <p>retention defines how long to retain the Prometheus data.</p>
-<p>Default: &ldquo;24h&rdquo; if <code>spec.retention</code> and <code>spec.retentionSize</code> are empty.</p>
+<p>Default: &ldquo;24h&rdquo; if <code>spec.retention</code>, <code>spec.retentionSize</code> and
+<code>spec.retentionPercentage</code> are empty.</p>
 </td>
 </tr>
 <tr>
@@ -16989,6 +17116,24 @@ ByteSize
 </tr>
 <tr>
 <td>
+<code>retentionPercentage</code><br/>
+<em>
+<a href="https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity">
+k8s.io/apimachinery/pkg/api/resource.Quantity
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>retentionPercentage defines the maximum percentage of the data volume&rsquo;s
+capacity used by the Prometheus data.</p>
+<p>The value is a number between 0 and 100. If set to 0, percentage-based
+retention is disabled.</p>
+<p>It requires Prometheus &gt;= v3.11.0 and is ignored by older versions.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>shardRetentionPolicy</code><br/>
 <em>
 <a href="#monitoring.coreos.com/v1.ShardRetentionPolicy">
@@ -16998,11 +17143,8 @@ ShardRetentionPolicy
 </td>
 <td>
 <em>(Optional)</em>
-<p>shardRetentionPolicy defines the retention policy for the Prometheus shards.
-(Alpha) Using this field requires the &lsquo;PrometheusShardRetentionPolicy&rsquo; feature gate to be enabled.</p>
-<p>The final goals for this feature can be seen at <a href="https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/proposals/202310-shard-autoscaling.md#graceful-scale-down-of-prometheus-servers">https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/proposals/202310-shard-autoscaling.md#graceful-scale-down-of-prometheus-servers</a>,
-however, the feature is not yet fully implemented in this PR. The limitation being:
-* Retention duration is not settable, for now, shards are retained forever.</p>
+<p>shardRetentionPolicy defines the retention policy for the Prometheus shards.</p>
+<p>(Beta) Using this mode requires the <code>PrometheusShardRetentionPolicy</code> feature gate (enabled by default).</p>
 </td>
 </tr>
 <tr>
@@ -17014,9 +17156,15 @@ bool
 </td>
 <td>
 <em>(Optional)</em>
-<p>disableCompaction when true, the Prometheus compaction is disabled.
-When <code>spec.thanos.objectStorageConfig</code> or <code>spec.objectStorageConfigFile</code> are defined, the operator automatically
-disables block compaction to avoid race conditions during block uploads (as the Thanos documentation recommends).</p>
+<p>disableCompaction when true, the Prometheus compaction is disabled.</p>
+<p>When <code>spec.thanos.objectStorageConfig</code> or <code>spec.thanos.objectStorageConfigFile</code> are defined, the operator&rsquo;s
+default handling depends on the Prometheus and Thanos sidecar versions:
+- With Prometheus &lt; v3.9.0 or a Thanos sidecar &lt; v0.42.0, block compaction is disabled to avoid race
+conditions during block uploads (as the Thanos documentation recommends).
+- With Prometheus &gt;= v3.9.0 and a Thanos sidecar &gt;= v0.42.0, local compaction is kept enabled and coordinated
+with the sidecar through the shipper meta file (<code>--storage.tsdb.delay-compact-file.path</code>), so blocks are only
+compacted after they have been uploaded.
+Setting this field to true always disables local compaction regardless of the versions.</p>
 </td>
 </tr>
 <tr>
@@ -17864,7 +18012,7 @@ string
 <td>
 <code>modulus</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -17947,11 +18095,14 @@ from a remote endpoint.</p>
 <td>
 <code>url</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1.URL">
+URL
+</a>
 </em>
 </td>
 <td>
 <p>url defines the URL of the endpoint to query from.</p>
+<p>It must use the HTTP or HTTPS scheme.</p>
 </td>
 </tr>
 <tr>
@@ -19599,7 +19750,7 @@ By default, the services are discovered in the same namespace as the <code>Servi
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -19644,7 +19795,7 @@ ScrapeProtocol
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -19657,7 +19808,7 @@ be accepted.</p>
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -19670,7 +19821,7 @@ uint64
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -19683,7 +19834,7 @@ uint64
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -19723,7 +19874,7 @@ It requires Prometheus &gt;= v2.45.0.</p>
 <td>
 <code>nativeHistogramBucketLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -19766,7 +19917,7 @@ It requires Prometheus &gt;= v3.0.0.</p>
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -20039,8 +20190,8 @@ Targets are distributed across shards based on a hash of the target address.</p>
 </td>
 </tr><tr><td><p>&#34;Topology&#34;</p></td>
 <td><p>TopologyShardingStrategyMode enables zone-aware sharding.
-Each shard is assigned to a specific topology zone and only scrapes targets in that zone.
-(Alpha) Using this mode requires the <code>PrometheusTopologySharding</code> feature gate to be enabled.</p>
+Each shard is assigned to a specific topology zone and only scrapes targets in that zone.</p>
+<p>(Beta) Using this mode requires the <code>PrometheusTopologySharding</code> feature gate (enabled by default).</p>
 </td>
 </tr></tbody>
 </table>
@@ -20137,7 +20288,7 @@ string
 <td>
 <em>(Optional)</em>
 <p>externalId defines the external ID used when assuming an AWS role. Can only be used with roleArn.
-It requires Prometheus &gt;= v3.11.0 or Alertmanager &gt;= v0.33.0. Currently not supported by Thanos.</p>
+It requires Prometheus &gt;= v3.11.0 or Alertmanager &gt;= v0.34.0. Currently not supported by Thanos.</p>
 </td>
 </tr>
 <tr>
@@ -20604,6 +20755,23 @@ It may not trigger the stale series compaction if the usual head compaction
 is about to happen soon.</p>
 <p>If set to 0, stale series compaction is disabled.</p>
 <p>It requires Prometheus &gt;= v3.10.0.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>chunkEncoding</code><br/>
+<em>
+<a href="#monitoring.coreos.com/v1.ChunkEncodingSpec">
+ChunkEncodingSpec
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>chunkEncoding configures per-chunk-type encoding overrides.</p>
+<p>It requires Prometheus &gt;= v3.13.0.</p>
+<p>Notice: Setting &ldquo;Xor&rdquo; is incompatible with &ndash;enable-feature=st-storage
+(XOR chunks do not store start timestamps).</p>
 </td>
 </tr>
 </tbody>
@@ -22553,7 +22721,7 @@ Supported values are:
 <h3 id="monitoring.coreos.com/v1.URL">URL
 (<code>string</code> alias)</h3>
 <p>
-(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.AlertmanagerGlobalConfig">AlertmanagerGlobalConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalJiraConfig">GlobalJiraConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalRocketChatConfig">GlobalRocketChatConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalTelegramConfig">GlobalTelegramConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalVictorOpsConfig">GlobalVictorOpsConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalWeChatConfig">GlobalWeChatConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalWebexConfig">GlobalWebexConfig</a>, <a href="#monitoring.coreos.com/v1.OAuth2">OAuth2</a>, <a href="#monitoring.coreos.com/v1.RemoteWriteSpec">RemoteWriteSpec</a>)
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1.AlertmanagerGlobalConfig">AlertmanagerGlobalConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalJiraConfig">GlobalJiraConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalRocketChatConfig">GlobalRocketChatConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalTelegramConfig">GlobalTelegramConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalVictorOpsConfig">GlobalVictorOpsConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalWeChatConfig">GlobalWeChatConfig</a>, <a href="#monitoring.coreos.com/v1.GlobalWebexConfig">GlobalWebexConfig</a>, <a href="#monitoring.coreos.com/v1.OAuth2">OAuth2</a>, <a href="#monitoring.coreos.com/v1.RemoteReadSpec">RemoteReadSpec</a>, <a href="#monitoring.coreos.com/v1.RemoteWriteSpec">RemoteWriteSpec</a>)
 </p>
 <div>
 <p>URL represents a valid URL</p>
@@ -23549,6 +23717,7 @@ configuration (either in the monitoring resources or via scrape class).</p>
 <p>You can also disable sharding on a specific target by setting the
 <code>__tmp_disable_sharding</code> label with relabeling configuration. When
 the label value isn&rsquo;t empty, all Prometheus shards will scrape the target.</p>
+<p>Default: 1</p>
 </td>
 </tr>
 <tr>
@@ -24342,7 +24511,7 @@ The label&rsquo;s value is the namespace of the <code>ServiceMonitor</code>,
 <td>
 <code>enforcedSampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -24365,7 +24534,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedSampleLimit</code> i
 <td>
 <code>enforcedTargetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -24387,7 +24556,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedTargetLimit</code> i
 <td>
 <code>enforcedLabelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -24408,7 +24577,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelLimit</code> is
 <td>
 <code>enforcedLabelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -24429,7 +24598,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelNameLengthLimit
 <td>
 <code>enforcedLabelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -24450,7 +24619,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelValueLengthLimi
 <td>
 <code>enforcedKeepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -24711,7 +24880,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -24726,7 +24895,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -24741,7 +24910,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -24756,7 +24925,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -24771,7 +24940,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -24786,7 +24955,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -25616,7 +25785,7 @@ SafeTLSConfig
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -25628,7 +25797,7 @@ uint64
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -25640,7 +25809,7 @@ uint64
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -25653,7 +25822,7 @@ Only valid in Prometheus versions 2.27.0 and newer.</p>
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -25666,7 +25835,7 @@ Only valid in Prometheus versions 2.27.0 and newer.</p>
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -25723,7 +25892,7 @@ It requires Prometheus &gt;= v2.45.0.</p>
 <td>
 <code>nativeHistogramBucketLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -25766,7 +25935,7 @@ It requires Prometheus &gt;= v3.0.0.</p>
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -27353,6 +27522,29 @@ bool
 </tr>
 </tbody>
 </table>
+<h3 id="monitoring.coreos.com/v1alpha1.DockerSwarmRole">DockerSwarmRole
+(<code>string</code> alias)</h3>
+<p>
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1alpha1.DockerSwarmSDConfig">DockerSwarmSDConfig</a>)
+</p>
+<div>
+<p>DockerSwarmRole defines the role of Docker Swarm targets to retrieve.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr><td><p>&#34;Nodes&#34;</p></td>
+<td></td>
+</tr><tr><td><p>&#34;Services&#34;</p></td>
+<td></td>
+</tr><tr><td><p>&#34;Tasks&#34;</p></td>
+<td></td>
+</tr></tbody>
+</table>
 <h3 id="monitoring.coreos.com/v1alpha1.DockerSwarmSDConfig">DockerSwarmSDConfig
 </h3>
 <p>
@@ -27385,7 +27577,9 @@ string
 <td>
 <code>role</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1alpha1.DockerSwarmRole">
+DockerSwarmRole
+</a>
 </em>
 </td>
 <td>
@@ -28829,6 +29023,27 @@ bool
 </tr>
 </tbody>
 </table>
+<h3 id="monitoring.coreos.com/v1alpha1.HetznerRole">HetznerRole
+(<code>string</code> alias)</h3>
+<p>
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1alpha1.HetznerSDConfig">HetznerSDConfig</a>)
+</p>
+<div>
+<p>HetznerRole defines the Hetzner role of entities that should be discovered.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr><td><p>&#34;Hcloud&#34;</p></td>
+<td></td>
+</tr><tr><td><p>&#34;Robot&#34;</p></td>
+<td></td>
+</tr></tbody>
+</table>
 <h3 id="monitoring.coreos.com/v1alpha1.HetznerSDConfig">HetznerSDConfig
 </h3>
 <p>
@@ -28851,7 +29066,9 @@ See <a href="https://prometheus.io/docs/prometheus/latest/configuration/configur
 <td>
 <code>role</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1alpha1.HetznerRole">
+HetznerRole
+</a>
 </em>
 </td>
 <td>
@@ -31072,6 +31289,29 @@ If not set, Prometheus uses its default value.</p>
 <td></td>
 </tr></tbody>
 </table>
+<h3 id="monitoring.coreos.com/v1alpha1.OpenStackAvailability">OpenStackAvailability
+(<code>string</code> alias)</h3>
+<p>
+(<em>Appears on:</em><a href="#monitoring.coreos.com/v1alpha1.OpenStackSDConfig">OpenStackSDConfig</a>)
+</p>
+<div>
+<p>OpenStackAvailability defines the availability of the endpoint to connect to.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr><td><p>&#34;Admin&#34;</p></td>
+<td></td>
+</tr><tr><td><p>&#34;Internal&#34;</p></td>
+<td></td>
+</tr><tr><td><p>&#34;Public&#34;</p></td>
+<td></td>
+</tr></tbody>
+</table>
 <h3 id="monitoring.coreos.com/v1alpha1.OpenStackRole">OpenStackRole
 (<code>string</code> alias)</h3>
 <p>
@@ -31332,7 +31572,9 @@ instead be specified in the relabeling rule.</p>
 <td>
 <code>availability</code><br/>
 <em>
-string
+<a href="#monitoring.coreos.com/v1alpha1.OpenStackAvailability">
+OpenStackAvailability
+</a>
 </em>
 </td>
 <td>
@@ -32391,6 +32633,7 @@ configuration (either in the monitoring resources or via scrape class).</p>
 <p>You can also disable sharding on a specific target by setting the
 <code>__tmp_disable_sharding</code> label with relabeling configuration. When
 the label value isn&rsquo;t empty, all Prometheus shards will scrape the target.</p>
+<p>Default: 1</p>
 </td>
 </tr>
 <tr>
@@ -33184,7 +33427,7 @@ The label&rsquo;s value is the namespace of the <code>ServiceMonitor</code>,
 <td>
 <code>enforcedSampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -33207,7 +33450,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedSampleLimit</code> i
 <td>
 <code>enforcedTargetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -33229,7 +33472,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedTargetLimit</code> i
 <td>
 <code>enforcedLabelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -33250,7 +33493,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelLimit</code> is
 <td>
 <code>enforcedLabelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -33271,7 +33514,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelNameLengthLimit
 <td>
 <code>enforcedLabelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -33292,7 +33535,7 @@ If Prometheus version is &gt;= 2.45.0 and the <code>enforcedLabelValueLengthLimi
 <td>
 <code>enforcedKeepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -33553,7 +33796,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -33568,7 +33811,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -33583,7 +33826,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -33598,7 +33841,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -33613,7 +33856,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -33628,7 +33871,7 @@ If you want to enforce a maximum limit for all scrape objects, refer to enforced
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -35229,6 +35472,21 @@ HTTPConfig
 <p>httpConfig defines the HTTP client configuration for SNS API requests.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>useAWSHTTPClient</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>useAWSHTTPClient forces the AWS SDK&rsquo;s BuildableClient instead of
+alertmanager&rsquo;s tracing-wrapped HTTP client. Auto-enabled when AWS_CA_BUNDLE
+is set; set explicitly when configuring ca_bundle via shared AWS config.</p>
+<p>It requires Alertmanager &gt;= 0.33.0.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="monitoring.coreos.com/v1alpha1.ScalewayRole">ScalewayRole
@@ -36088,7 +36346,7 @@ SafeTLSConfig
 <td>
 <code>sampleLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -36100,7 +36358,7 @@ uint64
 <td>
 <code>targetLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -36112,7 +36370,7 @@ uint64
 <td>
 <code>labelLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -36125,7 +36383,7 @@ Only valid in Prometheus versions 2.27.0 and newer.</p>
 <td>
 <code>labelNameLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -36138,7 +36396,7 @@ Only valid in Prometheus versions 2.27.0 and newer.</p>
 <td>
 <code>labelValueLengthLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -36195,7 +36453,7 @@ It requires Prometheus &gt;= v2.45.0.</p>
 <td>
 <code>nativeHistogramBucketLimit</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -36238,7 +36496,7 @@ It requires Prometheus &gt;= v3.0.0.</p>
 <td>
 <code>keepDroppedTargets</code><br/>
 <em>
-uint64
+int64
 </em>
 </td>
 <td>
@@ -36798,6 +37056,20 @@ string
 <p>messageText defines text content of the Slack message.
 If set, this is sent as the top-level &lsquo;text&rsquo; field in the Slack payload.
 It requires Alertmanager &gt;= v0.31.0.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>updateMessage</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>updateMessage enables updating existing Slack messages instead of creating new ones
+when alert state changes. Please note that Webhook URLs do not support updates.
+It requires Alertmanager &gt;= v0.32.0.</p>
 </td>
 </tr>
 </tbody>
@@ -37818,6 +38090,21 @@ Duration
 <p>timeout defines the maximum time to wait for a webhook request to complete,
 before failing the request and allowing it to be retried.
 It requires Alertmanager &gt;= v0.28.0.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>payload</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>payload define custom payload to be sent to the webhook endpoint.
+This is an advanced configuration option that allows you
+to define a custom payload using Go templates.
+It requires Alertmanager &gt;= v0.32.0.</p>
 </td>
 </tr>
 </tbody>
@@ -41007,6 +41294,21 @@ HTTPConfig
 <p>httpConfig defines the HTTP client configuration for SNS API requests.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>useAWSHTTPClient</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>useAWSHTTPClient forces the AWS SDK&rsquo;s BuildableClient instead of
+alertmanager&rsquo;s tracing-wrapped HTTP client. Auto-enabled when AWS_CA_BUNDLE
+is set; set explicitly when configuring ca_bundle via shared AWS config.</p>
+<p>It requires Alertmanager &gt;= 0.33.0.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="monitoring.coreos.com/v1beta1.SecretKeySelector">SecretKeySelector
@@ -41485,6 +41787,20 @@ string
 <p>messageText defines text content of the Slack message.
 If set, this is sent as the top-level &lsquo;text&rsquo; field in the Slack payload.
 It requires Alertmanager &gt;= v0.31.0.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>updateMessage</code><br/>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>updateMessage enables updating existing Slack messages instead of creating new ones
+when alert state changes. Please note that Webhook URLs do not support updates.
+It requires Alertmanager &gt;= v0.32.0.</p>
 </td>
 </tr>
 </tbody>
@@ -42497,6 +42813,21 @@ Duration
 <p>timeout defines the maximum time to wait for a webhook request to complete,
 before failing the request and allowing it to be retried.
 It requires Alertmanager &gt;= v0.28.0.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>payload</code><br/>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>payload define custom payload to be sent to the webhook endpoint.
+This is an advanced configuration option that allows you
+to define a custom payload using Go templates.
+It requires Alertmanager &gt;= v0.32.0.</p>
 </td>
 </tr>
 </tbody>
