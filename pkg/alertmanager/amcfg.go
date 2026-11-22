@@ -980,6 +980,10 @@ func (cb *ConfigBuilder) convertSlackConfig(ctx context.Context, in monitoringv1
 		MessageText:         ptr.Deref(in.MessageText, ""),
 		UpdateMessage:       in.UpdateMessage,
 		PostUpdatesToThread: in.PostUpdatesToThread,
+		TitleLink:           in.TitleLink,
+		IconURL:             in.IconURL,
+		ImageURL:            in.ImageURL,
+		ThumbURL:            in.ThumbURL,
 	}
 
 	if in.APIURL != nil {
@@ -988,19 +992,6 @@ func (cb *ConfigBuilder) convertSlackConfig(ctx context.Context, in monitoringv1
 			return nil, err
 		}
 		out.APIURL = url
-	}
-
-	if in.TitleLink != "" {
-		out.TitleLink = in.TitleLink
-	}
-	if in.IconURL != "" {
-		out.IconURL = in.IconURL
-	}
-	if in.ImageURL != "" {
-		out.ImageURL = in.ImageURL
-	}
-	if in.ThumbURL != "" {
-		out.ThumbURL = in.ThumbURL
 	}
 
 	var actions []slackAction
@@ -1013,18 +1004,15 @@ func (cb *ConfigBuilder) convertSlackConfig(ctx context.Context, in monitoringv1
 				Style: ptr.Deref(a.Style, ""),
 				Name:  ptr.Deref(a.Name, ""),
 				Value: ptr.Deref(a.Value, ""),
+				URL:   a.URL,
 			}
 
-			if a.URL != "" {
-				action.URL = a.URL
-			}
-
-			if a.ConfirmField != nil {
+			if cf := a.ConfirmField; cf != nil {
 				action.ConfirmField = &slackConfirmationField{
-					Text:        a.ConfirmField.Text,
-					Title:       ptr.Deref(a.ConfirmField.Title, ""),
-					OkText:      ptr.Deref(a.ConfirmField.OkText, ""),
-					DismissText: ptr.Deref(a.ConfirmField.DismissText, ""),
+					Text:        cf.Text,
+					Title:       ptr.Deref(cf.Title, ""),
+					OkText:      ptr.Deref(cf.OkText, ""),
+					DismissText: ptr.Deref(cf.DismissText, ""),
 				}
 			}
 
